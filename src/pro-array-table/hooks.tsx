@@ -1,6 +1,16 @@
-import { ArrayField, FieldDisplayTypes, GeneralField } from "@formily/core";
+import {
+	ArrayField,
+	FieldDisplayTypes,
+	GeneralField,
+	isArrayField,
+} from "@formily/core";
 import { Schema } from "@formily/json-schema";
-import { RecursionField, useField, useFieldSchema } from "@formily/react";
+import {
+	RecursionField,
+	useField,
+	useFieldSchema,
+	useForm,
+} from "@formily/react";
 import { isArr } from "@formily/shared";
 import { ColumnProps, ColumnsType } from "antd/es/table";
 import { ArrayBase } from "../array-base";
@@ -74,7 +84,7 @@ export const useAddition = () => {
 	}, null);
 };
 
-export const useArrayTableColumns = (
+export const getArrayTableColumns = (
 	dataSource: any[],
 	field: ArrayField,
 	sources: ObservableColumnSource[],

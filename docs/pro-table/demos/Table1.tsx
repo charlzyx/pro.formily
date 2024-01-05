@@ -1,5 +1,4 @@
 import {
-	ArrayTable,
 	Editable,
 	FormButtonGroup,
 	FormItem,
@@ -9,16 +8,15 @@ import {
 import { createForm } from "@formily/core";
 import { FormProvider, createSchemaField } from "@formily/react";
 import { Button } from "antd";
-import { ProTable } from "proformily";
+import { ProArrayTable } from "proformily";
 import React from "react";
 
-console.log("--ProTable", ArrayTable, ProTable);
 const SchemaField = createSchemaField({
 	components: {
 		FormItem,
 		Editable,
 		Input,
-		ArrayTable: ProTable,
+		ProArrayTable: ProArrayTable,
 	},
 });
 
@@ -30,9 +28,10 @@ const schema = {
 		array: {
 			type: "array",
 			"x-decorator": "FormItem",
-			"x-component": "ArrayTable",
+			"x-component": "ProArrayTable",
 			"x-component-props": {
 				pagination: { pageSize: 10 },
+				rowSelection: true,
 				scroll: { x: "100%" },
 			},
 			items: {
@@ -40,30 +39,30 @@ const schema = {
 				properties: {
 					column1: {
 						type: "void",
-						"x-component": "ArrayTable.Column",
-						"x-component-props": { width: 50, title: "Sort", align: "center" },
+						"x-component": "ProArrayTable.Column",
+						"x-component-props": { width: 80, title: "Sort", align: "center" },
 						properties: {
 							sort: {
 								type: "void",
-								"x-component": "ArrayTable.SortHandle",
+								"x-component": "ProArrayTable.SortHandle",
 							},
 						},
 					},
 					column2: {
 						type: "void",
-						"x-component": "ArrayTable.Column",
+						"x-component": "ProArrayTable.Column",
 						"x-component-props": { width: 80, title: "Index", align: "center" },
 						properties: {
 							index: {
 								type: "void",
-								"x-component": "ArrayTable.Index",
+								"x-component": "ProArrayTable.Index",
 							},
 						},
 					},
 					column3: {
 						type: "void",
-						"x-component": "ArrayTable.Column",
-						"x-component-props": { width: 200, title: "A1" },
+						"x-component": "ProArrayTable.Column",
+						"x-component-props": { width: 120, title: "A1" },
 						properties: {
 							a1: {
 								type: "string",
@@ -74,8 +73,8 @@ const schema = {
 					},
 					column4: {
 						type: "void",
-						"x-component": "ArrayTable.Column",
-						"x-component-props": { width: 200, title: "A2" },
+						"x-component": "ProArrayTable.Column",
+						"x-component-props": { width: 120, title: "A2" },
 						properties: {
 							a2: {
 								type: "string",
@@ -86,8 +85,8 @@ const schema = {
 					},
 					column5: {
 						type: "void",
-						"x-component": "ArrayTable.Column",
-						"x-component-props": { width: 200, title: "A3" },
+						"x-component": "ProArrayTable.Column",
+						"x-component-props": { width: 120, title: "A3" },
 						properties: {
 							a3: {
 								type: "string",
@@ -98,7 +97,7 @@ const schema = {
 					},
 					column6: {
 						type: "void",
-						"x-component": "ArrayTable.Column",
+						"x-component": "ProArrayTable.Column",
 						"x-component-props": {
 							title: "Operations",
 							dataIndex: "operations",
@@ -112,15 +111,15 @@ const schema = {
 								properties: {
 									remove: {
 										type: "void",
-										"x-component": "ArrayTable.Remove",
+										"x-component": "ProArrayTable.Remove",
 									},
 									moveDown: {
 										type: "void",
-										"x-component": "ArrayTable.MoveDown",
+										"x-component": "ProArrayTable.MoveDown",
 									},
 									moveUp: {
 										type: "void",
-										"x-component": "ArrayTable.MoveUp",
+										"x-component": "ProArrayTable.MoveUp",
 									},
 								},
 							},
@@ -131,7 +130,7 @@ const schema = {
 			properties: {
 				add: {
 					type: "void",
-					"x-component": "ArrayTable.Addition",
+					"x-component": "ProArrayTable.Addition",
 					title: "添加条目",
 				},
 			},
@@ -140,7 +139,9 @@ const schema = {
 };
 const range = (count: number) =>
 	Array.from(new Array(count)).map((_, key) => ({
-		aaa: key,
+		a1: `${key}.1`,
+		a2: `${key}.2`,
+		a3: `${key}.3`,
 	}));
 
 export default () => {

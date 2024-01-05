@@ -15,6 +15,7 @@
     "@formily/antd-v5": "^1.1.9",
     "@formily/core": "^2.3.1",
     "@formily/react": "^2.3.1",
+    "@formily/reactive": "^2.3.1",
     "@formily/shared": "^2.3.1",
     "@rsbuild/plugin-react": "^0.2.15",
     "@rspress/plugin-preview": "^1.9.3",

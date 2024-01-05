@@ -172,7 +172,7 @@ const Addition: ReactFC<IArrayBaseAdditionProps> = (props) => {
 		return null;
 	return wrapSSR(
 		<Button
-			type="dashed"
+			type="link"
 			block
 			{...props}
 			disabled={self?.disabled}
@@ -207,7 +207,7 @@ const Copy = forwardRef<HTMLButtonElement, CommonProps>((props, ref) => {
 	if (array.field?.pattern !== "editable") return null;
 	return wrapSSR(
 		<Button
-			type="dashed"
+			type="link"
 			{...props}
 			style={{
 				padding: "0 0 0 6px",
@@ -254,7 +254,7 @@ const Remove = forwardRef<HTMLSpanElement, CommonProps>((props, ref) => {
 	if (array.field?.pattern !== "editable") return null;
 	return wrapSSR(
 		<Button
-			type="dashed"
+			type="link"
 			{...props}
 			style={{
 				padding: "0 0 0 6px",
@@ -296,7 +296,7 @@ const MoveDown = forwardRef<HTMLSpanElement, CommonProps>((props, ref) => {
 	if (array.field?.pattern !== "editable") return null;
 	return (
 		<Button
-			type="dashed"
+			type="link"
 			{...props}
 			style={{
 				padding: "0 0 0 6px",
@@ -337,7 +337,7 @@ const MoveUp = forwardRef<HTMLSpanElement, CommonProps>((props, ref) => {
 	if (array.field?.pattern !== "editable") return null;
 	return (
 		<Button
-			type="dashed"
+			type="link"
 			{...props}
 			style={{
 				padding: "0 0 0 6px",

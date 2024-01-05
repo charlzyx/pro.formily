@@ -1,1 +1,1 @@
-export { ProTable } from "./pro-table";
+export { ProArrayTable } from "./pro-array-table";
