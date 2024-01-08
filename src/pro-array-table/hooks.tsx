@@ -13,6 +13,7 @@ import {
 } from "@formily/react";
 import { isArr } from "@formily/shared";
 import { ColumnProps, ColumnsType } from "antd/es/table";
+import { useEffect, useRef, useState } from "react";
 import { ArrayBase } from "../array-base";
 import {
 	ObservableColumnSource,
@@ -70,7 +71,6 @@ export const useArrayTableSources = () => {
 	};
 
 	if (!schema) throw new Error("can not found schema object");
-
 	return parseArrayItems(schema.items);
 };
 
@@ -84,12 +84,11 @@ export const useAddition = () => {
 	}, null);
 };
 
-export const getArrayTableColumns = (
-	dataSource: any[],
+export const useArrayTableColumns = (
 	field: ArrayField,
 	sources: ObservableColumnSource[],
-): ColumnsType<any> => {
-	return sources.reduce<ColumnsType<any>>(
+): [ColumnsType<any>, React.MutableRefObject<ColumnsType<any>>] => {
+	const columns = sources.reduce<ColumnsType<any>>(
 		(buf, { name, columnProps, schema, display }, key) => {
 			if (display !== "visible") return buf;
 			if (!isColumnComponent(schema)) return buf;
@@ -98,7 +97,7 @@ export const getArrayTableColumns = (
 				key,
 				dataIndex: name,
 				render: (value: any, record: any) => {
-					const index = dataSource.indexOf(record);
+					const index = field.value.indexOf(record);
 					const children = (
 						<ArrayBase.Item index={index} record={() => field?.value?.[index]}>
 							<RecursionField
@@ -114,4 +113,8 @@ export const getArrayTableColumns = (
 		},
 		[],
 	);
+	const ref = useRef(columns);
+	ref.current = columns;
+
+	return [columns, ref] as const;
 };

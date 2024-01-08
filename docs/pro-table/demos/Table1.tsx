@@ -5,12 +5,18 @@ import {
 	Input,
 	Submit,
 } from "@formily/antd-v5";
-import { createForm } from "@formily/core";
+import {
+	ArrayField,
+	createForm,
+	onFieldChange,
+	onFieldReact,
+	onFieldValueChange,
+	onFormValuesChange,
+} from "@formily/core";
 import { FormProvider, createSchemaField } from "@formily/react";
 import { Button } from "antd";
 import { ProArrayTable } from "proformily";
 import React from "react";
-
 const SchemaField = createSchemaField({
 	components: {
 		FormItem,
@@ -20,7 +26,16 @@ const SchemaField = createSchemaField({
 	},
 });
 
-const form = createForm();
+const form = createForm({
+	effects() {
+		onFormValuesChange(() => {
+			console.log("form values change ");
+		});
+		onFieldValueChange("*", (field) => {
+			console.log("change ", field.path.entire, (field as any).value);
+		});
+	},
+});
 
 const schema = {
 	type: "object",

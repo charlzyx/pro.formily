@@ -1,8 +1,6 @@
-import { ArrayField } from "@formily/core";
-import { Schema } from "@formily/json-schema";
 import { ReactFC, useFieldSchema } from "@formily/react";
 import cls from "classnames";
-import React, { Ref } from "react";
+import React from "react";
 import {
 	SortableContainer,
 	SortableElement,
@@ -87,7 +85,8 @@ export const getWrapperComp = (opts: {
 };
 
 export const useSortable = (
-	field: ArrayField,
+	dataSource: any[],
+	onSortEnd: (from: number, to: number) => void,
 	opts: {
 		ref: React.MutableRefObject<HTMLDivElement | null>;
 		start: number;
@@ -95,15 +94,13 @@ export const useSortable = (
 	},
 ) => {
 	const schema = useFieldSchema();
-	const dataSource = field.value || [];
 	const body = hasSortable(schema)
 		? {
 				wrapper: getWrapperComp({
 					list: dataSource,
 					start: opts.start,
 					prefixCls: opts.prefixCls,
-					// TODO: props supported
-					onSortEnd: field.move,
+					onSortEnd: onSortEnd,
 					ref: opts.ref,
 				}),
 				row: RowComp,
