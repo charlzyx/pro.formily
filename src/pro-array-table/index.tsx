@@ -1,6 +1,6 @@
 import { ArrayField } from "@formily/core";
 import { ReactFC, RecursionField, observer, useField } from "@formily/react";
-import { Divider, Table, TableProps, Typography } from "antd";
+import { Table, TableProps, Typography } from "antd";
 import cls from "classnames";
 import React, { useMemo, useRef } from "react";
 import { noop, usePrefixCls } from "../__builtins__";

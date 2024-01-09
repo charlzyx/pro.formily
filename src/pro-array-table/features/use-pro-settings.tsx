@@ -1,7 +1,7 @@
 import { ArrayField } from "@formily/core";
 import { useField, useForm } from "@formily/react";
 import { useAttach } from "@formily/react/esm/hooks/useAttach";
-import { model } from "@formily/reactive";
+import { model, toJS } from "@formily/reactive";
 import { clone } from "@formily/shared";
 import { TableColumnType, TableProps } from "antd";
 import { ColumnType } from "antd/es/table";
@@ -60,9 +60,7 @@ export const useProSettings = (
 			paginationPosition: "bottom-right",
 			...init,
 			get columns() {
-				return touched.current
-					? this._columns.filter((x) => x.show)
-					: columns.current;
+				return this._columns.filter((x) => x.show);
 			},
 			_columns: [],
 			reset() {
@@ -87,13 +85,13 @@ export const useProSettings = (
 
 	// 初始化, 快吐了
 	if (vm._columns.length === 0 && columns.current?.length > 0) {
-		touched.current = true;
 		vm._columns = clone(columns.current).map((item: TableColumnType<any>) => {
 			return {
 				...item,
 				show: true,
 			} as IProTableColumnProps;
 		});
+		touched.current = true;
 	}
 
 	return vm;
