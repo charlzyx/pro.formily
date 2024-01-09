@@ -1,6 +1,5 @@
 import { ArrayField } from "@formily/core";
 import { useField, useForm } from "@formily/react";
-import { useAttach } from "@formily/react/esm/hooks/useAttach";
 import { model, toJS } from "@formily/reactive";
 import { clone } from "@formily/shared";
 import { TableColumnType, TableProps } from "antd";
@@ -10,15 +9,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 export type IProTableColumnProps = TableColumnType<any> & {
 	show?: boolean;
 };
-export type IProSettingsProps = Partial<
-	Omit<IProSettings, "settingsColumns" | "columns">
->;
 
 export type IProSettings = {
 	size?: TableProps<any>["size"];
 	indentSize?: TableProps<any>["indentSize"];
 	columns: IProTableColumnProps[];
-	_columns: IProTableColumnProps[];
 	paginationPosition:
 		| "top-left"
 		| "top-center"
@@ -39,60 +34,39 @@ export const getPostion = (
 		  : "flex-end";
 };
 
-const defaultValue: IProSettingsProps = {
-	size: "small",
-};
-
 export const useProSettings = (
 	columns: React.MutableRefObject<ColumnType<any>[]>,
+	props: TableProps<any>,
 ) => {
-	const array = useField<ArrayField>();
-	const form = useForm();
-	const props = array.componentProps;
-	const touched = useRef(false);
-
-	const vm = useMemo(() => {
-		const init = {
-			...defaultValue,
-			...props,
-		};
-		return model<IProSettings>({
-			paginationPosition: "bottom-right",
-			...init,
-			get columns() {
-				return this._columns.filter((x) => x.show);
-			},
-			_columns: [],
-			reset() {
-				this._columns = clone(columns.current).map(
-					(item: TableColumnType<any>) => {
+	const [settings, setSettings] = useState<IProSettings>({
+		size: "small",
+		indentSize: props?.indentSize,
+		columns: [],
+		paginationPosition: "bottom-right",
+		reset() {
+			setSettings((pre) => {
+				return {
+					...pre,
+					columns: clone(columns.current).map((item: TableColumnType<any>) => {
 						return {
 							...item,
 							show: true,
 						} as IProTableColumnProps;
-					},
-				);
-			},
-		});
-	}, [props, form, array]);
+					}),
+				};
+			});
+		},
+	});
 
 	useEffect(() => {
-		if (!array.data?.settings) {
-			array.data = array.data || {};
-			array.data.settings = vm;
+		if (columns.current.length !== settings.columns.length) {
+			settings.reset();
 		}
-	}, [array, vm]);
+	}, [columns.current]);
 
-	// 初始化, 快吐了
-	if (vm._columns.length === 0 && columns.current?.length > 0) {
-		vm._columns = clone(columns.current).map((item: TableColumnType<any>) => {
-			return {
-				...item,
-				show: true,
-			} as IProTableColumnProps;
-		});
-		touched.current = true;
-	}
+	const computedColumns = useMemo(() => {
+		return settings.columns.filter((x) => x.show);
+	}, [settings.columns]);
 
-	return vm;
+	return [settings, computedColumns, setSettings] as const;
 };

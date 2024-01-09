@@ -21,11 +21,11 @@ import useCreation from "ahooks/es/useCreation";
 import { Button, ConfigProvider, Pagination, Popover, Row, Slider } from "antd";
 import { ColumnProps } from "antd/es/table";
 import { TablePaginationConfig } from "antd/lib";
-import { Fragment, useEffect, useMemo } from "react";
+import React, { Fragment, useEffect, useMemo } from "react";
 import { usePrefixCls } from "src/__builtins__";
 import { ArrayBase, ArrayBaseMixins } from "../array-base";
 import { useArrayFeature } from "./features/hooks";
-import { IProSettingsProps } from "./features/use-pro-settings";
+import { IProSettings } from "./features/use-pro-settings";
 import { ProArrayTable } from "./index";
 export const Column: ReactFC<ColumnProps<any>> = () => {
 	return <Fragment />;
@@ -59,9 +59,11 @@ export const TablePagination = (props: TablePaginationConfig) => {
 };
 
 export const ProSettings = ({
-	settings,
+	value,
+	onChange,
 }: {
-	settings: IProSettingsProps;
+	onChange: React.Dispatch<React.SetStateAction<IProSettings>>;
+	value: IProSettings;
 }) => {
 	const SchemaField = useCreation(
 		() =>
@@ -82,24 +84,27 @@ export const ProSettings = ({
 
 	const form = useCreation(() => {
 		return createForm({
-			initialValues: settings,
+			initialValues: value,
 			effects(form) {
-				onFormValuesChange((field) => {
-					settings._columns = toJS(form.values)._columns;
-					settings.size = toJS(form.values).size;
-					settings.indentSize = toJS(form.values).indentSize;
+				onFormValuesChange(() => {
+					onChange((pre) => {
+						return {
+							...pre,
+							...toJS(form.values),
+						};
+					});
 				});
 			},
 		});
 	}, []);
 
 	useEffect(() => {
-		if (form.values._columns.length > 0) return;
+		if (form.values.columns.length > 0) return;
 		setTimeout(() => {
-			const clone = toJS(settings);
+			const clone = value;
 			form.setValues(clone);
 		});
-	}, [settings]);
+	}, [value]);
 
 	const schema: ISchema = {
 		type: "object",
@@ -117,7 +122,7 @@ export const ProSettings = ({
 					{ label: "默认", value: "large" },
 				],
 			},
-			_columns: {
+			columns: {
 				type: "array",
 				"x-component": "ProArrayTable",
 				"x-component-props": {
@@ -206,7 +211,7 @@ export const ProSettings = ({
 				<h4>表格设置</h4>
 				<Button
 					onClick={() => {
-						settings.reset!();
+						value.reset();
 					}}
 				>
 					重置

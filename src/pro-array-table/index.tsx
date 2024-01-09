@@ -58,7 +58,10 @@ const InternalArrayTable: ReactFC<
 	const page = props.pagination;
 	const startIndex = page ? (page.current! - 1) * page.pageSize! : 0;
 
-	const settings = useProSettings(refColumns);
+	const [settings, columns, setSettings] = useProSettings(
+		refColumns,
+		props as TableProps<any>,
+	);
 
 	const dataSlice = useMemo(() => {
 		if (page) {
@@ -117,7 +120,7 @@ const InternalArrayTable: ReactFC<
 			</Flex>
 			{addition}
 			{props.settings !== false ? (
-				<ProSettings settings={settings}></ProSettings>
+				<ProSettings value={settings} onChange={setSettings}></ProSettings>
 			) : null}
 		</Flex>
 	);
@@ -163,7 +166,7 @@ const InternalArrayTable: ReactFC<
 						footer={undefined}
 						onChange={noop}
 						pagination={false}
-						columns={settings.columns}
+						columns={columns}
 						dataSource={dataSlice}
 						components={{
 							...props.components,
