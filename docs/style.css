@@ -1,0 +1,4 @@
+// to fix FormButtonGroup sticky
+.rspress-preview-card > div {
+  overflow: unset !important;
+}

@@ -12,6 +12,7 @@ export default defineConfig({
 		light: "/rspress-light-logo.png",
 		dark: "/rspress-dark-logo.png",
 	},
+	globalStyles: path.join(__dirname, "./docs/style.css"),
 	builderConfig: {
 		...RsBuildConfig,
 	},

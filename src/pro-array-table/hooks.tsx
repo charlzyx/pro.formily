@@ -118,3 +118,12 @@ export const useArrayTableColumns = (
 
 	return [columns, ref] as const;
 };
+
+export const useArrayField = () => {
+	const field = useField();
+	let array = field;
+	while (array && !isArrayField(array)) {
+		array = array.parent;
+	}
+	return array;
+};

@@ -5,13 +5,13 @@ import { model } from "@formily/reactive";
 import { clone } from "@formily/shared";
 import { TableColumnType, TableProps } from "antd";
 import { ColumnType } from "antd/es/table";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export type IProTableColumnProps = TableColumnType<any> & {
 	show?: boolean;
 };
 export type IProSettingsProps = Partial<
-	Omit<IProSettings, "settingsColumns" | "columns" | "reset">
+	Omit<IProSettings, "settingsColumns" | "columns">
 >;
 
 export type IProSettings = {
@@ -19,19 +19,28 @@ export type IProSettings = {
 	indentSize?: TableProps<any>["indentSize"];
 	columns: IProTableColumnProps[];
 	_columns: IProTableColumnProps[];
-	reset: () => void;
-	paginationPosition?:
+	paginationPosition:
 		| "top-left"
 		| "top-center"
 		| "top-right"
 		| "bottom-left"
 		| "bottom-center"
 		| "bottom-right";
+	reset: () => void;
+};
+
+export const getPostion = (
+	pos: IProSettings["paginationPosition"],
+): React.CSSProperties["justifyContent"] => {
+	return /center/.test(pos)
+		? "center"
+		: /left/.test(pos)
+		  ? "flex-start"
+		  : "flex-end";
 };
 
 const defaultValue: IProSettingsProps = {
 	size: "small",
-	paginationPosition: "bottom-right",
 };
 
 export const useProSettings = (
@@ -45,10 +54,10 @@ export const useProSettings = (
 	const vm = useMemo(() => {
 		const init = {
 			...defaultValue,
-			size: props.size,
-			indentSize: props.indentSize,
+			...props,
 		};
 		return model<IProSettings>({
+			paginationPosition: "bottom-right",
 			...init,
 			get columns() {
 				return touched.current
@@ -57,10 +66,24 @@ export const useProSettings = (
 			},
 			_columns: [],
 			reset() {
-				this.columns = clone(columns.current);
+				this._columns = clone(columns.current).map(
+					(item: TableColumnType<any>) => {
+						return {
+							...item,
+							show: true,
+						} as IProTableColumnProps;
+					},
+				);
 			},
 		});
 	}, [props, form, array]);
+
+	useEffect(() => {
+		if (!array.data?.settings) {
+			array.data = array.data || {};
+			array.data.settings = vm;
+		}
+	}, [array, vm]);
 
 	// 初始化, 快吐了
 	if (vm._columns.length === 0 && columns.current?.length > 0) {
@@ -72,14 +95,6 @@ export const useProSettings = (
 			} as IProTableColumnProps;
 		});
 	}
-
-	const field = useAttach(
-		form.createField({
-			basePath: array?.address,
-			name: "settings",
-			value: vm,
-		}),
-	);
 
 	return vm;
 };

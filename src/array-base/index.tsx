@@ -173,7 +173,7 @@ const Addition: ReactFC<IArrayBaseAdditionProps> = (props) => {
 	return wrapSSR(
 		<Button
 			type="link"
-			block
+			// block
 			{...props}
 			disabled={self?.disabled}
 			className={cls(`${prefixCls}-addition`, hashId, props.className)}

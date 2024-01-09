@@ -3,6 +3,7 @@ import {
 	Checkbox,
 	FormItem,
 	Input,
+	NumberPicker,
 	PreviewText,
 	Radio,
 } from "@formily/antd-v5";
@@ -11,18 +12,19 @@ import {
 	FormProvider,
 	ISchema,
 	ReactFC,
+	connect,
 	createSchemaField,
 	observer,
 } from "@formily/react";
 import { toJS } from "@formily/reactive";
 import useCreation from "ahooks/es/useCreation";
-import { Button, ConfigProvider, Pagination, Popover } from "antd";
+import { Button, ConfigProvider, Pagination, Popover, Row, Slider } from "antd";
 import { ColumnProps } from "antd/es/table";
 import { TablePaginationConfig } from "antd/lib";
 import { Fragment, useEffect, useMemo } from "react";
 import { usePrefixCls } from "src/__builtins__";
 import { ArrayBase, ArrayBaseMixins } from "../array-base";
-import { usePagination } from "./features/use-pagination";
+import { useArrayFeature } from "./features/hooks";
 import { IProSettingsProps } from "./features/use-pro-settings";
 import { ProArrayTable } from "./index";
 export const Column: ReactFC<ColumnProps<any>> = () => {
@@ -31,15 +33,15 @@ export const Column: ReactFC<ColumnProps<any>> = () => {
 
 export const Addition: ArrayBaseMixins["Addition"] = observer((props) => {
 	const array = ArrayBase.useArray();
-	const page = usePagination();
+	const [, $page] = useArrayFeature("pagination");
 	return (
 		<ArrayBase.Addition
 			{...props}
 			onClick={(e) => {
 				// 如果添加数据后将超过当前页，则自动切换到下一页
 				const total = array?.field?.value.length || 0;
-				if (total >= page.current! * page.pageSize! + 1) {
-					page.current! += 1;
+				if (total >= $page.current! * $page.pageSize! + 1) {
+					$page.current! += 1;
 				}
 				props.onClick?.(e);
 			}}
@@ -65,8 +67,10 @@ export const ProSettings = ({
 		() =>
 			createSchemaField({
 				components: {
+					Slider: connect(Slider),
 					FormItem,
 					Input,
+					NumberPicker,
 					Radio,
 					ProArrayTable,
 					PreviewText,
@@ -104,7 +108,8 @@ export const ProSettings = ({
 				type: "string",
 				"x-component": "Radio.Group",
 				"x-component-props": {
-					type: "button",
+					optionType: "button",
+					buttonStyle: "solid",
 				},
 				enum: [
 					{ label: "紧凑", value: "small" },
@@ -129,7 +134,7 @@ export const ProSettings = ({
 							type: "void",
 							"x-component": "ProArrayTable.Column",
 							"x-component-props": {
-								width: 60,
+								width: 40,
 							},
 							properties: {
 								sort: {
@@ -142,7 +147,7 @@ export const ProSettings = ({
 							type: "void",
 							"x-component": "ProArrayTable.Column",
 							"x-component-props": {
-								width: 60,
+								width: 40,
 							},
 							properties: {
 								show: {
@@ -168,12 +173,16 @@ export const ProSettings = ({
 							type: "void",
 							"x-component": "ProArrayTable.Column",
 							"x-component-props": {
-								width: 80,
+								width: 100,
 							},
 							properties: {
 								width: {
 									type: "string",
-									"x-component": "Input",
+									"x-component": "Slider",
+									"x-component-props": {
+										min: 20,
+										max: 400,
+									},
 								},
 							},
 						},
@@ -191,9 +200,27 @@ export const ProSettings = ({
 			</ConfigProvider>
 		);
 	}, []);
+	const title = useMemo(() => {
+		return (
+			<Row justify="space-between">
+				<h4>表格设置</h4>
+				<Button
+					onClick={() => {
+						settings.reset!();
+					}}
+				>
+					重置
+				</Button>
+			</Row>
+		);
+	}, []);
 	return (
-		<Popover content={content} title="设置" trigger="click">
-			<Button icon={<SettingOutlined />} type="link"></Button>
+		<Popover content={content} title={title} trigger="click">
+			<Button
+				style={{ justifySelf: "flex-end" }}
+				icon={<SettingOutlined />}
+				type="link"
+			></Button>
 		</Popover>
 	);
 };

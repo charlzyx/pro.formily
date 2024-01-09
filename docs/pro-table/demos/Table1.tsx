@@ -6,17 +6,15 @@ import {
 	Submit,
 } from "@formily/antd-v5";
 import {
-	ArrayField,
 	createForm,
-	onFieldChange,
-	onFieldReact,
 	onFieldValueChange,
 	onFormValuesChange,
 } from "@formily/core";
-import { FormProvider, createSchemaField } from "@formily/react";
-import { Button } from "antd";
+import { FormProvider, ISchema, createSchemaField } from "@formily/react";
+import { Button, Divider, Space } from "antd";
 import { ProArrayTable } from "proformily";
-import React from "react";
+import { useEffect } from "react";
+import { useFormArrayFeature } from "src/pro-array-table/features/hooks";
 const SchemaField = createSchemaField({
 	components: {
 		FormItem,
@@ -37,111 +35,138 @@ const form = createForm({
 	},
 });
 
-const schema = {
-	type: "object",
-	properties: {
-		array: {
-			type: "array",
-			"x-decorator": "FormItem",
-			"x-component": "ProArrayTable",
-			"x-component-props": {
-				pagination: { pageSize: 10 },
-				rowSelection: true,
-				scroll: { x: "100%" },
-			},
-			items: {
-				type: "object",
+const row: ISchema = {
+	items: {
+		type: "object",
+		properties: {
+			column1: {
+				type: "void",
+				"x-component": "ProArrayTable.Column",
+				"x-component-props": { width: 80, title: "Sort", align: "center" },
 				properties: {
-					column1: {
+					sort: {
 						type: "void",
-						"x-component": "ProArrayTable.Column",
-						"x-component-props": { width: 80, title: "Sort", align: "center" },
+						"x-component": "ProArrayTable.SortHandle",
+					},
+				},
+			},
+			column2: {
+				type: "void",
+				"x-component": "ProArrayTable.Column",
+				"x-component-props": { width: 80, title: "Index", align: "center" },
+				properties: {
+					index: {
+						type: "void",
+						"x-component": "ProArrayTable.Index",
+					},
+				},
+			},
+			column3: {
+				type: "void",
+				"x-component": "ProArrayTable.Column",
+				"x-component-props": { width: 120, title: "A1" },
+				properties: {
+					a1: {
+						type: "string",
+						"x-decorator": "Editable",
+						"x-component": "Input",
+					},
+				},
+			},
+			column4: {
+				type: "void",
+				"x-component": "ProArrayTable.Column",
+				"x-component-props": { width: 120, title: "A2" },
+				properties: {
+					a2: {
+						type: "string",
+						"x-decorator": "FormItem",
+						"x-component": "Input",
+					},
+				},
+			},
+			column5: {
+				type: "void",
+				"x-component": "ProArrayTable.Column",
+				"x-component-props": { width: 120, title: "A3" },
+				properties: {
+					a3: {
+						type: "string",
+						"x-decorator": "FormItem",
+						"x-component": "Input",
+					},
+				},
+			},
+			column6: {
+				type: "void",
+				"x-component": "ProArrayTable.Column",
+				"x-component-props": {
+					title: "Operations",
+					dataIndex: "operations",
+					width: 160,
+					fixed: "right",
+				},
+				properties: {
+					item: {
+						type: "void",
+						"x-component": "FormItem",
 						properties: {
-							sort: {
+							remove: {
 								type: "void",
-								"x-component": "ProArrayTable.SortHandle",
+								"x-component": "ProArrayTable.Remove",
 							},
-						},
-					},
-					column2: {
-						type: "void",
-						"x-component": "ProArrayTable.Column",
-						"x-component-props": { width: 80, title: "Index", align: "center" },
-						properties: {
-							index: {
+							moveDown: {
 								type: "void",
-								"x-component": "ProArrayTable.Index",
+								"x-component": "ProArrayTable.MoveDown",
 							},
-						},
-					},
-					column3: {
-						type: "void",
-						"x-component": "ProArrayTable.Column",
-						"x-component-props": { width: 120, title: "A1" },
-						properties: {
-							a1: {
-								type: "string",
-								"x-decorator": "Editable",
-								"x-component": "Input",
-							},
-						},
-					},
-					column4: {
-						type: "void",
-						"x-component": "ProArrayTable.Column",
-						"x-component-props": { width: 120, title: "A2" },
-						properties: {
-							a2: {
-								type: "string",
-								"x-decorator": "FormItem",
-								"x-component": "Input",
-							},
-						},
-					},
-					column5: {
-						type: "void",
-						"x-component": "ProArrayTable.Column",
-						"x-component-props": { width: 120, title: "A3" },
-						properties: {
-							a3: {
-								type: "string",
-								"x-decorator": "FormItem",
-								"x-component": "Input",
-							},
-						},
-					},
-					column6: {
-						type: "void",
-						"x-component": "ProArrayTable.Column",
-						"x-component-props": {
-							title: "Operations",
-							dataIndex: "operations",
-							width: 200,
-							fixed: "right",
-						},
-						properties: {
-							item: {
+							moveUp: {
 								type: "void",
-								"x-component": "FormItem",
-								properties: {
-									remove: {
-										type: "void",
-										"x-component": "ProArrayTable.Remove",
-									},
-									moveDown: {
-										type: "void",
-										"x-component": "ProArrayTable.MoveDown",
-									},
-									moveUp: {
-										type: "void",
-										"x-component": "ProArrayTable.MoveUp",
-									},
-								},
+								"x-component": "ProArrayTable.MoveUp",
 							},
 						},
 					},
 				},
 			},
+		},
+	},
+};
+
+const subRow: ISchema = JSON.parse(JSON.stringify(row));
+// biome-ignore lint/performance/noDelete: <explanation>
+delete (subRow as any).items.properties.column1;
+// biome-ignore lint/performance/noDelete: <explanation>
+delete (subRow as any).items.properties.column6;
+
+const schema: ISchema = {
+	type: "object",
+	properties: {
+		array: {
+			type: "array",
+			title: "Array Table Pro Max",
+			"x-component": "ProArrayTable",
+			"x-component-props": {
+				rowSelection: true,
+				expandable: {
+					expandedRowRender: {
+						// 必须是 void
+						type: "void",
+						properties: {
+							subitems: {
+								type: "array",
+								"x-component": "ProArrayTable",
+								"x-read-pretty": true,
+								"x-component-props": {
+									showHeader: false,
+									settings: false,
+									bordered: false,
+								},
+								items: subRow.items,
+							},
+						},
+					},
+				},
+			},
+			items: row.items,
 			properties: {
 				add: {
 					type: "void",
@@ -153,29 +178,63 @@ const schema = {
 	},
 };
 const range = (count: number) =>
-	Array.from(new Array(count)).map((_, key) => ({
-		a1: `${key}.1`,
-		a2: `${key}.2`,
-		a3: `${key}.3`,
-	}));
+	Array.from(new Array(count)).map((_, key) => {
+		const ret = {
+			a1: `${key}.1`,
+			a2: `${key}.2`,
+			a3: `${key}.3`,
+			subitems: [] as any[],
+		};
+		ret.subitems = [
+			{
+				a1: `c.${ret.a1}`,
+				a2: `c.${ret.a2}`,
+				a3: `c.${ret.a3}`,
+			},
+		];
+		return ret;
+	});
 
 export default () => {
+	console.log("form", form);
+	const [row, $row] = useFormArrayFeature(form, "array", "rowSelection");
+	useEffect(() => {
+		console.log("row is ", row);
+	}, [row]);
+
 	return (
 		<FormProvider form={form}>
 			<SchemaField schema={schema} />
-			<FormButtonGroup>
-				<Submit onSubmit={console.log}>提交</Submit>
-			</FormButtonGroup>
-			<Button
-				block
-				onClick={() => {
-					form.setInitialValues({
-						array: range(88),
-					});
-				}}
-			>
-				Load 10W pieces of large data
-			</Button>
+			<Divider orientation="right">
+				<FormButtonGroup>
+					<Submit onSubmit={console.log}>提交</Submit>
+				</FormButtonGroup>
+			</Divider>
+			<Space>
+				<Button
+					onClick={() => {
+						$row?.selectedRowKeys?.push(2);
+						// form
+						// 	.query("array")
+						// 	.take()
+						// 	?.setState((s) => {
+						// 		s.componentProps?.rowSelection?.selectedRowKeys?.push?.(2);
+						// 	});
+					}}
+				>
+					CHeck 2
+				</Button>
+				<Button
+					onClick={() => {
+						form.setInitialValues({
+							array: range(88),
+						});
+						console.log(range(88));
+					}}
+				>
+					Load 10W pieces of large data
+				</Button>
+			</Space>
 		</FormProvider>
 	);
 };
