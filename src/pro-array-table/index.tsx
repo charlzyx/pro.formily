@@ -15,6 +15,7 @@ import {
   ProArrayTableMaxContext,
   getPaginationPosition,
 } from "./context";
+import { ProSettings } from "./features/pro-settings";
 import { useSortable } from "./features/sortable";
 import { useExpandableAttach } from "./features/use-expandable-attach";
 import { usePaginationAttach } from "./features/use-pagination-attach";
@@ -27,14 +28,7 @@ import {
   useFootbar,
   useToolbar,
 } from "./hooks";
-import {
-  Addition,
-  Column,
-  Expand,
-  Flex,
-  ProSettings,
-  RowSelection,
-} from "./mixin";
+import { Addition, Column, Expand, Flex, RowSelection } from "./mixin";
 import "./style";
 export { useArrayField } from "./hooks";
 
@@ -46,17 +40,32 @@ export type ProArrayTableProps = Omit<TableProps<any>, "title"> & {
 const ProArrayTableMax: ReactFC<ProArrayTableProps> = observer((props) => {
   const field = useField<ArrayField>();
   const sources = useArrayTableSources();
-  const columns = useArrayTableColumns(field, sources);
+  const [columns, columnsRef] = useArrayTableColumns(field, sources);
 
   const proCtx = useCreation(() => {
     return model<IProArrayTableMaxContext>({
       columns: [],
       size: "small",
       paginationPosition: "bottomRight",
+      reset() {
+        this.size = "small";
+        this.paginationPosition = "bottomRight";
+        this.columns = columnsRef.current.map((item) => {
+          return {
+            ...item,
+            show: true,
+          };
+        });
+      },
     });
   }, []);
 
-  proCtx.columns = columns;
+  proCtx.columns = columns.map((item) => {
+    return {
+      ...item,
+      show: true,
+    };
+  });
 
   return (
     <ProArrayTableMaxContext.Provider value={proCtx}>
@@ -76,7 +85,6 @@ const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
   const prefixCls = usePrefixCls("formily-array-table");
   const sources = useArrayTableSources();
   const dataSource = Array.isArray(field.value) ? field.value.slice() : [];
-
   usePaginationAttach(dataSource);
 
   const page = props.pagination;
@@ -193,7 +201,7 @@ const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
             // TODO: 跟 查询表单联动
             onChange={noop}
             pagination={false}
-            // columns={props.columns}
+            columns={props.columns?.filter((item) => (item as any).show)}
             dataSource={dataSlice}
             components={{
               ...props.components,

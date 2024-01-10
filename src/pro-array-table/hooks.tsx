@@ -3,6 +3,7 @@ import { Schema } from "@formily/json-schema";
 import { RecursionField, useField, useFieldSchema } from "@formily/react";
 import { isArr } from "@formily/shared";
 import { ColumnsType } from "antd/es/table";
+import { useRef } from "react";
 import { ArrayBase } from "./array-base";
 import {
   ObservableColumnSource,
@@ -117,8 +118,7 @@ export const useFootbar = () => {
 export const useArrayTableColumns = (
   field: ArrayField,
   sources: ObservableColumnSource[],
-  // ): [ColumnsType<any>, React.MutableRefObject<ColumnsType<any>>] => {
-): ColumnsType<any> => {
+): [ColumnsType<any>, React.MutableRefObject<ColumnsType<any>>] => {
   const columns = sources.reduce<ColumnsType<any>>(
     (buf, { name, columnProps, schema, display }, key) => {
       if (display !== "visible") return buf;
@@ -144,11 +144,10 @@ export const useArrayTableColumns = (
     },
     [],
   );
-  // const ref = useRef(columns);
-  // ref.current = columns;
+  const ref = useRef(columns);
+  ref.current = columns;
 
-  // return [columns, ref] as const;
-  return columns;
+  return [columns, ref] as const;
 };
 
 export const useArrayField = () => {

@@ -4,6 +4,7 @@ import React, { createContext } from "react";
 
 export interface IProArrayTableMaxContext {
   columns: TableColumnType<any>[];
+  reset: () => void;
   size: ConfigProviderProps["componentSize"];
   paginationPosition: Exclude<
     Exclude<TableProps<any>["pagination"], boolean | undefined>["position"],
@@ -22,6 +23,7 @@ export const getPaginationPosition = (
 };
 
 export const ProArrayTableMaxContext = createContext<IProArrayTableMaxContext>({
+  reset() {},
   columns: [],
   size: "small",
   paginationPosition: "bottomRight",
