@@ -8,8 +8,7 @@ import {
   PreviewText,
   Radio,
 } from "@formily/antd";
-import { usePrefixCls } from "@formily/antd/esm/__builtins__";
-import { createForm, onFormValuesChange } from "@formily/core";
+import { createForm, onFieldChange } from "@formily/core";
 import {
   FormProvider,
   ISchema,
@@ -25,20 +24,22 @@ import {
   Button,
   ConfigProvider,
   Divider,
-  Pagination,
   Popover,
   Row,
   Slider,
   Space,
 } from "antd";
 import { ColumnProps } from "antd/es/table";
-import { TablePaginationConfig } from "antd/lib";
-import React, { Fragment, useEffect, useMemo } from "react";
+import React, { Fragment, useContext, useMemo } from "react";
 import { ArrayBase } from "./array-base";
+import { ProArrayTableMaxContext } from "./context";
 import { useCompPropsOf } from "./features/hooks";
-import { IProSettings } from "./features/use-pro-settings";
 import { ProArrayTable } from "./index";
+
 export const Column: ReactFC<ColumnProps<any>> = () => {
+  return <Fragment />;
+};
+export const Expand: ReactFC<ColumnProps<any>> = () => {
   return <Fragment />;
 };
 
@@ -149,22 +150,98 @@ export const RowSelection = (props: {
   );
 };
 
-export const TablePagination = (props: TablePaginationConfig) => {
-  const cls = usePrefixCls("formily-array-table-formily-pagination");
-  return (
-    <div className={cls}>
-      <Pagination size="small" {...props} />
-    </div>
-  );
+const schema: ISchema = {
+  type: "object",
+  properties: {
+    size: {
+      type: "string",
+      "x-component": "Radio.Group",
+      "x-component-props": {
+        optionType: "button",
+        buttonStyle: "solid",
+      },
+      enum: [
+        { label: "紧凑", value: "small" },
+        { label: "中等", value: "middle" },
+        { label: "默认", value: "large" },
+      ],
+    },
+    columns: {
+      type: "array",
+      "x-component": "ProArrayTable",
+      "x-component-props": {
+        bordered: false,
+        settings: false,
+        pagination: false,
+        rowSelection: false,
+        showHeader: false,
+      },
+      items: {
+        type: "object",
+        properties: {
+          _sort: {
+            type: "void",
+            "x-component": "ProArrayTable.Column",
+            "x-component-props": {
+              width: 40,
+            },
+            properties: {
+              sort: {
+                type: "void",
+                "x-component": "ProArrayTable.SortHandle",
+              },
+            },
+          },
+          _show: {
+            type: "void",
+            "x-component": "ProArrayTable.Column",
+            "x-component-props": {
+              width: 40,
+            },
+            properties: {
+              show: {
+                type: "boolean",
+                "x-component": "Checkbox",
+              },
+            },
+          },
+          _title: {
+            type: "void",
+            "x-component": "ProArrayTable.Column",
+            "x-component-props": {
+              width: 60,
+            },
+            properties: {
+              title: {
+                type: "string",
+                "x-component": "PreviewText",
+              },
+            },
+          },
+          _width: {
+            type: "void",
+            "x-component": "ProArrayTable.Column",
+            "x-component-props": {
+              width: 100,
+            },
+            properties: {
+              width: {
+                type: "string",
+                "x-component": "Slider",
+                "x-component-props": {
+                  min: 20,
+                  max: 400,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
-
-export const ProSettings = ({
-  value,
-  onChange,
-}: {
-  onChange: React.Dispatch<React.SetStateAction<IProSettings>>;
-  value: IProSettings;
-}) => {
+export const ProSettings = observer(() => {
+  const proCtx = useContext(ProArrayTableMaxContext);
   const SchemaField = useCreation(
     () =>
       createSchemaField({
@@ -184,118 +261,18 @@ export const ProSettings = ({
 
   const form = useCreation(() => {
     return createForm({
-      initialValues: value,
+      initialValues: toJS(proCtx),
       effects(form) {
-        onFormValuesChange(() => {
-          onChange((pre) => {
-            return {
-              ...pre,
-              ...toJS(form.values),
-            };
-          });
+        onFieldChange("*", (field) => {
+          console.log("field", field.address.toString(), (field as any)?.value);
+          // FIXME: 等待修复
+          // Object.assign(proCtx, toJS(form.values));
         });
       },
     });
   }, []);
+  form.setValuesIn("columns", proCtx.columns);
 
-  useEffect(() => {
-    if (form.values.columns.length > 0) return;
-    setTimeout(() => {
-      const clone = value;
-      form.setValues(clone);
-    });
-  }, [value]);
-
-  const schema: ISchema = {
-    type: "object",
-    properties: {
-      size: {
-        type: "string",
-        "x-component": "Radio.Group",
-        "x-component-props": {
-          optionType: "button",
-          buttonStyle: "solid",
-        },
-        enum: [
-          { label: "紧凑", value: "small" },
-          { label: "中等", value: "middle" },
-          { label: "默认", value: "large" },
-        ],
-      },
-      columns: {
-        type: "array",
-        "x-component": "ProArrayTable",
-        "x-component-props": {
-          bordered: false,
-          settings: false,
-          pagination: false,
-          rowSelection: false,
-          showHeader: false,
-        },
-        items: {
-          type: "object",
-          properties: {
-            _sort: {
-              type: "void",
-              "x-component": "ProArrayTable.Column",
-              "x-component-props": {
-                width: 40,
-              },
-              properties: {
-                sort: {
-                  type: "void",
-                  "x-component": "ProArrayTable.SortHandle",
-                },
-              },
-            },
-            _show: {
-              type: "void",
-              "x-component": "ProArrayTable.Column",
-              "x-component-props": {
-                width: 40,
-              },
-              properties: {
-                show: {
-                  type: "boolean",
-                  "x-component": "Checkbox",
-                },
-              },
-            },
-            _title: {
-              type: "void",
-              "x-component": "ProArrayTable.Column",
-              "x-component-props": {
-                width: 60,
-              },
-              properties: {
-                title: {
-                  type: "string",
-                  "x-component": "PreviewText",
-                },
-              },
-            },
-            _width: {
-              type: "void",
-              "x-component": "ProArrayTable.Column",
-              "x-component-props": {
-                width: 100,
-              },
-              properties: {
-                width: {
-                  type: "string",
-                  "x-component": "Slider",
-                  "x-component-props": {
-                    min: 20,
-                    max: 400,
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
   const content = useMemo(() => {
     return (
       <FormProvider form={form}>
@@ -307,13 +284,7 @@ export const ProSettings = ({
     return (
       <Row justify="space-between">
         <h4>表格设置</h4>
-        <Button
-          onClick={() => {
-            value.reset();
-          }}
-        >
-          重置
-        </Button>
+        <Button onClick={() => {}}>重置</Button>
       </Row>
     );
   }, []);
@@ -328,4 +299,4 @@ export const ProSettings = ({
       </Popover>
     </ConfigProvider>
   );
-};
+});

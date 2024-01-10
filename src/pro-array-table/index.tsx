@@ -1,14 +1,23 @@
 import { usePrefixCls } from "@formily/antd/esm/__builtins__";
 import { ArrayField } from "@formily/core";
 import { ReactFC, RecursionField, observer, useField } from "@formily/react";
-import { Table, TableProps, Typography } from "antd";
-import React, { useMemo, useRef } from "react";
+import { model } from "@formily/reactive";
+import useCreation from "ahooks/es/useCreation";
+// import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
+import { Pagination, Table, Typography } from "antd";
+import { TableProps } from "antd/es/table";
+import ConfigProvider from "antd/lib/config-provider";
+import React, { useContext, useMemo, useRef } from "react";
 import { noop } from "../__builtins__";
 import { ArrayBase } from "./array-base";
+import {
+  IProArrayTableMaxContext,
+  ProArrayTableMaxContext,
+  getPaginationPosition,
+} from "./context";
 import { useSortable } from "./features/sortable";
 import { useExpandableAttach } from "./features/use-expandable-attach";
 import { usePaginationAttach } from "./features/use-pagination-attach";
-import { getPostion, useProSettings } from "./features/use-pro-settings";
 import { useRowSelectionAttach } from "./features/use-row-selection-attach";
 import { isColumnComponent } from "./helper";
 import {
@@ -21,37 +30,59 @@ import {
 import {
   Addition,
   Column,
+  Expand,
   Flex,
   ProSettings,
   RowSelection,
-  TablePagination,
 } from "./mixin";
 import "./style";
 export { useArrayField } from "./hooks";
 
-const InternalArrayTable: ReactFC<
-  Omit<TableProps<any>, "title"> & {
-    title: string | TableProps<any>["title"];
-    footer: string | TableProps<any>["footer"];
-    settings?: boolean;
-  }
-> = observer((props) => {
+export type ProArrayTableProps = Omit<TableProps<any>, "title"> & {
+  title: string | TableProps<any>["title"];
+  footer: string | TableProps<any>["footer"];
+  settings?: boolean;
+};
+const ProArrayTableMax: ReactFC<ProArrayTableProps> = observer((props) => {
+  const field = useField<ArrayField>();
+  const sources = useArrayTableSources();
+  const columns = useArrayTableColumns(field, sources);
+
+  const proCtx = useCreation(() => {
+    return model<IProArrayTableMaxContext>({
+      columns: [],
+      size: "small",
+      paginationPosition: "bottomRight",
+    });
+  }, []);
+
+  proCtx.columns = columns;
+
+  return (
+    <ProArrayTableMaxContext.Provider value={proCtx}>
+      <ConfigProvider componentSize={proCtx.size}>
+        <InternalArrayTable
+          {...props}
+          columns={proCtx.columns}
+        ></InternalArrayTable>
+      </ConfigProvider>
+    </ProArrayTableMaxContext.Provider>
+  );
+});
+
+const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   const field = useField<ArrayField>();
   const prefixCls = usePrefixCls("formily-array-table");
   const sources = useArrayTableSources();
   const dataSource = Array.isArray(field.value) ? field.value.slice() : [];
 
-  const [, refColumns] = useArrayTableColumns(field, sources);
   usePaginationAttach(dataSource);
-  useExpandableAttach();
+
   const page = props.pagination;
   const startIndex = page ? (page.current! - 1) * page.pageSize! : 0;
 
-  const [settings, columns, setSettings] = useProSettings(
-    refColumns,
-    props as TableProps<any>,
-  );
+  const settings = useContext(ProArrayTableMaxContext);
 
   const dataSlice = useMemo(() => {
     if (page) {
@@ -71,27 +102,28 @@ const InternalArrayTable: ReactFC<
   const addition = useAddition();
   const toolbar = useToolbar();
   const footbar = useFootbar();
+  useExpandableAttach();
 
   const rowKey = (record: any) => {
-    return props.rowKey
+    const got = props.rowKey
       ? typeof props.rowKey === "function"
         ? props.rowKey(record)
         : record?.[props.rowKey]
       : dataSource.indexOf(record);
+    return got;
   };
 
   useRowSelectionAttach(rowKey);
 
   const pagination = !page ? null : (
     <div>
-      <TablePagination
+      <Pagination
         style={{
           padding: "8px 0",
         }}
         {...page}
         size={page.size || (settings.size as any)}
-        position={undefined}
-      ></TablePagination>
+      ></Pagination>
     </div>
   );
 
@@ -117,14 +149,12 @@ const InternalArrayTable: ReactFC<
       {props.rowSelection ? (
         <RowSelection ds={dataSlice} rowKey={rowKey}></RowSelection>
       ) : null}
-      <Flex justifyContent={getPostion(settings.paginationPosition)}>
+      <Flex justifyContent={getPaginationPosition(settings.paginationPosition)}>
         {/top/.test(settings.paginationPosition!) ? pagination : null}
       </Flex>
       {toolbar}
       {addition}
-      {props.settings !== false ? (
-        <ProSettings value={settings} onChange={setSettings}></ProSettings>
-      ) : null}
+      {props.settings !== false ? <ProSettings></ProSettings> : null}
     </Flex>
   );
 
@@ -142,24 +172,11 @@ const InternalArrayTable: ReactFC<
         )
       ) : null}
       {footbar}
-      <Flex justifyContent={getPostion(settings.paginationPosition)}>
+      <Flex justifyContent={getPaginationPosition(settings.paginationPosition)}>
         {/bottom/.test(settings.paginationPosition!) ? pagination : null}
       </Flex>
     </Flex>
   );
-  // useWhyDidYouUpdate("ProTable", {
-  // 	field,
-  // 	prefixCls,
-  // 	dataSource,
-  // 	dataSlice,
-  // 	// settings,
-  // 	columns,
-  // 	body,
-  // 	// rowSelection,
-  // 	pagination,
-  // 	header,
-  // 	footer,
-  // });
 
   return (
     <div>
@@ -176,7 +193,7 @@ const InternalArrayTable: ReactFC<
             // TODO: 跟 查询表单联动
             onChange={noop}
             pagination={false}
-            columns={columns}
+            // columns={props.columns}
             dataSource={dataSlice}
             components={{
               ...props.components,
@@ -202,12 +219,10 @@ const InternalArrayTable: ReactFC<
   );
 });
 
-export const ProArrayTable = Object.assign(
-  ArrayBase.mixin(InternalArrayTable),
-  {
-    Column,
-    Addition,
-  },
-);
+export const ProArrayTable = Object.assign(ArrayBase.mixin(ProArrayTableMax), {
+  Column,
+  Addition,
+  Expand,
+});
 
 ProArrayTable.displayName = "ProArrayTable";

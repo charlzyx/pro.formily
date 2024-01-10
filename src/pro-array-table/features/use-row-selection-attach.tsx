@@ -2,7 +2,7 @@ import { ArrayField } from "@formily/core";
 import { useField } from "@formily/react";
 import { toJS } from "@formily/reactive";
 import { Table } from "antd";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export type IRowSelection = Exclude<
   Required<React.ComponentProps<typeof Table>>["rowSelection"],

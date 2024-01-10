@@ -30,6 +30,10 @@ export const isFootbarComponent = (schema: Schema) => {
   return schema["x-component"]?.indexOf("Footbar") > -1;
 };
 
+export const isExpandComponent = (schema: Schema) => {
+  return schema["x-component"]?.indexOf("Expand") > -1;
+};
+
 export const hasSortable = (schema: Schema): boolean => {
   const canMap = (schema.items || (schema as any)) as Schema;
   const ret = canMap.reduceProperties((sortable: boolean, propSchema) => {

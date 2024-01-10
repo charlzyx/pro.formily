@@ -13,7 +13,11 @@ export const usePaginationAttach = (dataSource: any[]) => {
   const array = useField<ArrayField>();
 
   useEffect(() => {
-    if (dataSource.length === array.componentProps?.pagination?.total) return;
+    if (
+      array.componentProps?.pagination?.total !== 0 ||
+      dataSource.length === array.componentProps?.pagination?.total
+    )
+      return;
     array.setState((s) => {
       if (s.componentProps?.pagination) {
         s.componentProps!.pagination.total = dataSource.length;

@@ -188,25 +188,7 @@ const schema: ISchema = {
       "x-component": "ProArrayTable",
       "x-component-props": {
         rowSelection: true,
-        expandable: {
-          expandedRowRender: {
-            // 必须是 void, 且只会渲染 properties
-            type: "void",
-            properties: {
-              subitems: {
-                type: "array",
-                "x-component": "ProArrayTable",
-                "x-read-pretty": true,
-                "x-component-props": {
-                  showHeader: false,
-                  settings: false,
-                  bordered: false,
-                },
-                items: subRow.items,
-              },
-            },
-          },
-        },
+        expandable: true,
       },
       items: row.items,
       properties: {
@@ -222,6 +204,23 @@ const schema: ISchema = {
         footbar: {
           type: "void",
           "x-component": "CustomeFootbar",
+        },
+        expand: {
+          type: "void",
+          "x-component": "ProArrayTable.Expand",
+          properties: {
+            subitems: {
+              type: "array",
+              "x-component": "ProArrayTable",
+              "x-read-pretty": true,
+              "x-component-props": {
+                showHeader: false,
+                settings: false,
+                bordered: false,
+              },
+              items: subRow.items,
+            },
+          },
         },
       },
     },

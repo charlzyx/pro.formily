@@ -3,12 +3,12 @@ import { Schema } from "@formily/json-schema";
 import { RecursionField, useField, useFieldSchema } from "@formily/react";
 import { isArr } from "@formily/shared";
 import { ColumnsType } from "antd/es/table";
-import { useRef } from "react";
 import { ArrayBase } from "./array-base";
 import {
   ObservableColumnSource,
   isAdditionComponent,
   isColumnComponent,
+  isExpandComponent,
   isFootbarComponent,
   isOperationsComponent,
   isToolbarComponent,
@@ -22,7 +22,8 @@ export const useArrayTableSources = () => {
       isColumnComponent(schema) ||
       isOperationsComponent(schema) ||
       isAdditionComponent(schema) ||
-      isToolbarComponent(schema)
+      isToolbarComponent(schema) ||
+      isExpandComponent(schema)
     ) {
       if (!schema["x-component-props"]?.dataIndex && !schema.name) return [];
       const name = schema["x-component-props"]?.dataIndex || schema.name;
@@ -67,6 +68,22 @@ export const useArrayTableSources = () => {
   return parseArrayItems(schema.items);
 };
 
+export const useExpandRender = (index: number) => {
+  const schema = useFieldSchema();
+  const array = ArrayBase.useArray();
+
+  return schema.reduceProperties((expand, schema, key) => {
+    if (isExpandComponent(schema)) {
+      return (
+        <ArrayBase.Item index={index} record={() => array.field.value?.[index]}>
+          <RecursionField onlyRenderProperties schema={schema} name={index} />
+        </ArrayBase.Item>
+      );
+    }
+    return expand;
+  }, null);
+};
+
 export const useAddition = () => {
   const schema = useFieldSchema();
   return schema.reduceProperties((addition, schema, key) => {
@@ -100,7 +117,8 @@ export const useFootbar = () => {
 export const useArrayTableColumns = (
   field: ArrayField,
   sources: ObservableColumnSource[],
-): [ColumnsType<any>, React.MutableRefObject<ColumnsType<any>>] => {
+  // ): [ColumnsType<any>, React.MutableRefObject<ColumnsType<any>>] => {
+): ColumnsType<any> => {
   const columns = sources.reduce<ColumnsType<any>>(
     (buf, { name, columnProps, schema, display }, key) => {
       if (display !== "visible") return buf;
@@ -126,10 +144,11 @@ export const useArrayTableColumns = (
     },
     [],
   );
-  const ref = useRef(columns);
-  ref.current = columns;
+  // const ref = useRef(columns);
+  // ref.current = columns;
 
-  return [columns, ref] as const;
+  // return [columns, ref] as const;
+  return columns;
 };
 
 export const useArrayField = () => {
