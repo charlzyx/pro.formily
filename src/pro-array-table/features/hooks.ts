@@ -1,66 +1,65 @@
-import { Form, isArrayField } from "@formily/core";
-import { useField, useForm } from "@formily/react";
-import { observe, toJS } from "@formily/reactive";
+import { Form, GeneralField, isArrayField } from "@formily/core";
+import { useField } from "@formily/react";
+import { isSupportObservable, observe, toJS } from "@formily/reactive";
 import { useEffect, useMemo, useState } from "react";
+import { IExpandableProps } from "./use-expandable-attach";
+import { IPaginationProps } from "./use-pagination-attach";
+import { IRowSelection } from "./use-row-selection-attach";
 
-export type ArrayFeatureNames =
-	| "pagination"
-	| "rowSelection"
-	| "expandable"
-	| (string & {});
+export const useObState = <T extends object>(
+  $ob?: T,
+): [T | undefined, T | undefined] => {
+  const [state, setFeature] = useState($ob ? toJS($ob) : undefined);
 
-export const useFormArrayFeature = <T extends Record<string, any>>(
-	form: Form,
-	pattern: string,
-	featureName: ArrayFeatureNames,
-): [T, T] => {
-	const [mounted, setMounted] = useState(false);
-	useEffect(() => {
-		setMounted(true);
-		return () => {
-			setMounted(false);
-		};
-	}, []);
-
-	const array = useMemo(() => {
-		return mounted ? form.query(pattern).take() : undefined;
-	}, [mounted, pattern]);
-
-	const $feature = array?.componentProps?.[featureName];
-	const [feature, setFeature] = useState($feature ? toJS($feature) : undefined);
-
-	useEffect(() => {
-		if (!$feature) return;
-		const disposer = observe($feature, () => {
-			setFeature(toJS($feature));
-		});
-		return disposer;
-	}, [$feature]);
-
-	return [feature, $feature];
+  useEffect(() => {
+    if (!state || !isSupportObservable(!$ob)) return;
+    const disposer = observe($ob!, () => {
+      setFeature(toJS($ob));
+    });
+    return disposer;
+  }, [$ob]);
+  return [state, $ob];
 };
 
-export const useArrayFeature = <T extends Record<string, any>>(
-	featureName: ArrayFeatureNames,
-	pattern?: string,
-): [T, T] => {
-	const form = useForm();
-	const field = useField();
-	const query = pattern ? form.query(pattern).take() : null;
-	let array = query || field;
-	while (array && !isArrayField(array)) {
-		array = array.parent;
-	}
-	const $feature = array.componentProps?.[featureName];
-	const [feature, setFeature] = useState(toJS($feature));
+type SupportedProps = {
+  rowSelection: IRowSelection;
+  pagination: IPaginationProps;
+  expandable: IExpandableProps;
+};
+export const useCompPropsOf = <K extends keyof SupportedProps>(
+  field: GeneralField,
+  key: K,
+) => {
+  const $props = (field?.componentProps as any)?.[key];
+  return useObState<SupportedProps[K]>($props);
+};
 
-	useEffect(() => {
-		if (!feature) return;
-		const disposer = observe($feature, () => {
-			setFeature(toJS($feature));
-		});
-		return disposer;
-	}, [$feature]);
+export const useArrayField = () => {
+  let array = useField();
+  while (array && !isArrayField(array)) {
+    array = array.parent;
+  }
+  return array;
+};
 
-	return [feature, $feature];
+export const useFormArrayProps = <K extends keyof SupportedProps>(
+  form: Form,
+  pattern: string,
+  featureName: K,
+) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+    return () => {
+      setMounted(false);
+    };
+  }, []);
+
+  const array = useMemo(() => {
+    return mounted ? form.query(pattern).take() : undefined;
+  }, [mounted, pattern]);
+
+  const $feature = array?.componentProps?.[featureName];
+
+  return useObState<SupportedProps[K]>($feature);
 };
