@@ -1,20 +1,30 @@
 @root-entry-name: 'default';
 @import (reference) '~antd/es/style/themes/index.less';
+// 修复 .ant-btn > span display: inline-block
+.@{ant-prefix}-btn {
+  .anticon {
+    display: inline-flex;
+  }
+}
 
 @array-table-prefix-cls: ~'@{ant-prefix}-formily-array-table';
-
 .@{array-table-prefix-cls} {
-  .@{array-table-prefix-cls}-pagination {
-    display: flex;
-    justify-content: center;
+  // .@{array-table-prefix-cls}-pagination {
+  //   display: flex;
+  //   justify-content: center;
 
-    .@{array-table-prefix-cls}-status-select.has-error {
-      .@{ant-prefix}-select-selector {
-        border-color: @error-color !important;
-      }
-    }
-  }
-
+  //   .@{array-table-prefix-cls}-status-select.has-error {
+  //     .@{ant-prefix}-select-selector {
+  //       border-color: @error-color !important;
+  //     }
+  //   }
+  // }
+  // // ant-table-expanded-row ant-table-expanded-row-level-1 ant-formily-array-table-row-1
+  // .@{ant-prefix}-table-expanded-row {
+  //   td {
+  //     padding-bottom: 0 !important;
+  //   }
+  // }
   .@{ant-prefix}-table {
     table {
       overflow: hidden;

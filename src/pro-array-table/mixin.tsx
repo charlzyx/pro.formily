@@ -63,59 +63,78 @@ export const RowSelection = (props: {
   const { ds, rowKey } = props;
   const array = ArrayBase.useArray();
   const [, $row] = useCompPropsOf(array.field, "rowSelection");
-  return (
-    <Space size="small">
-      {$row?.selectedRowKeys?.length ? (
-        <Alert
-          style={{ padding: "3px 4px" }}
-          type="info"
-          message={
-            <Space size="small" split={<Divider type="vertical" />}>
-              <Button type="text" size="small">
-                选中 {$row?.selectedRowKeys?.length} 项
-              </Button>
-              <Button
-                size="small"
-                onClick={() => {
-                  if (!$row) return;
-                  $row.selectedRows = [];
-                  $row.selectedRowKeys = [];
-                }}
-                type="link"
-              >
-                取消选择
-              </Button>
-              <Button
-                size="small"
-                onClick={() => {
-                  if (!$row) return;
-                  const selected = $row.selectedRowKeys!.reduce(
-                    (m: Record<string, string>, i: any) => {
-                      m[i] = i;
-                      return m;
-                    },
-                    {},
-                  );
-                  const keys: (string | number)[] = [];
-                  const rows: any[] = [];
-                  ds.forEach((item) => {
-                    const key = rowKey(item);
-                    if (!selected[key]) {
-                      keys.push(key);
-                      rows.push(item);
-                    }
-                  });
-                  $row.selectedRowKeys = keys;
-                  $row.selectedRows = rows;
-                }}
-                type="link"
-              >
-                选择反向
-              </Button>
-            </Space>
-          }
-        />
-      ) : null}
-    </Space>
-  );
+  return ds.length > 0 ? (
+    <Alert
+      style={{ padding: "3px 4px" }}
+      type="info"
+      message={
+        <Space size="small" split={<Divider type="vertical" />}>
+          <Button
+            type="text"
+            size="small"
+            style={{ width: "60px", textAlign: "left" }}
+          >
+            选中 {$row?.selectedRowKeys?.length} 项
+          </Button>
+          <Button
+            size="small"
+            onClick={() => {
+              if (!$row) return;
+              $row.selectedRows = [];
+              $row.selectedRowKeys = [];
+            }}
+            type="link"
+          >
+            清空
+          </Button>
+          <Button
+            size="small"
+            onClick={() => {
+              if (!$row) return;
+              const keys: (string | number)[] = [];
+              const rows: any[] = [];
+              ds.forEach((item) => {
+                const key = rowKey(item);
+                keys.push(key);
+                rows.push(item);
+              });
+              $row.selectedRowKeys = keys;
+              $row.selectedRows = rows;
+            }}
+            type="link"
+          >
+            全选
+          </Button>
+
+          <Button
+            size="small"
+            onClick={() => {
+              if (!$row) return;
+              const selected = $row.selectedRowKeys!.reduce(
+                (m: Record<string | number, true>, i: any) => {
+                  m[i] = true;
+                  return m;
+                },
+                {},
+              );
+              const keys: (string | number)[] = [];
+              const rows: any[] = [];
+              ds.forEach((item) => {
+                const key = rowKey(item);
+                if (!selected[key]) {
+                  keys.push(key);
+                  rows.push(item);
+                }
+              });
+              $row.selectedRowKeys = keys;
+              $row.selectedRows = rows;
+            }}
+            type="link"
+          >
+            反选
+          </Button>
+        </Space>
+      }
+    />
+  ) : null;
 };

@@ -78,7 +78,8 @@ const ProArrayTableMax: ReactFC<ProArrayTableProps> = observer((props) => {
     </ProArrayTableMaxContext.Provider>
   );
 });
-
+// TODO: 列宽拖动
+// https://4x.ant.design/components/table/#components-table-demo-resizable-column
 const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   const field = useField<ArrayField>();

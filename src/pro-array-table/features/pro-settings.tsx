@@ -164,11 +164,7 @@ export const ProSettings = observer(() => {
   return (
     <ConfigProvider componentSize="small">
       <Popover content={content} title={title} trigger="click">
-        <Button
-          style={{ justifySelf: "flex-end" }}
-          icon={<SettingOutlined />}
-          type="link"
-        ></Button>
+        <Button icon={<SettingOutlined />} type="link"></Button>
       </Popover>
     </ConfigProvider>
   );

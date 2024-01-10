@@ -22,15 +22,7 @@ function expandedSchameRowRender(
   expanded: GetParamsAt<3>,
 ) {
   const expand = useExpandRender(index);
-  return (
-    <div
-      style={{
-        paddingLeft: `${indent}px`,
-      }}
-    >
-      {expand}
-    </div>
-  );
+  return expand;
 }
 export const useExpandableAttach = () => {
   const array = useField<ArrayField>();
@@ -62,7 +54,8 @@ export const useExpandableAttach = () => {
       });
 
       $expand.defaultExpandedRowKeys = $expand.expandedRowKeys ?? [];
-      $expand.expandedRowRender = expandedSchameRowRender as any;
+      $expand.expandedRowRender =
+        $expand.expandedRowRender ?? (expandedSchameRowRender as any);
 
       console.debug(
         `feature of ${array.address.toString()}:expandable turn on.`,

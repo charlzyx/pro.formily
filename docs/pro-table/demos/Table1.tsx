@@ -26,7 +26,6 @@ const CustomeToolbar = () => {
   return (
     <Space>
       <Button
-        size="small"
         type="primary"
         onClick={() => {
           // ok
@@ -84,7 +83,7 @@ const row: ISchema = {
       column1: {
         type: "void",
         "x-component": "ProArrayTable.Column",
-        "x-component-props": { width: 80, title: "Sort", align: "center" },
+        "x-component-props": { width: 60, title: "Sort", align: "center" },
         properties: {
           sort: {
             type: "void",
@@ -95,7 +94,7 @@ const row: ISchema = {
       column2: {
         type: "void",
         "x-component": "ProArrayTable.Column",
-        "x-component-props": { width: 80, title: "Index", align: "center" },
+        "x-component-props": { width: 60, title: "Index", align: "center" },
         properties: {
           index: {
             type: "void",
