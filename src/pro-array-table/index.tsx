@@ -2,20 +2,23 @@ import { usePrefixCls } from "@formily/antd/esm/__builtins__";
 import { ArrayField } from "@formily/core";
 import { ReactFC, RecursionField, observer, useField } from "@formily/react";
 import { model } from "@formily/reactive";
+import { clone } from "@formily/shared";
 import useCreation from "ahooks/es/useCreation";
 // import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
-import { Pagination, Table, Typography } from "antd";
+import { Pagination, Table, TableColumnType, Typography } from "antd";
 import { TableProps } from "antd/es/table";
 import ConfigProvider from "antd/lib/config-provider";
-import React, { useContext, useMemo, useRef } from "react";
+import React, { useContext, useEffect, useMemo, useRef } from "react";
 import { noop } from "../__builtins__";
 import { ArrayBase } from "./array-base";
 import {
+  ArrayTableProMaxContext,
   IProArrayTableMaxContext,
-  ProArrayTableMaxContext,
+  columnPro,
   getPaginationPosition,
 } from "./context";
 import { ProSettings } from "./features/pro-settings";
+import { ResizableTitle } from "./features/resizeable";
 import { useSortable } from "./features/sortable";
 import { useExpandableAttach } from "./features/use-expandable-attach";
 import { usePaginationAttach } from "./features/use-pagination-attach";
@@ -23,7 +26,6 @@ import { useRowSelectionAttach } from "./features/use-row-selection-attach";
 import { isColumnComponent } from "./helper";
 import {
   useAddition,
-  useArrayTableColumns,
   useArrayTableSources,
   useFootbar,
   useToolbar,
@@ -35,12 +37,16 @@ export { useArrayField } from "./hooks";
 export type ProArrayTableProps = Omit<TableProps<any>, "title"> & {
   title: string | TableProps<any>["title"];
   footer: string | TableProps<any>["footer"];
+  /** 列表配置齿轮, 默认 true */
   settings?: boolean;
+  /** 表头列宽是否可拖动, 默认 true */
+  resizeable?: boolean;
 };
-const ProArrayTableMax: ReactFC<ProArrayTableProps> = observer((props) => {
-  const field = useField<ArrayField>();
-  const sources = useArrayTableSources();
-  const [columns, columnsRef] = useArrayTableColumns(field, sources);
+
+const ArrayTableProMax: ReactFC<ProArrayTableProps> = observer((props) => {
+  const [columns] = useArrayTableSources();
+
+  const init = useRef(columnPro(columns));
 
   const proCtx = useCreation(() => {
     return model<IProArrayTableMaxContext>({
@@ -50,48 +56,37 @@ const ProArrayTableMax: ReactFC<ProArrayTableProps> = observer((props) => {
       reset() {
         this.size = "small";
         this.paginationPosition = "bottomRight";
-        this.columns = columnsRef.current.map((item) => {
-          return {
-            ...item,
-            show: true,
-          };
-        });
+        this.columns = clone(init.current);
       },
     });
   }, []);
 
-  proCtx.columns = columns.map((item) => {
-    return {
-      ...item,
-      show: true,
-    };
-  });
+  // if touched, skip, or maxium render oom.
+  if (proCtx.columns.length === 0 && columns.length > 0) {
+    proCtx.columns = columnPro(columns);
+  }
 
   return (
-    <ProArrayTableMaxContext.Provider value={proCtx}>
+    <ArrayTableProMaxContext.Provider value={proCtx}>
       <ConfigProvider componentSize={proCtx.size}>
-        <InternalArrayTable
-          {...props}
-          columns={proCtx.columns}
-        ></InternalArrayTable>
+        <InternalArrayTable {...props}></InternalArrayTable>
       </ConfigProvider>
-    </ProArrayTableMaxContext.Provider>
+    </ArrayTableProMaxContext.Provider>
   );
 });
-// TODO: 列宽拖动
-// https://4x.ant.design/components/table/#components-table-demo-resizable-column
+
 const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   const field = useField<ArrayField>();
   const prefixCls = usePrefixCls("formily-array-table");
-  const sources = useArrayTableSources();
+  const [columns, sources] = useArrayTableSources();
   const dataSource = Array.isArray(field.value) ? field.value.slice() : [];
   usePaginationAttach(dataSource);
 
   const page = props.pagination;
   const startIndex = page ? (page.current! - 1) * page.pageSize! : 0;
 
-  const settings = useContext(ProArrayTableMaxContext);
+  const settings = useContext(ArrayTableProMaxContext);
 
   const dataSlice = useMemo(() => {
     if (page) {
@@ -122,7 +117,12 @@ const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
     return got;
   };
 
-  useRowSelectionAttach(rowKey);
+  const rowKeyRef = useRef(rowKey);
+  useEffect(() => {
+    rowKeyRef.current = rowKey;
+  }, [rowKey]);
+
+  useRowSelectionAttach(rowKeyRef);
 
   const pagination = !page ? null : (
     <div>
@@ -202,10 +202,17 @@ const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
             // TODO: 跟 查询表单联动
             onChange={noop}
             pagination={false}
-            columns={props.columns?.filter((item) => (item as any).show)}
+            columns={columns}
             dataSource={dataSlice}
             components={{
               ...props.components,
+              header: {
+                ...props.components?.header,
+                cell:
+                  props.resizeable !== false
+                    ? ResizableTitle
+                    : props.components?.header?.cell,
+              },
               body: {
                 ...body,
                 ...props.components?.body,
@@ -228,7 +235,7 @@ const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
   );
 });
 
-export const ProArrayTable = Object.assign(ArrayBase.mixin(ProArrayTableMax), {
+export const ProArrayTable = Object.assign(ArrayBase.mixin(ArrayTableProMax), {
   Column,
   Addition,
   Expand,

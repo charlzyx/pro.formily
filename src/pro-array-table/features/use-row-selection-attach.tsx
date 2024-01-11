@@ -22,7 +22,9 @@ const getRowsByKey = (array: any, keys: React.Key[], rowKey: RowKey) => {
   });
 };
 
-export const useRowSelectionAttach = (rowKey?: RowKey) => {
+export const useRowSelectionAttach = (
+  rowKeyRef?: React.MutableRefObject<RowKey>,
+) => {
   const array = useField<ArrayField>();
   useEffect(() => {
     array.setState((s) => {
@@ -40,8 +42,8 @@ export const useRowSelectionAttach = (rowKey?: RowKey) => {
       const override: IRowSelection = {
         selectedRowKeys: [],
         selectedRows:
-          $row?.selectedRowKeys && rowKey
-            ? getRowsByKey(array.value, $row.selectedRowKeys, rowKey)
+          $row?.selectedRowKeys && rowKeyRef?.current
+            ? getRowsByKey(array.value, $row.selectedRowKeys, rowKeyRef.current)
             : [],
         info: { type: "none" },
         onChange(keys, rows, info) {
@@ -62,5 +64,5 @@ export const useRowSelectionAttach = (rowKey?: RowKey) => {
         `feature of ${array.address.toString()}:row-selection turn on.`,
       );
     });
-  }, [array, rowKey]);
+  }, [array]);
 };

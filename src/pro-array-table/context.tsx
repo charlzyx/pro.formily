@@ -3,7 +3,13 @@ import type { ConfigProviderProps } from "antd/lib/config-provider";
 import React, { createContext } from "react";
 
 export interface IProArrayTableMaxContext {
-  columns: TableColumnType<any>[];
+  columns: {
+    dataIndex: string;
+    title: string;
+    show: boolean;
+    pin?: "left" | "right";
+    order: number;
+  }[];
   reset: () => void;
   size: ConfigProviderProps["componentSize"];
   paginationPosition: Exclude<
@@ -11,7 +17,25 @@ export interface IProArrayTableMaxContext {
     undefined
   >[0];
 }
-
+export const columnPro = (columns: TableColumnType<any>[]) => {
+  const ans = columns.reduce(
+    (data, item, idx) => {
+      data.list.push({
+        dataIndex: item.dataIndex as string,
+        title: item.title as string,
+        order: idx,
+        show: true,
+        pin: item.fixed ? (data.info.prevfixed ? "left" : "right") : undefined,
+      });
+      return data;
+    },
+    {
+      list: [] as IProArrayTableMaxContext["columns"],
+      info: { prevfixed: columns?.[0]?.fixed },
+    },
+  );
+  return ans.list;
+};
 export const getPaginationPosition = (
   pos: IProArrayTableMaxContext["paginationPosition"],
 ): React.CSSProperties["justifyContent"] => {
@@ -22,9 +46,10 @@ export const getPaginationPosition = (
       : "flex-end";
 };
 
-export const ProArrayTableMaxContext = createContext<IProArrayTableMaxContext>({
-  reset() {},
+export const ArrayTableProMaxContext = createContext<IProArrayTableMaxContext>({
   columns: [],
+  reset() {},
+  // columns: [],
   size: "small",
   paginationPosition: "bottomRight",
 });

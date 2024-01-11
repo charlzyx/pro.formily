@@ -19,6 +19,8 @@
         "noForEach": "off"
       },
       "a11y": {
+        "useKeyWithClickEvents": "off",
+        "useKeyWithMouseEvents": "off",
         "useValidAnchor": "off"
       },
       "correctness": {

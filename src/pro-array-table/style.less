@@ -19,12 +19,40 @@
   //     }
   //   }
   // }
+  .react-resizable {
+    position: relative;
+    background-clip: padding-box;
+  }
+
+  .react-resizable-handle {
+    position: absolute;
+    background-clip: padding-box;
+    right: -4px;
+    top: 0;
+    background-color: @primary-color;
+    background-size: 50% 100%;
+    opacity: 0;
+    bottom: 0;
+    transition: opacity width 0.3s ease;
+    z-index: 10000;
+    width: 10px;
+    border: 4px solid transparent;
+    border-top: 0;
+    border-bottom: 0;
+    height: 100%;
+    cursor: col-resize;
+  }
+
+  .react-resizable-handle.active {
+    border: 4px solid transparent;
+    opacity: 0.5;
+  }
   // // ant-table-expanded-row ant-table-expanded-row-level-1 ant-formily-array-table-row-1
-  // .@{ant-prefix}-table-expanded-row {
-  //   td {
-  //     padding-bottom: 0 !important;
-  //   }
-  // }
+  .@{ant-prefix}-table-expanded-row {
+    > .@{ant-prefix}-table-cell {
+      padding-bottom: 1px !important;
+    }
+  }
   .@{ant-prefix}-table {
     table {
       overflow: hidden;

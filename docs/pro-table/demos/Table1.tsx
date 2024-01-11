@@ -144,7 +144,6 @@ const row: ISchema = {
         "x-component-props": {
           title: "Operations",
           dataIndex: "operations",
-          width: 160,
           fixed: "right",
         },
         properties: {

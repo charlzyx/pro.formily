@@ -3,8 +3,7 @@ import {
   SortableElement,
   usePrefixCls,
 } from "@formily/antd/esm/__builtins__";
-import { isArrayField } from "@formily/core";
-import { ReactFC, useField, useFieldSchema } from "@formily/react";
+import { ReactFC, useFieldSchema } from "@formily/react";
 import cls from "classnames";
 import React from "react";
 import { empty } from "../../__builtins__";

@@ -21,13 +21,14 @@
     "@rspress/plugin-preview": "^1.9.3",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
+    "@types/react-resizable": "^3.0.7",
     "ahooks": "^3.7.8",
     "antd": "^4.24.15",
     "dayjs": "^1.11.10",
     "moment": "^2.30.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-resizeable": "^0.2.6",
+    "react-resizable": "^3.0.5",
     "rspress": "^1.9.3"
   },
   "devDependencies": {

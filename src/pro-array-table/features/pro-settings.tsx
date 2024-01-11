@@ -18,7 +18,7 @@ import {
 import useCreation from "ahooks/es/useCreation";
 import { Button, ConfigProvider, Popover, Row, Slider } from "antd";
 import { useContext, useMemo } from "react";
-import { ProArrayTableMaxContext } from "../context";
+import { ArrayTableProMaxContext } from "../context";
 import { ProArrayTable } from "../index";
 
 const schema: ISchema = {
@@ -57,12 +57,17 @@ const schema: ISchema = {
               width: 40,
             },
             properties: {
+              order: {
+                type: "number",
+                "x-value": "{{$self.index}}",
+              },
               sort: {
                 type: "void",
                 "x-component": "ProArrayTable.SortHandle",
               },
             },
           },
+          // TODO: pin left | right
           _show: {
             type: "void",
             "x-component": "ProArrayTable.Column",
@@ -89,23 +94,6 @@ const schema: ISchema = {
               },
             },
           },
-          _width: {
-            type: "void",
-            "x-component": "ProArrayTable.Column",
-            "x-component-props": {
-              width: 100,
-            },
-            properties: {
-              width: {
-                type: "string",
-                "x-component": "Slider",
-                "x-component-props": {
-                  min: 20,
-                  max: 400,
-                },
-              },
-            },
-          },
         },
       },
     },
@@ -113,7 +101,7 @@ const schema: ISchema = {
 };
 
 export const ProSettings = observer(() => {
-  const $proCtx = useContext(ProArrayTableMaxContext);
+  const $proCtx = useContext(ArrayTableProMaxContext);
   const SchemaField = useCreation(
     () =>
       createSchemaField({
