@@ -18,8 +18,8 @@ import {
 import useCreation from "ahooks/es/useCreation";
 import { Button, ConfigProvider, Popover, Row, Slider } from "antd";
 import { useContext, useMemo } from "react";
-import { ArrayTableProMaxContext } from "../context";
-import { ProArrayTable } from "../index";
+import { ArrayTableProContext } from "../context";
+import { ArrayTablePro } from "../index";
 
 const schema: ISchema = {
   type: "object",
@@ -101,7 +101,7 @@ const schema: ISchema = {
 };
 
 export const ProSettings = observer(() => {
-  const $proCtx = useContext(ArrayTableProMaxContext);
+  const $proCtx = useContext(ArrayTableProContext);
   const SchemaField = useCreation(
     () =>
       createSchemaField({
@@ -111,7 +111,7 @@ export const ProSettings = observer(() => {
           Input,
           NumberPicker,
           Radio,
-          ProArrayTable,
+          ProArrayTable: ArrayTablePro,
           PreviewText,
           Checkbox,
         },

@@ -4,7 +4,7 @@ import { Alert, Button, Divider, Space } from "antd";
 import { ColumnProps } from "antd/es/table";
 import React, { Fragment } from "react";
 import { ArrayBase } from "./array-base";
-import { useCompPropsOf } from "./features/hooks";
+import { useArrayCompPropsOf } from "./features/hooks";
 
 export const Column: ReactFC<ColumnProps<any>> = () => {
   return <Fragment />;
@@ -15,7 +15,7 @@ export const Expand: ReactFC<ColumnProps<any>> = () => {
 
 export const Addition: ArrayBaseMixins["Addition"] = observer((props) => {
   const array = ArrayBase.useArray();
-  const [, $page] = useCompPropsOf(array.field, "pagination");
+  const [, $page] = useArrayCompPropsOf(array.field, "pagination");
   return (
     <ArrayBase.Addition
       block={false}
@@ -62,7 +62,7 @@ export const RowSelection = (props: {
 }) => {
   const { ds, rowKey } = props;
   const array = ArrayBase.useArray();
-  const [, $row] = useCompPropsOf(array.field, "rowSelection");
+  const [, $row] = useArrayCompPropsOf(array.field, "rowSelection");
   return ds.length > 0 ? (
     <Alert
       style={{ padding: "3px 4px" }}

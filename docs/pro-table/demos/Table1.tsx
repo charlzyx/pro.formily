@@ -12,17 +12,19 @@ import {
   onFormValuesChange,
 } from "@formily/core";
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
-import { Button, Divider, Space } from "antd";
-import { ProArrayTable } from "proformily";
+import { Button, ConfigProvider, Divider, Space } from "antd";
+import zhCN from "antd/lib/locale/zh_CN";
+import { ArrayTablePro } from "proformily";
 import { useEffect } from "react";
+
 import {
-  useCompPropsOf,
+  useArrayCompPropsOf,
   useFormArrayProps,
 } from "src/pro-array-table/features/hooks";
 
 const CustomeToolbar = () => {
   const array = ArrayBase.useArray!();
-  const [, $row] = useCompPropsOf(array.field, "rowSelection");
+  const [, $row] = useArrayCompPropsOf(array.field, "rowSelection");
   return (
     <Space>
       <Button
@@ -42,7 +44,7 @@ const CustomeToolbar = () => {
 };
 const CustomeFootbar = () => {
   const array = ArrayBase.useArray!();
-  const [, $page] = useCompPropsOf(array.field, "pagination");
+  const [, $page] = useArrayCompPropsOf(array.field, "pagination");
   const totalPage = (($page?.total || 0)! / ($page?.pageSize || 1)).toFixed(0);
   return (
     <Space>
@@ -57,7 +59,7 @@ const SchemaField = createSchemaField({
     FormItem,
     Editable,
     Input,
-    ProArrayTable: ProArrayTable,
+    ProArrayTable: ArrayTablePro,
     // 组件名称必须包含 Toolbar
     CustomeToolbar,
     // 组件名称必须包含 Footbar
@@ -250,39 +252,41 @@ export default () => {
   }, [row]);
 
   return (
-    <FormProvider form={form}>
-      <SchemaField schema={schema} />
-      <Divider orientation="right">
-        <FormButtonGroup>
-          <Submit onSubmit={console.log}>提交</Submit>
-        </FormButtonGroup>
-      </Divider>
-      <Space>
-        <Button
-          onClick={() => {
-            // simple way
-            $row?.selectedRowKeys?.push(2);
-            //  work but verbose
-            // form
-            // 	.query("array")
-            // 	.take()
-            // 	?.setState((s) => {
-            // 		s.componentProps?.rowSelection?.selectedRowKeys?.push?.(2);
-            // 	});
-          }}
-        >
-          CHeck 2
-        </Button>
-        <Button
-          onClick={() => {
-            form.setInitialValues({
-              array: range(88),
-            });
-          }}
-        >
-          Load 10W pieces of large data
-        </Button>
-      </Space>
-    </FormProvider>
+    <ConfigProvider locale={zhCN}>
+      <FormProvider form={form}>
+        <SchemaField schema={schema} />
+        <Divider orientation="right">
+          <FormButtonGroup>
+            <Submit onSubmit={console.log}>提交</Submit>
+          </FormButtonGroup>
+        </Divider>
+        <Space>
+          <Button
+            onClick={() => {
+              // simple way
+              $row?.selectedRowKeys?.push(2);
+              //  work but verbose
+              // form
+              // 	.query("array")
+              // 	.take()
+              // 	?.setState((s) => {
+              // 		s.componentProps?.rowSelection?.selectedRowKeys?.push?.(2);
+              // 	});
+            }}
+          >
+            CHeck 2
+          </Button>
+          <Button
+            onClick={() => {
+              form.setInitialValues({
+                array: range(88),
+              });
+            }}
+          >
+            Load 10W pieces of large data
+          </Button>
+        </Space>
+      </FormProvider>
+    </ConfigProvider>
   );
 };

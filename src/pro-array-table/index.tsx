@@ -12,8 +12,8 @@ import React, { useContext, useEffect, useMemo, useRef } from "react";
 import { noop } from "../__builtins__";
 import { ArrayBase } from "./array-base";
 import {
-  ArrayTableProMaxContext,
-  IProArrayTableMaxContext,
+  ArrayTableProContext,
+  IArrayTableProContext,
   columnPro,
   getPaginationPosition,
 } from "./context";
@@ -34,7 +34,7 @@ import { Addition, Column, Expand, Flex, RowSelection } from "./mixin";
 import "./style";
 export { useArrayField } from "./hooks";
 
-export type ProArrayTableProps = Omit<TableProps<any>, "title"> & {
+export type ArrayTableProProps = Omit<TableProps<any>, "title"> & {
   title: string | TableProps<any>["title"];
   footer: string | TableProps<any>["footer"];
   /** 列表配置齿轮, 默认 true */
@@ -43,39 +43,41 @@ export type ProArrayTableProps = Omit<TableProps<any>, "title"> & {
   resizeable?: boolean;
 };
 
-const ArrayTableProMax: ReactFC<ProArrayTableProps> = observer((props) => {
-  const [columns] = useArrayTableSources();
+const ArrayTableWithSettings: ReactFC<ArrayTableProProps> = observer(
+  (props) => {
+    const [columns] = useArrayTableSources();
 
-  const init = useRef(columnPro(columns));
+    const init = useRef(columnPro(columns));
 
-  const proCtx = useCreation(() => {
-    return model<IProArrayTableMaxContext>({
-      columns: [],
-      size: "small",
-      paginationPosition: "bottomRight",
-      reset() {
-        this.size = "small";
-        this.paginationPosition = "bottomRight";
-        this.columns = clone(init.current);
-      },
-    });
-  }, []);
+    const proCtx = useCreation(() => {
+      return model<IArrayTableProContext>({
+        columns: [],
+        size: "small",
+        paginationPosition: "bottomRight",
+        reset() {
+          this.size = "small";
+          this.paginationPosition = "bottomRight";
+          this.columns = clone(init.current);
+        },
+      });
+    }, []);
 
-  // if touched, skip, or maxium render oom.
-  if (proCtx.columns.length === 0 && columns.length > 0) {
-    proCtx.columns = columnPro(columns);
-  }
+    // if touched, skip, or maxium render oom.
+    if (proCtx.columns.length === 0 && columns.length > 0) {
+      proCtx.columns = columnPro(columns);
+    }
 
-  return (
-    <ArrayTableProMaxContext.Provider value={proCtx}>
-      <ConfigProvider componentSize={proCtx.size}>
-        <InternalArrayTable {...props}></InternalArrayTable>
-      </ConfigProvider>
-    </ArrayTableProMaxContext.Provider>
-  );
-});
+    return (
+      <ArrayTableProContext.Provider value={proCtx}>
+        <ConfigProvider componentSize={proCtx.size}>
+          <InternalArrayTable {...props}></InternalArrayTable>
+        </ConfigProvider>
+      </ArrayTableProContext.Provider>
+    );
+  },
+);
 
-const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
+const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   const field = useField<ArrayField>();
   const prefixCls = usePrefixCls("formily-array-table");
@@ -86,7 +88,7 @@ const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
   const page = props.pagination;
   const startIndex = page ? (page.current! - 1) * page.pageSize! : 0;
 
-  const settings = useContext(ArrayTableProMaxContext);
+  const settings = useContext(ArrayTableProContext);
 
   const dataSlice = useMemo(() => {
     if (page) {
@@ -235,10 +237,13 @@ const InternalArrayTable: ReactFC<ProArrayTableProps> = observer((props) => {
   );
 });
 
-export const ProArrayTable = Object.assign(ArrayBase.mixin(ArrayTableProMax), {
-  Column,
-  Addition,
-  Expand,
-});
+export const ArrayTablePro = Object.assign(
+  ArrayBase.mixin(ArrayTableWithSettings),
+  {
+    Column,
+    Addition,
+    Expand,
+  },
+);
 
-ProArrayTable.displayName = "ProArrayTable";
+ArrayTablePro.displayName = "ArrayTablePro";

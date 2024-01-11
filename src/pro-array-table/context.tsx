@@ -2,7 +2,7 @@ import { TableColumnType, TableProps } from "antd";
 import type { ConfigProviderProps } from "antd/lib/config-provider";
 import React, { createContext } from "react";
 
-export interface IProArrayTableMaxContext {
+export interface IArrayTableProContext {
   columns: {
     dataIndex: string;
     title: string;
@@ -30,14 +30,14 @@ export const columnPro = (columns: TableColumnType<any>[]) => {
       return data;
     },
     {
-      list: [] as IProArrayTableMaxContext["columns"],
+      list: [] as IArrayTableProContext["columns"],
       info: { prevfixed: columns?.[0]?.fixed },
     },
   );
   return ans.list;
 };
 export const getPaginationPosition = (
-  pos: IProArrayTableMaxContext["paginationPosition"],
+  pos: IArrayTableProContext["paginationPosition"],
 ): React.CSSProperties["justifyContent"] => {
   return /center/.test(pos)
     ? "center"
@@ -46,7 +46,7 @@ export const getPaginationPosition = (
       : "flex-end";
 };
 
-export const ArrayTableProMaxContext = createContext<IProArrayTableMaxContext>({
+export const ArrayTableProContext = createContext<IArrayTableProContext>({
   columns: [],
   reset() {},
   // columns: [],

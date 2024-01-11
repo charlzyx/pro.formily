@@ -26,20 +26,12 @@ type SupportedProps = {
   pagination: IPaginationProps;
   expandable: IExpandableProps;
 };
-export const useCompPropsOf = <K extends keyof SupportedProps>(
+export const useArrayCompPropsOf = <K extends keyof SupportedProps>(
   field: GeneralField,
   key: K,
 ) => {
   const $props = (field?.componentProps as any)?.[key];
   return useObState<SupportedProps[K]>($props);
-};
-
-export const useArrayField = () => {
-  let array = useField();
-  while (array && !isArrayField(array)) {
-    array = array.parent;
-  }
-  return array;
 };
 
 export const useFormArrayProps = <K extends keyof SupportedProps>(
