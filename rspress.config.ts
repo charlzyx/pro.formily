@@ -1,5 +1,5 @@
 import * as path from "path";
-import { pluginPreview } from "@rspress/plugin-preview";
+import { pluginPlayground } from "@rspress/plugin-playground";
 import { defineConfig } from "rspress/config";
 import RsBuildConfig from "./rsbuild.config";
 
@@ -17,7 +17,7 @@ export default defineConfig({
   builderConfig: {
     ...RsBuildConfig,
   },
-  plugins: [pluginPreview()],
+  plugins: [pluginPlayground()],
   themeConfig: {
     socialLinks: [
       {
