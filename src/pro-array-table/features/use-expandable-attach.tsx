@@ -1,9 +1,8 @@
 import { ArrayField } from "@formily/core";
-import { ISchema, RecursionField, useField } from "@formily/react";
+import { useField } from "@formily/react";
 import { toJS } from "@formily/reactive";
 import { Table } from "antd";
 import React, { useEffect } from "react";
-import { ArrayBase } from "../array-base";
 import { useExpandRender } from "../hooks";
 
 export type IExpandableProps = Exclude<

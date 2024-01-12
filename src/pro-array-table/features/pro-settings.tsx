@@ -7,7 +7,12 @@ import {
   PreviewText,
   Radio,
 } from "@formily/antd";
-import { createForm } from "@formily/core";
+import {
+  createForm,
+  onFieldChange,
+  onFieldInitialValueChange,
+  onFieldInputValueChange,
+} from "@formily/core";
 import {
   FormProvider,
   ISchema,
@@ -18,7 +23,7 @@ import {
 import useCreation from "ahooks/es/useCreation";
 import { Button, ConfigProvider, Popover, Row, Slider } from "antd";
 import { useContext, useMemo } from "react";
-import { ArrayTableProContext } from "../context";
+import { ArrayTableProSettingsContext } from "../context";
 import { ArrayTablePro } from "../index";
 
 const schema: ISchema = {
@@ -30,6 +35,7 @@ const schema: ISchema = {
       "x-component-props": {
         optionType: "button",
         buttonStyle: "solid",
+        size: "small",
       },
       enum: [
         { label: "紧凑", value: "small" },
@@ -101,7 +107,7 @@ const schema: ISchema = {
 };
 
 export const ProSettings = observer(() => {
-  const $proCtx = useContext(ArrayTableProContext);
+  const $proSettings = useContext(ArrayTableProSettingsContext);
   const SchemaField = useCreation(
     () =>
       createSchemaField({
@@ -121,12 +127,20 @@ export const ProSettings = observer(() => {
 
   const form = useCreation(() => {
     return createForm({
-      initialValues: $proCtx,
+      initialValues: $proSettings,
+      effects() {
+        onFieldInputValueChange("*", (field) => {
+          const dataKey = field.address.toArr()[0] as string;
+          if (/columns/.test(dataKey)) {
+            // columns 是响应式的, 不需要关注啦
+            return;
+          }
+          ($proSettings as any)[dataKey] = field.value;
+        });
+      },
     });
   }, []);
-  form.setValuesIn("columns", $proCtx.columns);
-  form.setValuesIn("size", $proCtx.size);
-  form.setValuesIn("paginationPosition", $proCtx.paginationPosition);
+  form.setValuesIn("columns", $proSettings.columns);
 
   const content = useMemo(() => {
     return (
@@ -141,7 +155,7 @@ export const ProSettings = observer(() => {
         <h4>表格设置</h4>
         <Button
           onClick={() => {
-            $proCtx.reset();
+            $proSettings.reset();
           }}
         >
           重置

@@ -2,7 +2,7 @@ import { TableColumnType, TableProps } from "antd";
 import type { ConfigProviderProps } from "antd/lib/config-provider";
 import React, { createContext } from "react";
 
-export interface IArrayTableProContext {
+export interface IArrayTableProSettingsContext {
   columns: {
     dataIndex: string;
     title: string;
@@ -30,14 +30,14 @@ export const columnPro = (columns: TableColumnType<any>[]) => {
       return data;
     },
     {
-      list: [] as IArrayTableProContext["columns"],
+      list: [] as IArrayTableProSettingsContext["columns"],
       info: { prevfixed: columns?.[0]?.fixed },
     },
   );
   return ans.list;
 };
 export const getPaginationPosition = (
-  pos: IArrayTableProContext["paginationPosition"],
+  pos: IArrayTableProSettingsContext["paginationPosition"],
 ): React.CSSProperties["justifyContent"] => {
   return /center/.test(pos)
     ? "center"
@@ -46,10 +46,11 @@ export const getPaginationPosition = (
       : "flex-end";
 };
 
-export const ArrayTableProContext = createContext<IArrayTableProContext>({
-  columns: [],
-  reset() {},
-  // columns: [],
-  size: "small",
-  paginationPosition: "bottomRight",
-});
+export const ArrayTableProSettingsContext =
+  createContext<IArrayTableProSettingsContext>({
+    columns: [],
+    reset() {},
+    // columns: [],
+    size: "small",
+    paginationPosition: "bottomRight",
+  });

@@ -26,12 +26,12 @@ export const isToolbarComponent = (schema: Schema) => {
   return schema["x-component"]?.indexOf("Toolbar") > -1;
 };
 
-export const isFootbarComponent = (schema: Schema) => {
-  return schema["x-component"]?.indexOf("Footbar") > -1;
+export const isFooterComponent = (schema: Schema) => {
+  return schema["x-component"]?.indexOf("Footer") > -1;
 };
 
 export const isExpandComponent = (schema: Schema) => {
-  return schema["x-component"]?.indexOf("Expand") > -1;
+  return schema["x-component"]?.indexOf("RowExpand") > -1;
 };
 
 export const hasSortable = (schema: Schema): boolean => {

@@ -9,7 +9,7 @@ import { useArrayCompPropsOf } from "./features/hooks";
 export const Column: ReactFC<ColumnProps<any>> = () => {
   return <Fragment />;
 };
-export const Expand: ReactFC<ColumnProps<any>> = () => {
+export const RowExpand: ReactFC<ColumnProps<any>> = () => {
   return <Fragment />;
 };
 

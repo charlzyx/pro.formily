@@ -5,15 +5,15 @@ import { model } from "@formily/reactive";
 import { clone } from "@formily/shared";
 import useCreation from "ahooks/es/useCreation";
 // import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
-import { Pagination, Table, TableColumnType, Typography } from "antd";
+import { Pagination, Table, Typography } from "antd";
 import { TableProps } from "antd/es/table";
 import ConfigProvider from "antd/lib/config-provider";
 import React, { useContext, useEffect, useMemo, useRef } from "react";
 import { noop } from "../__builtins__";
 import { ArrayBase } from "./array-base";
 import {
-  ArrayTableProContext,
-  IArrayTableProContext,
+  ArrayTableProSettingsContext,
+  IArrayTableProSettingsContext,
   columnPro,
   getPaginationPosition,
 } from "./context";
@@ -27,10 +27,10 @@ import { isColumnComponent } from "./helper";
 import {
   useAddition,
   useArrayTableSources,
-  useFootbar,
+  useFooter,
   useToolbar,
 } from "./hooks";
-import { Addition, Column, Expand, Flex, RowSelection } from "./mixin";
+import { Addition, Column, Flex, RowExpand, RowSelection } from "./mixin";
 import "./style";
 export { useArrayField } from "./hooks";
 
@@ -43,39 +43,38 @@ export type ArrayTableProProps = Omit<TableProps<any>, "title"> & {
   resizeable?: boolean;
 };
 
-const ArrayTableWithSettings: ReactFC<ArrayTableProProps> = observer(
-  (props) => {
-    const [columns] = useArrayTableSources();
+const ArrayTableProSettings: ReactFC<ArrayTableProProps> = observer((props) => {
+  const [columns] = useArrayTableSources();
 
-    const init = useRef(columnPro(columns));
+  const init = useRef(columnPro(columns));
 
-    const proCtx = useCreation(() => {
-      return model<IArrayTableProContext>({
-        columns: [],
-        size: "small",
-        paginationPosition: "bottomRight",
-        reset() {
-          this.size = "small";
-          this.paginationPosition = "bottomRight";
-          this.columns = clone(init.current);
-        },
-      });
-    }, []);
+  const proSettings = useCreation(() => {
+    return model<IArrayTableProSettingsContext>({
+      columns: [],
+      size: "small",
+      paginationPosition: "bottomRight",
+      reset() {
+        this.size = "small";
+        this.paginationPosition = "bottomRight";
+        this.columns = clone(init.current);
+      },
+    });
+  }, []);
 
-    // if touched, skip, or maxium render oom.
-    if (proCtx.columns.length === 0 && columns.length > 0) {
-      proCtx.columns = columnPro(columns);
-    }
+  // if touched, skip, or maxium render oom.
+  if (proSettings.columns.length === 0 && columns.length > 0) {
+    proSettings.columns = columnPro(columns);
+  }
 
-    return (
-      <ArrayTableProContext.Provider value={proCtx}>
-        <ConfigProvider componentSize={proCtx.size}>
-          <InternalArrayTable {...props}></InternalArrayTable>
-        </ConfigProvider>
-      </ArrayTableProContext.Provider>
-    );
-  },
-);
+  return (
+    <ArrayTableProSettingsContext.Provider value={proSettings}>
+      <InternalArrayTable
+        size={proSettings.size}
+        {...props}
+      ></InternalArrayTable>
+    </ArrayTableProSettingsContext.Provider>
+  );
+});
 
 const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -88,7 +87,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const page = props.pagination;
   const startIndex = page ? (page.current! - 1) * page.pageSize! : 0;
 
-  const settings = useContext(ArrayTableProContext);
+  const proSettings = useContext(ArrayTableProSettingsContext);
 
   const dataSlice = useMemo(() => {
     if (page) {
@@ -107,7 +106,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   });
   const addition = useAddition();
   const toolbar = useToolbar();
-  const footbar = useFootbar();
+  const footer = useFooter();
   useExpandableAttach();
 
   const rowKey = (record: any) => {
@@ -133,7 +132,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
           padding: "8px 0",
         }}
         {...page}
-        size={page.size || (settings.size as any)}
+        size={page.size || (proSettings.size as any)}
       ></Pagination>
     </div>
   );
@@ -141,12 +140,12 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const showHeader =
     props.title ||
     props.rowSelection ||
-    (/top/.test(settings.paginationPosition!) && pagination) ||
+    (/top/.test(proSettings.paginationPosition!) && pagination) ||
     toolbar ||
     addition ||
     props.settings;
 
-  const header = !showHeader ? null : (
+  const _header = !showHeader ? null : (
     <Flex marginBottom={`${6}px`}>
       {props.title ? (
         typeof props.title === "function" ? (
@@ -160,8 +159,10 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
       {props.rowSelection ? (
         <RowSelection ds={dataSlice} rowKey={rowKey}></RowSelection>
       ) : null}
-      <Flex justifyContent={getPaginationPosition(settings.paginationPosition)}>
-        {/top/.test(settings.paginationPosition!) ? pagination : null}
+      <Flex
+        justifyContent={getPaginationPosition(proSettings.paginationPosition)}
+      >
+        {/top/.test(proSettings.paginationPosition!) ? pagination : null}
       </Flex>
       {toolbar}
       {addition}
@@ -171,9 +172,9 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
 
   const showFooter =
     props.footer ||
-    footbar ||
-    (/bottom/.test(settings.paginationPosition!) && pagination);
-  const footer = !showFooter ? null : (
+    footer ||
+    (/bottom/.test(proSettings.paginationPosition!) && pagination);
+  const _footer = !showFooter ? null : (
     <Flex marginTop={`${6}px`}>
       {props.footer ? (
         typeof props.footer === "function" ? (
@@ -182,67 +183,67 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
           <Typography.Title level={5}>{props.footer}</Typography.Title>
         )
       ) : null}
-      {footbar}
-      <Flex justifyContent={getPaginationPosition(settings.paginationPosition)}>
-        {/bottom/.test(settings.paginationPosition!) ? pagination : null}
+      {footer}
+      <Flex
+        justifyContent={getPaginationPosition(proSettings.paginationPosition)}
+      >
+        {/bottom/.test(proSettings.paginationPosition!) ? pagination : null}
       </Flex>
     </Flex>
   );
 
   return (
-    <div>
-      <ArrayBase>
-        {header}
-        <div ref={ref} className={prefixCls}>
-          <Table
-            bordered
-            rowKey={rowKey}
-            {...props}
-            size={settings.size ?? "small"}
-            title={undefined}
-            footer={undefined}
-            // TODO: 跟 查询表单联动
-            onChange={noop}
-            pagination={false}
-            columns={columns}
-            dataSource={dataSlice}
-            components={{
-              ...props.components,
-              header: {
-                ...props.components?.header,
-                cell:
-                  props.resizeable !== false
-                    ? ResizableTitle
-                    : props.components?.header?.cell,
-              },
-              body: {
-                ...body,
-                ...props.components?.body,
-              },
-            }}
-          />
-        </div>
-        {footer}
-        {sources.map((column, key) => {
-          if (!isColumnComponent(column.schema)) return;
-          return React.createElement(RecursionField, {
-            name: column.name,
-            schema: column.schema,
-            onlyRenderSelf: true,
-            key,
-          });
-        })}
-      </ArrayBase>
-    </div>
+    <ArrayBase>
+      {_header}
+      <div ref={ref} className={prefixCls}>
+        <Table
+          bordered
+          rowKey={rowKey}
+          {...props}
+          size={proSettings.size ?? "small"}
+          title={undefined}
+          footer={undefined}
+          // TODO: 跟 查询表单联动
+          onChange={noop}
+          pagination={false}
+          columns={columns}
+          dataSource={dataSlice}
+          components={{
+            ...props.components,
+            header: {
+              ...props.components?.header,
+              cell:
+                props.resizeable !== false
+                  ? ResizableTitle
+                  : props.components?.header?.cell,
+            },
+            body: {
+              ...body,
+              ...props.components?.body,
+            },
+          }}
+        />
+      </div>
+      {_footer}
+      {sources.map((column, key) => {
+        if (!isColumnComponent(column.schema)) return;
+        return React.createElement(RecursionField, {
+          name: column.name,
+          schema: column.schema,
+          onlyRenderSelf: true,
+          key,
+        });
+      })}
+    </ArrayBase>
   );
 });
 
 export const ArrayTablePro = Object.assign(
-  ArrayBase.mixin(ArrayTableWithSettings),
+  ArrayBase.mixin(ArrayTableProSettings),
   {
     Column,
     Addition,
-    Expand,
+    RowExpand,
   },
 );
 

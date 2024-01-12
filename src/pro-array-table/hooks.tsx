@@ -7,13 +7,13 @@ import { useContext, useMemo, useState } from "react";
 import type { ResizeCallbackData } from "react-resizable";
 import { ArrayBase } from "./array-base";
 
-import { ArrayTableProContext } from "./context";
+import { ArrayTableProSettingsContext } from "./context";
 import {
   ObservableColumnSource,
   isAdditionComponent,
   isColumnComponent,
   isExpandComponent,
-  isFootbarComponent,
+  isFooterComponent,
   isOperationsComponent,
   isToolbarComponent,
 } from "./helper";
@@ -72,7 +72,7 @@ const useColumns = (
   sources: ObservableColumnSource[],
 ) => {
   const [resize, setResizes] = useState<number[]>([]);
-  const proCtx = useContext(ArrayTableProContext);
+  const proCtx = useContext(ArrayTableProSettingsContext);
   const prebuild = sources.filter((item) => {
     return (
       item.display === "visible" &&
@@ -182,10 +182,10 @@ export const useToolbar = () => {
   }, null);
 };
 
-export const useFootbar = () => {
+export const useFooter = () => {
   const schema = useFieldSchema();
   return schema.reduceProperties((footer, schema, key) => {
-    if (isFootbarComponent(schema)) {
+    if (isFooterComponent(schema)) {
       return <RecursionField schema={schema} name={key} />;
     }
     return footer;

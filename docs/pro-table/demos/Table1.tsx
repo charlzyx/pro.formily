@@ -14,13 +14,12 @@ import {
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { Button, ConfigProvider, Divider, Space } from "antd";
 import zhCN from "antd/lib/locale/zh_CN";
-import { ArrayTablePro } from "proformily";
-import { useEffect } from "react";
-
 import {
+  ArrayTablePro,
   useArrayCompPropsOf,
   useFormArrayProps,
-} from "src/pro-array-table/features/hooks";
+} from "proformily";
+import { useEffect } from "react";
 
 const CustomeToolbar = () => {
   const array = ArrayBase.useArray!();
@@ -42,7 +41,7 @@ const CustomeToolbar = () => {
     </Space>
   );
 };
-const CustomeFootbar = () => {
+const CustomeFooter = () => {
   const array = ArrayBase.useArray!();
   const [, $page] = useArrayCompPropsOf(array.field, "pagination");
   const totalPage = (($page?.total || 0)! / ($page?.pageSize || 1)).toFixed(0);
@@ -54,16 +53,35 @@ const CustomeFootbar = () => {
   );
 };
 
+const RowSummary = () => {
+  const row = ArrayBase.useRecord!();
+  const summary = row.a1 + row.a2 + row.a3;
+  console.log("say hi", row);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        marginBottom: "16px",
+      }}
+    >
+      我是自定义 row render {summary} 👇🏻 是 schame 形式的 row render
+    </div>
+  );
+};
+
 const SchemaField = createSchemaField({
   components: {
     FormItem,
     Editable,
     Input,
-    ProArrayTable: ArrayTablePro,
+    ArrayTablePro: ArrayTablePro,
     // 组件名称必须包含 Toolbar
     CustomeToolbar,
-    // 组件名称必须包含 Footbar
-    CustomeFootbar,
+    // 组件名称必须包含 Footer
+    CustomeFooter,
+    RowSummary,
   },
 });
 
@@ -84,29 +102,29 @@ const row: ISchema = {
     properties: {
       column1: {
         type: "void",
-        "x-component": "ProArrayTable.Column",
+        "x-component": "ArrayTablePro.Column",
         "x-component-props": { width: 60, title: "Sort", align: "center" },
         properties: {
           sort: {
             type: "void",
-            "x-component": "ProArrayTable.SortHandle",
+            "x-component": "ArrayTablePro.SortHandle",
           },
         },
       },
       column2: {
         type: "void",
-        "x-component": "ProArrayTable.Column",
+        "x-component": "ArrayTablePro.Column",
         "x-component-props": { width: 60, title: "Index", align: "center" },
         properties: {
           index: {
             type: "void",
-            "x-component": "ProArrayTable.Index",
+            "x-component": "ArrayTablePro.Index",
           },
         },
       },
       column3: {
         type: "void",
-        "x-component": "ProArrayTable.Column",
+        "x-component": "ArrayTablePro.Column",
         "x-component-props": { width: 120, title: "A1" },
         properties: {
           a1: {
@@ -118,7 +136,7 @@ const row: ISchema = {
       },
       column4: {
         type: "void",
-        "x-component": "ProArrayTable.Column",
+        "x-component": "ArrayTablePro.Column",
         "x-component-props": { width: 120, title: "A2" },
         properties: {
           a2: {
@@ -130,7 +148,7 @@ const row: ISchema = {
       },
       column5: {
         type: "void",
-        "x-component": "ProArrayTable.Column",
+        "x-component": "ArrayTablePro.Column",
         "x-component-props": { width: 120, title: "A3" },
         properties: {
           a3: {
@@ -142,7 +160,7 @@ const row: ISchema = {
       },
       column6: {
         type: "void",
-        "x-component": "ProArrayTable.Column",
+        "x-component": "ArrayTablePro.Column",
         "x-component-props": {
           title: "Operations",
           dataIndex: "operations",
@@ -155,15 +173,15 @@ const row: ISchema = {
             properties: {
               remove: {
                 type: "void",
-                "x-component": "ProArrayTable.Remove",
+                "x-component": "ArrayTablePro.Remove",
               },
               moveDown: {
                 type: "void",
-                "x-component": "ProArrayTable.MoveDown",
+                "x-component": "ArrayTablePro.MoveDown",
               },
               moveUp: {
                 type: "void",
-                "x-component": "ProArrayTable.MoveUp",
+                "x-component": "ArrayTablePro.MoveUp",
               },
             },
           },
@@ -185,10 +203,12 @@ const schema: ISchema = {
     array: {
       type: "array",
       title: "Array Table Pro Max",
-      "x-component": "ProArrayTable",
+      "x-component": "ArrayTablePro",
       "x-component-props": {
         rowSelection: true,
-        expandable: true,
+        expandable: {
+          rowExpandable: (record: any) => Array.isArray(record.subitems),
+        },
       },
       items: row.items,
       properties: {
@@ -198,20 +218,24 @@ const schema: ISchema = {
         },
         add: {
           type: "void",
-          "x-component": "ProArrayTable.Addition",
+          "x-component": "ArrayTablePro.Addition",
           title: "添加条目",
         },
-        footbar: {
+        footer: {
           type: "void",
-          "x-component": "CustomeFootbar",
+          "x-component": "CustomeFooter",
         },
         expand: {
           type: "void",
-          "x-component": "ProArrayTable.Expand",
+          "x-component": "ArrayTablePro.RowExpand",
           properties: {
+            summary: {
+              type: "void",
+              "x-component": "RowSummary",
+            },
             subitems: {
               type: "array",
-              "x-component": "ProArrayTable",
+              "x-component": "ArrayTablePro",
               "x-read-pretty": true,
               "x-component-props": {
                 showHeader: false,
@@ -234,13 +258,16 @@ const range = (count: number) =>
       a3: `${key}.3`,
       subitems: [] as any[],
     };
-    ret.subitems = [
-      {
-        a1: `c.${ret.a1}`,
-        a2: `c.${ret.a2}`,
-        a3: `c.${ret.a3}`,
-      },
-    ];
+    ret.subitems =
+      Math.random() > 0.45
+        ? [
+            {
+              a1: `c.${ret.a1}`,
+              a2: `c.${ret.a2}`,
+              a3: `c.${ret.a3}`,
+            },
+          ]
+        : (undefined as any);
     return ret;
   });
 
