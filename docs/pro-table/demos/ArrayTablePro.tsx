@@ -13,7 +13,12 @@ import {
 } from "@formily/core";
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { Button, ConfigProvider, Divider, Space } from "antd";
+import "antd/dist/antd.css";
 import zhCN from "antd/lib/locale/zh_CN";
+import moment from "moment";
+import "moment/locale/zh-cn";
+moment.locale("zh-cn");
+
 import {
   ArrayTablePro,
   useArrayCompPropsOf,
@@ -137,7 +142,7 @@ const row: ISchema = {
       column4: {
         type: "void",
         "x-component": "ArrayTablePro.Column",
-        "x-component-props": { width: 120, title: "A2" },
+        "x-component-props": { title: "A2" },
         properties: {
           a2: {
             type: "string",
@@ -149,7 +154,7 @@ const row: ISchema = {
       column5: {
         type: "void",
         "x-component": "ArrayTablePro.Column",
-        "x-component-props": { width: 120, title: "A3" },
+        "x-component-props": { title: "A3" },
         properties: {
           a3: {
             type: "string",
@@ -162,8 +167,9 @@ const row: ISchema = {
         type: "void",
         "x-component": "ArrayTablePro.Column",
         "x-component-props": {
-          title: "Operations",
-          dataIndex: "operations",
+          title: "Action",
+          width: 140,
+          dataIndex: "actinos",
           fixed: "right",
         },
         properties: {

@@ -1,4 +1,39 @@
+.rspress-doc-container > div > div {
+  width: 100% !important;
+}
+
+.rspress-doc {
+  width: 100% !important;
+  max-width: unset !important;
+  padding: 0 !important;
+}
+
+.rspress-preview-code-show {
+  margin-top: -24px !important;
+}
+.rspress-doc div[class^=language-] {
+  border: 1px dashed var(--rp-code-block-bg) !important;
+  border-radius: 0 !important;
+  border-top: 0 !important;
+}
+
 // to fix FormButtonGroup sticky
 .rspress-preview-card > div {
   overflow: unset !important;
+}
+
+.rspress-preview-card {
+  padding: 12px !important;
+  border-radius: 0px !important;
+  border-color: var(--rp-code-block-bg) !important;
+  flex-direction: column;
+}
+
+.rspress-preview-operations.web {
+  justify-content: flex-end !important;
+  align-items: flex-end !important;
+}
+
+button, html [type="button"], [type="reset"], [type="submit"] {
+  -webkit-appearance: button;
 }

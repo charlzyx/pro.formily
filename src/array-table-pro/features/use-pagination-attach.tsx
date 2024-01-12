@@ -3,13 +3,19 @@ import { useField } from "@formily/react";
 import { toJS } from "@formily/reactive";
 import { Table } from "antd";
 import { useEffect, useRef } from "react";
+import { IQueryListContext } from "src/query-list";
 
 export type IPaginationProps = Exclude<
   Required<React.ComponentProps<typeof Table>>["pagination"],
   boolean
-> & {};
+> & {
+  reset: () => void;
+};
 
-export const usePaginationAttach = (dataSource: any[]) => {
+export const usePaginationAttach = (
+  dataSource: any[],
+  querylist: IQueryListContext,
+) => {
   const array = useField<ArrayField>();
 
   useEffect(() => {
@@ -25,6 +31,16 @@ export const usePaginationAttach = (dataSource: any[]) => {
     });
   }, [dataSource.length]);
   useEffect(() => {
+    const init = {
+      current: array.componentProps?.pagination?.current ?? 1,
+      pageSize: array.componentProps?.pagination?.pageSize ?? 10,
+    };
+    if (!querylist.none) {
+      querylist.memo.current.init.pagination!.current = init.current;
+      querylist.memo.current.init.pagination!.pageSize = init.pageSize;
+      querylist.memo.current.data.pagination!.current = init.current;
+      querylist.memo.current.data.pagination!.pageSize = init.pageSize;
+    }
     array.setState((s) => {
       if (!s.componentProps) {
         s.componentProps = {};
@@ -40,8 +56,7 @@ export const usePaginationAttach = (dataSource: any[]) => {
       const _onShowSizeChange = $page?.onShowSizeChange;
 
       const override: IPaginationProps = {
-        current: 1,
-        pageSize: 10,
+        ...init,
         size: "small",
         position: ["bottomRight"],
         hideOnSinglePage: true,
@@ -54,6 +69,10 @@ export const usePaginationAttach = (dataSource: any[]) => {
           if (_onChange) {
             _onChange(page, pageSize);
           }
+          if (querylist?.none) return;
+          querylist.memo.current.data.pagination!.current = page;
+          querylist.memo.current.data.pagination!.pageSize = pageSize;
+          querylist.run();
         },
         onShowSizeChange(current, size) {
           $page.current = 1;
@@ -61,6 +80,15 @@ export const usePaginationAttach = (dataSource: any[]) => {
           if (_onShowSizeChange) {
             _onShowSizeChange(current, size);
           }
+          querylist.memo.current.data.pagination!.pageSize = size;
+          querylist.run();
+        },
+        reset() {
+          $page.current = init.current;
+          // next tick
+          return new Promise((resolve) => {
+            setTimeout(resolve);
+          });
         },
       };
 
@@ -72,5 +100,5 @@ export const usePaginationAttach = (dataSource: any[]) => {
         `feature of ${array.address.toString()}:pagination turn on.`,
       );
     });
-  }, [array]);
+  }, [array, querylist.memo, querylist.none]);
 };

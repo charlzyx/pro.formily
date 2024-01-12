@@ -9,30 +9,27 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
-    "@biomejs/biome": "^1.5.0",
-    "@dnd-kit/core": "^6.1.0",
-    "@dnd-kit/sortable": "^8.0.0",
     "@formily/antd": "^2.3.1",
     "@formily/core": "^2.3.1",
     "@formily/react": "^2.3.1",
     "@formily/reactive": "^2.3.1",
     "@formily/shared": "^2.3.1",
+    "ahooks": "^3.7.8",
+    "antd": "^4.24.15",
+    "moment": "^2.30.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-resizable": "^3.0.5"
+  },
+  "devDependencies": {
+    "rspress": "^1.9.3",
+    "@biomejs/biome": "^1.5.0",
     "@rsbuild/plugin-react": "^0.2.18",
     "@rspress/plugin-preview": "^1.9.3",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@types/react-resizable": "^3.0.7",
-    "ahooks": "^3.7.8",
-    "antd": "^4.24.15",
-    "dayjs": "^1.11.10",
-    "moment": "^2.30.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-resizable": "^3.0.5",
-    "rspress": "^1.9.3"
-  },
-  "devDependencies": {
-    "@rspress/plugin-playground": "^1.9.3",
+    "@faker-js/faker": "^8.3.1",
     "@types/node": "^16.18.70"
   }
 }

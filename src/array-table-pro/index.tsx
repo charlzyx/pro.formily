@@ -7,9 +7,8 @@ import useCreation from "ahooks/es/useCreation";
 // import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
 import { Pagination, Table, Typography } from "antd";
 import { TableProps } from "antd/es/table";
-import ConfigProvider from "antd/lib/config-provider";
 import React, { useContext, useEffect, useMemo, useRef } from "react";
-import { noop } from "../__builtins__";
+import { useQueryListContext } from "src/query-list";
 import { ArrayBase } from "./array-base";
 import {
   ArrayTableProSettingsContext,
@@ -41,6 +40,8 @@ export type ArrayTableProProps = Omit<TableProps<any>, "title"> & {
   settings?: boolean;
   /** 表头列宽是否可拖动, 默认 true */
   resizeable?: boolean;
+  /** 是否是开启 slice 性能优化, 默认开启  */
+  slice?: boolean;
 };
 
 const ArrayTableProSettings: ReactFC<ArrayTableProProps> = observer((props) => {
@@ -82,7 +83,16 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const prefixCls = usePrefixCls("formily-array-table");
   const [columns, sources] = useArrayTableSources();
   const dataSource = Array.isArray(field.value) ? field.value.slice() : [];
-  usePaginationAttach(dataSource);
+
+  const querylist = useQueryListContext();
+
+  useEffect(() => {
+    if (querylist && field?.address) {
+      querylist.setAddress(field.address.toString(), "table");
+    }
+  }, [querylist, field?.address]);
+
+  usePaginationAttach(dataSource, querylist);
 
   const page = props.pagination;
   const startIndex = page ? (page.current! - 1) * page.pageSize! : 0;
@@ -90,14 +100,14 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const proSettings = useContext(ArrayTableProSettingsContext);
 
   const dataSlice = useMemo(() => {
-    if (page) {
+    if (page && props.slice !== false && querylist.none) {
       return (page as any)?.pageSize
         ? dataSource.slice(startIndex, startIndex + (page as any).pageSize)
         : dataSource;
     } else {
       return dataSource;
     }
-  }, [dataSource, page, startIndex]);
+  }, [dataSource, page, startIndex, querylist?.none]);
 
   const body = useSortable(dataSource, (from, to) => field.move(from, to), {
     ref,
@@ -143,7 +153,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
     (/top/.test(proSettings.paginationPosition!) && pagination) ||
     toolbar ||
     addition ||
-    props.settings;
+    props.settings !== false;
 
   const _header = !showHeader ? null : (
     <Flex marginBottom={`${6}px`}>
@@ -200,11 +210,17 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
           bordered
           rowKey={rowKey}
           {...props}
+          loading={props.loading ?? querylist?.loading}
           size={proSettings.size ?? "small"}
           title={undefined}
           footer={undefined}
-          // TODO: 跟 查询表单联动
-          onChange={noop}
+          // 这里不处理 page 是因为 pagination 被我们重写了
+          onChange={(_page, filters, sorter, extra) => {
+            if (querylist.none) return;
+            querylist.memo.current.data.filters = filters;
+            querylist.memo.current.data.sorter = sorter;
+            querylist.memo.current.data.extra = extra;
+          }}
           pagination={false}
           columns={columns}
           dataSource={dataSlice}
