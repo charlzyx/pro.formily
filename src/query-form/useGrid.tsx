@@ -3,7 +3,7 @@ import type React from "react";
 import { useMemo } from "react";
 
 export const useGrid = (conf: React.ComponentProps<typeof FormGrid> = {}) => {
-  const maxRows = conf.maxRows || 1;
+  const maxRows = conf.maxRows || 2;
   const grid = useMemo(() => {
     return FormGrid.createFormGrid({
       maxColumns: conf.maxColumns || 4,

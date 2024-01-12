@@ -7,6 +7,7 @@ import { useContext, useMemo, useState } from "react";
 import type { ResizeCallbackData } from "react-resizable";
 import { ArrayBase } from "./array-base";
 
+import { useWhyDidYouUpdate } from "ahooks";
 import { ArrayTableProSettingsContext } from "./context";
 import {
   ObservableColumnSource,
@@ -70,6 +71,8 @@ const parseArrayItems = (arrayField: ArrayField, schema: Schema["items"]) => {
 const useColumns = (
   arrayField: ArrayField,
   sources: ObservableColumnSource[],
+  dataSource: any[],
+  getSimple = false,
 ) => {
   const [resize, setResizes] = useState<number[]>([]);
   const proCtx = useContext(ArrayTableProSettingsContext);
@@ -88,61 +91,65 @@ const useColumns = (
     return rank;
   });
 
-  const columns = useMemo(() => {
-    const origin = prebuild.reduce<ColumnsType<any>>(
-      (buf, { name, columnProps, schema, display }, key) => {
-        // if (display !== "visible") return buf;
-        // if (!isColumnComponent(schema)) return buf;
-        return buf.concat({
-          ...columnProps,
-          key,
-          width: resize[key] ?? columnProps.width,
-          dataIndex: name,
-          onHeaderCell() {
-            return {
-              width: resize[key] ?? columnProps.width,
-              onResize(e: any, data: ResizeCallbackData) {
-                setResizes((prev) => {
-                  prev[key] = data.size.width;
-                  return [...prev];
-                });
-              },
-              // index: key,
-            } as any;
-          },
-          render: (value: any, record: any) => {
-            const index = arrayField.value.indexOf(record);
-            const children = (
-              <ArrayBase.Item
-                index={index}
-                record={() => arrayField?.value?.[index]}
-              >
-                <RecursionField
-                  schema={schema}
-                  name={index}
-                  onlyRenderProperties
-                />
-              </ArrayBase.Item>
-            );
-            return children;
-          },
-        });
-      },
-      [],
-    );
-    return origin;
-  }, [resize, prebuild, arrayField]);
-  // console.log("__sources", sources, columns);
+  const columns = prebuild.reduce<ColumnsType<any>>(
+    (buf, { name, columnProps, schema, display }, key) => {
+      // if (display !== "visible") return buf;
+      // if (!isColumnComponent(schema)) return buf;
+      return buf.concat({
+        ...columnProps,
+        key,
+        width: resize[key] ?? columnProps.width,
+        dataIndex: name,
+        onHeaderCell: () => {
+          return {
+            width: resize[key] ?? columnProps.width,
+            onResize(e: any, data: ResizeCallbackData) {
+              setResizes((prev) => {
+                prev[key] = data.size.width;
+                return [...prev];
+              });
+            },
+            // index: key,
+          } as any;
+        },
+        render: (value: any, record: any) => {
+          /**
+           * 优化笔记：
+           * 这里用传入的 dataSoruce 比使用 arrayField.value 要快得多， 在10w条数据测试中感受明显
+           * 暂时我还不太明白是为什么, 初步猜测，在外部的 slice 创造了一个浅拷贝
+           * 即这里的 dataSource 是个浅拷贝， 那么这个浅拷贝的 indexOf 在内部的遍历
+           * 就能够减少那一堆本来 Observer 的 get handle;
+           * 跟这里有异曲同工之妙 @link https://github.com/alibaba/formily/pull/3863#discussion_r1234706804
+           */
+          // const index = arrayField.value.indexOf(record);
+          const index = dataSource.indexOf(record);
+          const children = (
+            <ArrayBase.Item
+              index={index}
+              record={() => arrayField?.value?.[index]}
+            >
+              <RecursionField
+                schema={schema}
+                name={index}
+                onlyRenderProperties
+              />
+            </ArrayBase.Item>
+          );
+          return children;
+        },
+      });
+    },
+    [],
+  );
 
   return columns;
 };
 
-export const useArrayTableSources = () => {
+export const useArrayTableSources = (dataSource: any[]) => {
   const arrayField = useField<ArrayField>();
   const schema = useFieldSchema();
   const sources = parseArrayItems(arrayField, schema.items);
-  const columns = useColumns(arrayField, sources);
-
+  const columns = useColumns(arrayField, sources, dataSource);
   return [columns, sources] as const;
 };
 

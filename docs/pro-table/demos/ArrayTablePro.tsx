@@ -105,7 +105,7 @@ const row: ISchema = {
   items: {
     type: "object",
     properties: {
-      column1: {
+      _sort: {
         type: "void",
         "x-component": "ArrayTablePro.Column",
         "x-component-props": { width: 60, title: "Sort", align: "center" },
@@ -116,7 +116,7 @@ const row: ISchema = {
           },
         },
       },
-      column2: {
+      _index: {
         type: "void",
         "x-component": "ArrayTablePro.Column",
         "x-component-props": { width: 60, title: "Index", align: "center" },
@@ -127,10 +127,10 @@ const row: ISchema = {
           },
         },
       },
-      column3: {
+      _a1: {
         type: "void",
         "x-component": "ArrayTablePro.Column",
-        "x-component-props": { width: 120, title: "A1" },
+        "x-component-props": { width: 160, title: "A1" },
         properties: {
           a1: {
             type: "string",
@@ -139,10 +139,10 @@ const row: ISchema = {
           },
         },
       },
-      column4: {
+      _a2: {
         type: "void",
         "x-component": "ArrayTablePro.Column",
-        "x-component-props": { title: "A2" },
+        "x-component-props": { width: 160, title: "A2" },
         properties: {
           a2: {
             type: "string",
@@ -151,10 +151,10 @@ const row: ISchema = {
           },
         },
       },
-      column5: {
+      _a3: {
         type: "void",
         "x-component": "ArrayTablePro.Column",
-        "x-component-props": { title: "A3" },
+        "x-component-props": { width: 160, title: "A3" },
         properties: {
           a3: {
             type: "string",
@@ -163,7 +163,7 @@ const row: ISchema = {
           },
         },
       },
-      column6: {
+      _action: {
         type: "void",
         "x-component": "ArrayTablePro.Column",
         "x-component-props": {
@@ -211,6 +211,7 @@ const schema: ISchema = {
       title: "Array Table Pro Max",
       "x-component": "ArrayTablePro",
       "x-component-props": {
+        scroll: { x: "100%" },
         rowSelection: true,
         expandable: {
           rowExpandable: (record: any) => Array.isArray(record.subitems),
@@ -297,7 +298,15 @@ export default () => {
           <Button
             onClick={() => {
               // simple way
-              $row?.selectedRowKeys?.push(2);
+              const hasIndex =
+                $row?.selectedRowKeys?.findIndex((x) => x === 2) ?? -1;
+
+              console.log("🚀 ~ hasIndex:", hasIndex);
+              if (hasIndex >= 0) {
+                $row?.selectedRowKeys?.splice(hasIndex, 1);
+              } else {
+                $row?.selectedRowKeys?.push(2);
+              }
               //  work but verbose
               // form
               // 	.query("array")
@@ -307,16 +316,16 @@ export default () => {
               // 	});
             }}
           >
-            CHeck 2
+            切换第三项选中框
           </Button>
           <Button
             onClick={() => {
               form.setInitialValues({
-                array: range(88),
+                array: range(10 * 10000),
               });
             }}
           >
-            Load 10W pieces of large data
+            加载 10万条超大数据
           </Button>
         </Space>
       </FormProvider>

@@ -3,6 +3,7 @@ import {
   DatePicker,
   Editable,
   FormButtonGroup,
+  FormGrid,
   FormItem,
   FormLayout,
   Input,
@@ -57,7 +58,7 @@ export const service = ({
         }).map((_, idx) => {
           return {
             id: current * pageSize + idx,
-            status: status ?? +faker.random.numeric(1) % 5,
+            status: status ?? +faker.string.numeric(1) % 5,
             domain: `${
               domain ? `${domain}.` : ""
             }${faker.internet.domainName()}`,
@@ -78,11 +79,13 @@ export const service = ({
               Array.from(
                 new Set(
                   Array.from({ length: Math.floor(Math.random() * 3) }).map(
-                    () => +faker.random.numeric(1) % 5,
+                    () => +faker.string.numeric(1) % 5,
                   ),
                 ),
               ),
-            date: moment(faker.date.between(start, end)).format("YYYY-MM-DD"),
+            date: moment(faker.date.between({ from: start, to: end })).format(
+              "YYYY-MM-DD",
+            ),
             img: faker.image.avatar(),
             desc: faker.lorem.paragraph(),
           };
@@ -102,6 +105,7 @@ const SchemaField = createSchemaField({
   components: {
     FormItem,
     DatePicker,
+    FormGrid,
     Editable,
     Input,
     Select,
@@ -118,14 +122,25 @@ const SchemaField = createSchemaField({
 const form = createForm({});
 const query: ISchema = {
   type: "object",
-  "x-component": "QueryForm",
   "x-decorator": "FormLayout",
   "x-decorator-props": {
     layout: "vertical",
   },
+  "x-component": "QueryForm",
+  "x-component-props": {
+    grid: {
+      maxRows: 1,
+    },
+  },
   properties: {
     domain: {
       title: "域名",
+      type: "string",
+      "x-decorator": "FormItem",
+      "x-component": "Input",
+    },
+    some: {
+      title: "查询",
       type: "string",
       "x-decorator": "FormItem",
       "x-component": "Input",
@@ -159,7 +174,6 @@ const query: ISchema = {
 const row: ISchema = {
   items: {
     type: "object",
-    "x-read-pretty": true,
     properties: {
       _id: {
         type: "void",
@@ -169,6 +183,7 @@ const row: ISchema = {
           id: {
             type: "string",
             "x-component": "Input",
+            "x-read-pretty": true,
           },
         },
       },
@@ -180,13 +195,14 @@ const row: ISchema = {
           id: {
             type: "string",
             "x-component": "Input",
+            "x-read-pretty": true,
           },
         },
       },
       _domain: {
         type: "void",
         "x-component": "ArrayTablePro.Column",
-        "x-component-props": { width: 60, title: "DOMAIN", align: "center" },
+        "x-component-props": { title: "DOMAIN", align: "center" },
         properties: {
           domain: {
             type: "string",

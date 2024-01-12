@@ -1,8 +1,13 @@
+import {
+  ArrowDownOutlined,
+  ArrowUpOutlined,
+  DownOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import type { FormLayout } from "@formily/antd";
 import { FormButtonGroup, FormGrid } from "@formily/antd";
 import type { ObjectField } from "@formily/core";
-import { observer, useField, useForm } from "@formily/react";
-import { observe, toJS } from "@formily/reactive";
+import { observer, useField } from "@formily/react";
 import { clone } from "@formily/shared";
 import { Button } from "antd";
 import React, { useEffect } from "react";
@@ -15,6 +20,13 @@ type QueryFormProps = React.PropsWithChildren<{
   grid?: React.ComponentProps<typeof FormGrid>;
   layout?: React.ComponentProps<typeof FormLayout>;
 }>;
+
+const buttonGroupStyle: React.CSSProperties = {
+  width: "100%",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+};
 
 export const QueryForm = observer((props: QueryFormProps) => {
   const { resetText, submitText } = props;
@@ -50,18 +62,17 @@ export const QueryForm = observer((props: QueryFormProps) => {
 
   const renderActions = () => {
     return (
-      <FormButtonGroup
-        align="right"
-        style={{
-          width: "100%",
-          marginBottom: "22px",
-          display: "flex",
-          justifyContent: "flex-end",
-        }}
-      >
+      <FormButtonGroup align="right" style={buttonGroupStyle}>
         {expanded !== undefined ? (
           <Button
             type="link"
+            icon={
+              expanded ? (
+                <UpOutlined></UpOutlined>
+              ) : (
+                <DownOutlined></DownOutlined>
+              )
+            }
             onClick={(e) => {
               e.preventDefault();
               toggle();
@@ -70,8 +81,10 @@ export const QueryForm = observer((props: QueryFormProps) => {
             {expanded ? "收起" : "展开"}
           </Button>
         ) : null}
-        <Button onClick={onReset}>{resetText || "重置"}</Button>
-        <Button onClick={onSubmit} type="primary">
+        <Button disabled={querylist?.loading} onClick={onReset}>
+          {resetText || "重置"}
+        </Button>
+        <Button disabled={querylist?.loading} onClick={onSubmit} type="primary">
           {submitText || "查询"}
         </Button>
       </FormButtonGroup>

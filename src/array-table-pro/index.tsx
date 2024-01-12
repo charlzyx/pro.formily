@@ -1,11 +1,13 @@
+import { SyncOutlined } from "@ant-design/icons";
 import { usePrefixCls } from "@formily/antd/esm/__builtins__";
 import { ArrayField } from "@formily/core";
 import { ReactFC, RecursionField, observer, useField } from "@formily/react";
 import { model } from "@formily/reactive";
 import { clone } from "@formily/shared";
+// import { useWhyDidYouUpdate } from "ahooks";
 import useCreation from "ahooks/es/useCreation";
 // import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
-import { Pagination, Table, Typography } from "antd";
+import { Button, Pagination, Table, Typography } from "antd";
 import { TableProps } from "antd/es/table";
 import React, { useContext, useEffect, useMemo, useRef } from "react";
 import { useQueryListContext } from "src/query-list";
@@ -45,7 +47,7 @@ export type ArrayTableProProps = Omit<TableProps<any>, "title"> & {
 };
 
 const ArrayTableProSettings: ReactFC<ArrayTableProProps> = observer((props) => {
-  const [columns] = useArrayTableSources();
+  const [columns] = useArrayTableSources([]);
 
   const init = useRef(columnPro(columns));
 
@@ -81,8 +83,13 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   const field = useField<ArrayField>();
   const prefixCls = usePrefixCls("formily-array-table");
-  const [columns, sources] = useArrayTableSources();
+  /**
+   * 优化笔记：
+   * 本来以为这个 slice 没什么用，直到我膝盖中了一箭
+   * 联动: useArrayTableSources -> useColumns -> render -> indexOf
+   */
   const dataSource = Array.isArray(field.value) ? field.value.slice() : [];
+  const [columns, sources] = useArrayTableSources(dataSource);
 
   const querylist = useQueryListContext();
 
@@ -100,16 +107,19 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const proSettings = useContext(ArrayTableProSettingsContext);
 
   const dataSlice = useMemo(() => {
-    if (page && props.slice !== false && querylist.none) {
+    const shouldSlice = page && props.slice !== false && querylist.none;
+    if (shouldSlice) {
+      const endIndex = startIndex + (page as any).pageSize;
+
       return (page as any)?.pageSize
-        ? dataSource.slice(startIndex, startIndex + (page as any).pageSize)
+        ? dataSource.slice(startIndex, endIndex)
         : dataSource;
     } else {
       return dataSource;
     }
   }, [dataSource, page, startIndex, querylist?.none]);
 
-  const body = useSortable(dataSource, (from, to) => field.move(from, to), {
+  const body = useSortable(dataSlice, (from, to) => field.move(from, to), {
     ref,
     prefixCls,
     start: startIndex,
@@ -142,6 +152,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
           padding: "8px 0",
         }}
         {...page}
+        disabled={page.disabled ?? querylist.loading}
         size={page.size || (proSettings.size as any)}
       ></Pagination>
     </div>
@@ -176,6 +187,14 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
       </Flex>
       {toolbar}
       {addition}
+      {!querylist?.none ? (
+        <Button
+          type="link"
+          icon={<SyncOutlined></SyncOutlined>}
+          onClick={() => querylist.run()}
+          loading={querylist?.loading}
+        ></Button>
+      ) : null}
       {props.settings !== false ? <ProSettings></ProSettings> : null}
     </Flex>
   );

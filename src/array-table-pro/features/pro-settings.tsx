@@ -7,12 +7,7 @@ import {
   PreviewText,
   Radio,
 } from "@formily/antd";
-import {
-  createForm,
-  onFieldChange,
-  onFieldInitialValueChange,
-  onFieldInputValueChange,
-} from "@formily/core";
+import { createForm, onFieldInputValueChange } from "@formily/core";
 import {
   FormProvider,
   ISchema,
