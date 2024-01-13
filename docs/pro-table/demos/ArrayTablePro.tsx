@@ -61,8 +61,6 @@ const CustomeFooter = () => {
 const RowSummary = () => {
   const row = ArrayBase.useRecord!();
   const summary = row.a1 + row.a2 + row.a3;
-  console.log("say hi", row);
-
   return (
     <div
       style={{
@@ -199,9 +197,9 @@ const row: ISchema = {
 
 const subRow: ISchema = JSON.parse(JSON.stringify(row));
 // biome-ignore lint/performance/noDelete: <explanation>
-delete (subRow as any).items.properties.column1;
+delete (subRow as any).items.properties._sort;
 // biome-ignore lint/performance/noDelete: <explanation>
-delete (subRow as any).items.properties.column6;
+delete (subRow as any).items.properties._action;
 
 const schema: ISchema = {
   type: "object",
@@ -321,7 +319,7 @@ export default () => {
           <Button
             onClick={() => {
               form.setInitialValues({
-                array: range(10 * 10000),
+                array: range(10 * 100),
               });
             }}
           >

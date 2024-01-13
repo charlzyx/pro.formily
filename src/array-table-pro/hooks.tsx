@@ -2,12 +2,11 @@ import { ArrayField, isArrayField } from "@formily/core";
 import { Schema } from "@formily/json-schema";
 import { RecursionField, useField, useFieldSchema } from "@formily/react";
 import { isArr } from "@formily/shared";
+import { useWhyDidYouUpdate } from "ahooks";
 import { ColumnsType } from "antd/es/table";
 import { useContext, useMemo, useState } from "react";
 import type { ResizeCallbackData } from "react-resizable";
 import { ArrayBase } from "./array-base";
-
-import { useWhyDidYouUpdate } from "ahooks";
 import { ArrayTableProSettingsContext } from "./context";
 import {
   ObservableColumnSource,
@@ -72,7 +71,6 @@ const useColumns = (
   arrayField: ArrayField,
   sources: ObservableColumnSource[],
   dataSource: any[],
-  getSimple = false,
 ) => {
   const [resize, setResizes] = useState<number[]>([]);
   const proCtx = useContext(ArrayTableProSettingsContext);

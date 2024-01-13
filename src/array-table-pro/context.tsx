@@ -50,7 +50,6 @@ export const ArrayTableProSettingsContext =
   createContext<IArrayTableProSettingsContext>({
     columns: [],
     reset() {},
-    // columns: [],
     size: "small",
     paginationPosition: "bottomRight",
   });

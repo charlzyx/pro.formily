@@ -1,4 +1,4 @@
-import { ArrayField, Field } from "@formily/core";
+import { ArrayField, Field, GeneralField } from "@formily/core";
 import { useForm } from "@formily/react";
 import { clone } from "@formily/shared";
 import { TableProps } from "antd";
@@ -72,7 +72,8 @@ const QueryListContext = createContext<IQueryListContext>({
 });
 
 export const useQueryListContext = () => {
-  return useContext(QueryListContext);
+  const ctx = useContext(QueryListContext);
+  return ctx;
 };
 
 export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
@@ -163,3 +164,6 @@ export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
     );
   },
 );
+// export const DeferdQueryListContext = () => {
+//   return <QueryListContext.Provider></QueryListContext.Provider>;
+// };

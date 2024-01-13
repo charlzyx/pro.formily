@@ -35,7 +35,8 @@ export const usePaginationAttach = (
       current: array.componentProps?.pagination?.current ?? 1,
       pageSize: array.componentProps?.pagination?.pageSize ?? 10,
     };
-    if (!querylist.none) {
+    // none or not me
+    if (!querylist.none || querylist.table !== array) {
       querylist.memo.current.init.pagination!.current = init.current;
       querylist.memo.current.init.pagination!.pageSize = init.pageSize;
       querylist.memo.current.data.pagination!.current = init.current;
@@ -69,10 +70,12 @@ export const usePaginationAttach = (
           if (_onChange) {
             _onChange(page, pageSize);
           }
-          if (querylist?.none) return;
-          querylist.memo.current.data.pagination!.current = page;
-          querylist.memo.current.data.pagination!.pageSize = pageSize;
-          querylist.run();
+          // none or not me
+          if (!querylist.none || querylist.table === array) {
+            querylist.memo.current.data.pagination!.current = page;
+            querylist.memo.current.data.pagination!.pageSize = pageSize;
+            querylist.run();
+          }
         },
         onShowSizeChange(current, size) {
           $page.current = 1;
@@ -80,8 +83,11 @@ export const usePaginationAttach = (
           if (_onShowSizeChange) {
             _onShowSizeChange(current, size);
           }
-          querylist.memo.current.data.pagination!.pageSize = size;
-          querylist.run();
+          // none or not me
+          if (!querylist.none || querylist.table === array) {
+            querylist.memo.current.data.pagination!.pageSize = size;
+            querylist.run();
+          }
         },
         reset() {
           $page.current = init.current;
@@ -100,5 +106,5 @@ export const usePaginationAttach = (
         `feature of ${array.address.toString()}:pagination turn on.`,
       );
     });
-  }, [array, querylist.memo, querylist.none]);
+  }, [array, querylist.table]);
 };

@@ -36,7 +36,7 @@ export const QueryForm = observer((props: QueryFormProps) => {
 
   useEffect(() => {
     if (field?.address && querylist) {
-      querylist.setAddress(field.address.toString(), "table");
+      querylist.setAddress(field.address.toString(), "query");
     }
   }, [querylist, field.address]);
 

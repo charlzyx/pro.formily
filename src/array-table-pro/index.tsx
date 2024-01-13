@@ -4,6 +4,7 @@ import { ArrayField } from "@formily/core";
 import { ReactFC, RecursionField, observer, useField } from "@formily/react";
 import { model } from "@formily/reactive";
 import { clone } from "@formily/shared";
+import { useWhyDidYouUpdate } from "ahooks";
 // import { useWhyDidYouUpdate } from "ahooks";
 import useCreation from "ahooks/es/useCreation";
 // import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
@@ -44,6 +45,7 @@ export type ArrayTableProProps = Omit<TableProps<any>, "title"> & {
   resizeable?: boolean;
   /** 是否是开启 slice 性能优化, 默认开启  */
   slice?: boolean;
+  paginationPosition: IArrayTableProSettingsContext["paginationPosition"];
 };
 
 const ArrayTableProSettings: ReactFC<ArrayTableProProps> = observer((props) => {
@@ -54,11 +56,11 @@ const ArrayTableProSettings: ReactFC<ArrayTableProProps> = observer((props) => {
   const proSettings = useCreation(() => {
     return model<IArrayTableProSettingsContext>({
       columns: [],
-      size: "small",
-      paginationPosition: "bottomRight",
+      size: props.size ?? "small",
+      paginationPosition: props.paginationPosition ?? "bottomRight",
       reset() {
         this.size = "small";
-        this.paginationPosition = "bottomRight";
+        this.paginationPosition = props.paginationPosition ?? "bottomRight";
         this.columns = clone(init.current);
       },
     });
@@ -72,8 +74,9 @@ const ArrayTableProSettings: ReactFC<ArrayTableProProps> = observer((props) => {
   return (
     <ArrayTableProSettingsContext.Provider value={proSettings}>
       <InternalArrayTable
-        size={proSettings.size}
         {...props}
+        paginationPosition={proSettings.paginationPosition}
+        size={proSettings.size}
       ></InternalArrayTable>
     </ArrayTableProSettingsContext.Provider>
   );
@@ -91,23 +94,27 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const dataSource = Array.isArray(field.value) ? field.value.slice() : [];
   const [columns, sources] = useArrayTableSources(dataSource);
 
+  /** 还是考虑 ArrayTable 跟 QueryList 分开吧，写一起耦合太严重 */
   const querylist = useQueryListContext();
 
   useEffect(() => {
-    if (querylist && field?.address) {
-      querylist.setAddress(field.address.toString(), "table");
-    }
+    if (querylist.none) return;
+    querylist.setAddress(field.address.toString(), "table");
   }, [querylist, field?.address]);
 
   usePaginationAttach(dataSource, querylist);
 
   const page = props.pagination;
+
   const startIndex = page ? (page.current! - 1) * page.pageSize! : 0;
 
-  const proSettings = useContext(ArrayTableProSettingsContext);
+  const dataSlice = (() => {
+    const shouldSlice =
+      page &&
+      props.slice !== false &&
+      // none or not me
+      (querylist.none || querylist.table !== field);
 
-  const dataSlice = useMemo(() => {
-    const shouldSlice = page && props.slice !== false && querylist.none;
     if (shouldSlice) {
       const endIndex = startIndex + (page as any).pageSize;
 
@@ -117,7 +124,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
     } else {
       return dataSource;
     }
-  }, [dataSource, page, startIndex, querylist?.none]);
+  })();
 
   const body = useSortable(dataSlice, (from, to) => field.move(from, to), {
     ref,
@@ -153,7 +160,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
         }}
         {...page}
         disabled={page.disabled ?? querylist.loading}
-        size={page.size || (proSettings.size as any)}
+        size={page.size || (props.size as any)}
       ></Pagination>
     </div>
   );
@@ -161,7 +168,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const showHeader =
     props.title ||
     props.rowSelection ||
-    (/top/.test(proSettings.paginationPosition!) && pagination) ||
+    (/top/.test(props.paginationPosition!) && pagination) ||
     toolbar ||
     addition ||
     props.settings !== false;
@@ -180,14 +187,12 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
       {props.rowSelection ? (
         <RowSelection ds={dataSlice} rowKey={rowKey}></RowSelection>
       ) : null}
-      <Flex
-        justifyContent={getPaginationPosition(proSettings.paginationPosition)}
-      >
-        {/top/.test(proSettings.paginationPosition!) ? pagination : null}
+      <Flex justifyContent={getPaginationPosition(props.paginationPosition)}>
+        {/top/.test(props.paginationPosition!) ? pagination : null}
       </Flex>
       {toolbar}
       {addition}
-      {!querylist?.none ? (
+      {!querylist.none && querylist.table === field ? (
         <Button
           type="link"
           icon={<SyncOutlined></SyncOutlined>}
@@ -202,7 +207,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const showFooter =
     props.footer ||
     footer ||
-    (/bottom/.test(proSettings.paginationPosition!) && pagination);
+    (/bottom/.test(props.paginationPosition!) && pagination);
   const _footer = !showFooter ? null : (
     <Flex marginTop={`${6}px`}>
       {props.footer ? (
@@ -213,10 +218,8 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
         )
       ) : null}
       {footer}
-      <Flex
-        justifyContent={getPaginationPosition(proSettings.paginationPosition)}
-      >
-        {/bottom/.test(proSettings.paginationPosition!) ? pagination : null}
+      <Flex justifyContent={getPaginationPosition(props.paginationPosition)}>
+        {/bottom/.test(props.paginationPosition!) ? pagination : null}
       </Flex>
     </Flex>
   );
@@ -230,7 +233,7 @@ const InternalArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
           rowKey={rowKey}
           {...props}
           loading={props.loading ?? querylist?.loading}
-          size={proSettings.size ?? "small"}
+          size={props.size ?? "small"}
           title={undefined}
           footer={undefined}
           // 这里不处理 page 是因为 pagination 被我们重写了
