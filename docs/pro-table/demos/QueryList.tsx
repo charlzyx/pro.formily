@@ -19,7 +19,7 @@ import moment from "moment";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
-import { ArrayTablePro, QueryForm, QueryList } from "proformily";
+import { QueryForm, QueryList, QueryTable } from "proformily";
 
 const log = (label: string, x: any) => {
   console.log("LABEL:", label);
@@ -112,7 +112,7 @@ const SchemaField = createSchemaField({
     FormLayout,
     QueryList,
     QueryForm,
-    ArrayTablePro: ArrayTablePro,
+    QueryTable,
   },
   scope: {
     service,
@@ -139,11 +139,14 @@ const query: ISchema = {
       "x-decorator": "FormItem",
       "x-component": "Input",
     },
-    some: {
-      title: "查询",
+    "[start, end]": {
+      title: "日期区间",
       type: "string",
       "x-decorator": "FormItem",
-      "x-component": "Input",
+      "x-decorator-props": {
+        gridSpan: 2,
+      },
+      "x-component": "DatePicker.RangePicker",
     },
     classify: {
       title: "分类",
@@ -160,15 +163,6 @@ const query: ISchema = {
       "x-decorator": "FormItem",
       "x-component": "Select",
     },
-    "[start, end]": {
-      title: "日期区间",
-      type: "string",
-      "x-decorator": "FormItem",
-      "x-decorator-props": {
-        gridSpan: 2,
-      },
-      "x-component": "DatePicker.RangePicker",
-    },
   },
 };
 const row: ISchema = {
@@ -177,7 +171,7 @@ const row: ISchema = {
     properties: {
       _id: {
         type: "void",
-        "x-component": "ArrayTablePro.Column",
+        "x-component": "QueryTable.Column",
         "x-component-props": { width: 60, title: "ID", align: "center" },
         properties: {
           id: {
@@ -189,7 +183,7 @@ const row: ISchema = {
       },
       _status: {
         type: "void",
-        "x-component": "ArrayTablePro.Column",
+        "x-component": "QueryTable.Column",
         "x-component-props": { width: 60, title: "STATUS", align: "center" },
         properties: {
           id: {
@@ -201,7 +195,7 @@ const row: ISchema = {
       },
       _domain: {
         type: "void",
-        "x-component": "ArrayTablePro.Column",
+        "x-component": "QueryTable.Column",
         "x-component-props": { title: "DOMAIN", align: "center" },
         properties: {
           domain: {
@@ -227,7 +221,7 @@ const schema: ISchema = {
         query: query,
         list: {
           type: "array",
-          "x-component": "ArrayTablePro",
+          "x-component": "QueryTable",
           items: row.items,
         },
       },

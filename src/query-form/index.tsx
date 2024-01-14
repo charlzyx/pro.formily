@@ -35,15 +35,15 @@ export const QueryForm = observer((props: QueryFormProps) => {
   const querylist = useQueryListContext();
 
   useEffect(() => {
-    if (field?.address && querylist) {
+    if (!querylist.none && field?.address) {
       querylist.setAddress(field.address.toString(), "query");
     }
-  }, [querylist, field.address]);
+  }, [querylist?.none, field.address]);
 
   useEffect(() => {
-    if (!querylist || !field.initialValue) return;
+    if (!querylist.none || !field.initialValue) return;
     querylist.memo.current.init.params = clone(field.initialValue);
-  }, [querylist, field.initialValue]);
+  }, [querylist.none, field.initialValue]);
 
   const onReset = () => {
     if (querylist?.loading) return;

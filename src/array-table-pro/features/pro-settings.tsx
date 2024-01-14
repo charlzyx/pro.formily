@@ -1,4 +1,9 @@
-import { SettingOutlined } from "@ant-design/icons";
+import {
+  ColumnHeightOutlined,
+  FontSizeOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+
 import {
   Checkbox,
   FormItem,
@@ -15,10 +20,12 @@ import {
   createSchemaField,
   observer,
 } from "@formily/react";
+import { toJS } from "@formily/reactive";
 import useCreation from "ahooks/es/useCreation";
-import { Button, ConfigProvider, Popover, Row, Slider } from "antd";
-import { useContext, useMemo } from "react";
+import { Button, ConfigProvider, Popover, Row, Slider, Space } from "antd";
+import React, { useContext, useMemo } from "react";
 import { ArrayTableProSettingsContext } from "../context";
+import { useArrayTableColumns } from "../hooks";
 import { ArrayTablePro } from "../index";
 
 const schema: ISchema = {
@@ -40,7 +47,7 @@ const schema: ISchema = {
     },
     columns: {
       type: "array",
-      "x-component": "ProArrayTable",
+      "x-component": "ArrayTablePro",
       "x-component-props": {
         bordered: false,
         settings: false,
@@ -53,7 +60,7 @@ const schema: ISchema = {
         properties: {
           _sort: {
             type: "void",
-            "x-component": "ProArrayTable.Column",
+            "x-component": "ArrayTablePro.Column",
             "x-component-props": {
               width: 40,
             },
@@ -64,14 +71,14 @@ const schema: ISchema = {
               },
               sort: {
                 type: "void",
-                "x-component": "ProArrayTable.SortHandle",
+                "x-component": "ArrayTablePro.SortHandle",
               },
             },
           },
           // TODO: pin left | right
           _show: {
             type: "void",
-            "x-component": "ProArrayTable.Column",
+            "x-component": "ArrayTablePro.Column",
             "x-component-props": {
               width: 40,
             },
@@ -84,7 +91,7 @@ const schema: ISchema = {
           },
           _title: {
             type: "void",
-            "x-component": "ProArrayTable.Column",
+            "x-component": "ArrayTablePro.Column",
             "x-component-props": {
               width: 60,
             },
@@ -101,8 +108,9 @@ const schema: ISchema = {
   },
 };
 
-export const ProSettings = observer(() => {
-  const $proSettings = useContext(ArrayTableProSettingsContext);
+export const ProSettings: React.FC<{
+  columns: ReturnType<typeof useArrayTableColumns>[1];
+}> = ({ columns }) => {
   const SchemaField = useCreation(
     () =>
       createSchemaField({
@@ -112,7 +120,7 @@ export const ProSettings = observer(() => {
           Input,
           NumberPicker,
           Radio,
-          ProArrayTable: ArrayTablePro,
+          ArrayTablePro: ArrayTablePro,
           PreviewText,
           Checkbox,
         },
@@ -122,20 +130,16 @@ export const ProSettings = observer(() => {
 
   const form = useCreation(() => {
     return createForm({
-      initialValues: $proSettings,
+      initialValues: {
+        columns: columns.value,
+      },
       effects() {
-        onFieldInputValueChange("*", (field) => {
-          const dataKey = field.address.toArr()[0] as string;
-          if (/columns/.test(dataKey)) {
-            // columns 是响应式的, 不需要关注啦
-            return;
-          }
-          ($proSettings as any)[dataKey] = field.value;
+        onFieldInputValueChange("columns", (field) => {
+          columns.onChange(toJS(form.values.columns));
         });
       },
     });
   }, []);
-  form.setValuesIn("columns", $proSettings.columns);
 
   const content = useMemo(() => {
     return (
@@ -147,22 +151,21 @@ export const ProSettings = observer(() => {
   const title = useMemo(() => {
     return (
       <Row justify="space-between">
-        <h4>表格设置</h4>
-        <Button
-          onClick={() => {
-            $proSettings.reset();
-          }}
-        >
-          重置
-        </Button>
+        <Button onClick={() => {}}>重置</Button>
       </Row>
     );
   }, []);
   return (
     <ConfigProvider componentSize="small">
-      <Popover content={content} title={title} trigger="click">
-        <Button icon={<SettingOutlined />} type="link"></Button>
-      </Popover>
+      <Space>
+        <Button
+          type="link"
+          icon={<ColumnHeightOutlined></ColumnHeightOutlined>}
+        ></Button>
+        <Popover content={content} title={title} trigger="click">
+          <Button icon={<SettingOutlined />} type="link"></Button>
+        </Popover>
+      </Space>
     </ConfigProvider>
   );
-});
+};

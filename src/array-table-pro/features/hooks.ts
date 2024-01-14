@@ -3,7 +3,7 @@ import { useField } from "@formily/react";
 import { isSupportObservable, observe, toJS } from "@formily/reactive";
 import { useEffect, useMemo, useState } from "react";
 import { IExpandableProps } from "./use-expandable-attach";
-import { IPaginationProps } from "./use-pagination-attach";
+import { IPaginationProps } from "./use-pagination";
 import { IRowSelection } from "./use-row-selection-attach";
 
 export const useObState = <T extends object>(

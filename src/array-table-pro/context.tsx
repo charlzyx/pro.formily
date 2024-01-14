@@ -12,10 +12,10 @@ export interface IArrayTableProSettingsContext {
   }[];
   reset: () => void;
   size: ConfigProviderProps["componentSize"];
-  paginationPosition: Exclude<
-    Exclude<TableProps<any>["pagination"], boolean | undefined>["position"],
-    undefined
-  >[0];
+  // paginationPosition: Exclude<
+  //   Exclude<TableProps<any>["pagination"], boolean | undefined>["position"],
+  //   undefined
+  // >[0];
 }
 export const columnPro = (columns: TableColumnType<any>[]) => {
   const ans = columns.reduce(
@@ -36,20 +36,19 @@ export const columnPro = (columns: TableColumnType<any>[]) => {
   );
   return ans.list;
 };
-export const getPaginationPosition = (
-  pos: IArrayTableProSettingsContext["paginationPosition"],
-): React.CSSProperties["justifyContent"] => {
-  return /center/.test(pos)
-    ? "center"
-    : /left/.test(pos)
-      ? "flex-start"
-      : "flex-end";
-};
+// export const getPaginationPosition = (
+//   pos: IArrayTableProSettingsContext["paginationPosition"],
+// ): React.CSSProperties["justifyContent"] => {
+//   return /center/.test(pos)
+//     ? "center"
+//     : /left/.test(pos)
+//       ? "flex-start"
+//       : "flex-end";
+// };
 
 export const ArrayTableProSettingsContext =
   createContext<IArrayTableProSettingsContext>({
     columns: [],
     reset() {},
     size: "small",
-    paginationPosition: "bottomRight",
   });

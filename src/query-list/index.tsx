@@ -97,8 +97,7 @@ export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
           if (!addr) return;
           if (of === "query") {
             address.current.query = addr;
-          } else of === "table";
-          {
+          } else if (of === "table") {
             address.current.table = addr;
           }
         },
@@ -123,7 +122,7 @@ export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
               .service?.(memo.current.data)
               .then((resp) => {
                 setLoading(false);
-                this.table?.setValue(resp.list ?? []);
+                this.table!.setValue(resp.list ?? []);
                 if (this.table?.componentProps?.pagination) {
                   this.table.componentProps.pagination.total = resp.total;
                 }
@@ -154,6 +153,9 @@ export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
         },
         ...methods,
       } as IQueryListContext;
+      Object.keys(methods).forEach((key) => {
+        (merge as any)[key].bind(merge);
+      });
       return merge;
     }, [props, loading, methods, form]);
 

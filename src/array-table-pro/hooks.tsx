@@ -3,6 +3,7 @@ import { Schema } from "@formily/json-schema";
 import { RecursionField, useField, useFieldSchema } from "@formily/react";
 import { isArr } from "@formily/shared";
 import { useWhyDidYouUpdate } from "ahooks";
+import { TableColumnType } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useContext, useMemo, useState } from "react";
 import type { ResizeCallbackData } from "react-resizable";
@@ -66,25 +67,63 @@ const parseArrayItems = (arrayField: ArrayField, schema: Schema["items"]) => {
     return columns;
   }, sources);
 };
+export interface IColumnConfig {
+  dataIndex: string;
+  title: string;
+  show: boolean;
+  pin?: "left" | "right";
+  order: number;
+}
 
-const useColumns = (
+export const getColumnsConfig = (sources: ObservableColumnSource[]) => {
+  const ans = sources.reduce(
+    (data, item, idx) => {
+      const { name, columnProps } = item;
+      data.list.push({
+        dataIndex: name,
+        title: columnProps.title as string,
+        order: idx,
+        show: true,
+        // TODO
+        pin: columnProps.fixed
+          ? data.info.prevfixed
+            ? "left"
+            : "right"
+          : undefined,
+      });
+      return data;
+    },
+    {
+      list: [] as IColumnConfig[],
+      // TODO
+      info: { prevfixed: sources?.[0]?.columnProps?.fixed },
+    },
+  );
+  return ans.list;
+};
+
+export const useArrayTableColumns = (
   arrayField: ArrayField,
   sources: ObservableColumnSource[],
   dataSource: any[],
 ) => {
   const [resize, setResizes] = useState<number[]>([]);
-  const proCtx = useContext(ArrayTableProSettingsContext);
+  const [config, setConfig] = useState<IColumnConfig[]>(
+    getColumnsConfig(sources),
+  );
+
   const prebuild = sources.filter((item) => {
+    const conf = config.find((x) => x.dataIndex === item.name);
     return (
       item.display === "visible" &&
-      proCtx.columns.find((x) => x.dataIndex === item.name)?.show !== false &&
+      (conf ? conf?.show !== false : true) &&
       isColumnComponent(item.schema)
     );
   });
 
   prebuild.sort((a, b) => {
-    const pa = proCtx.columns.find((x) => x.dataIndex === a.name);
-    const pb = proCtx.columns.find((x) => x.dataIndex === b.name);
+    const pa = config.find((x) => x.dataIndex === a.name);
+    const pb = config.find((x) => x.dataIndex === b.name);
     const rank = (pb?.order ?? 0) - (pa?.order ?? 0) > 0 ? -1 : 1;
     return rank;
   });
@@ -114,8 +153,7 @@ const useColumns = (
           /**
            * 优化笔记：
            * 这里用传入的 dataSoruce 比使用 arrayField.value 要快得多， 在10w条数据测试中感受明显
-           * 暂时我还不太明白是为什么, 初步猜测，在外部的 slice 创造了一个浅拷贝
-           * 即这里的 dataSource 是个浅拷贝， 那么这个浅拷贝的 indexOf 在内部的遍历
+           * 在外部的 slice 创造了一个浅拷贝, 即这里的 dataSource 是个浅拷贝， 那么这个浅拷贝的 indexOf 在内部的遍历
            * 就能够减少那一堆本来 Observer 的 get handle;
            * 跟这里有异曲同工之妙 @link https://github.com/alibaba/formily/pull/3863#discussion_r1234706804
            */
@@ -140,15 +178,21 @@ const useColumns = (
     [],
   );
 
-  return columns;
+  return [
+    columns,
+    // bind
+    {
+      value: config,
+      onChange: setConfig,
+    },
+  ] as const;
 };
 
-export const useArrayTableSources = (dataSource: any[]) => {
+export const useArrayTableSources = () => {
   const arrayField = useField<ArrayField>();
   const schema = useFieldSchema();
   const sources = parseArrayItems(arrayField, schema.items);
-  const columns = useColumns(arrayField, sources, dataSource);
-  return [columns, sources] as const;
+  return sources;
 };
 
 export const useExpandRender = (index: number) => {
