@@ -1,4 +1,4 @@
-import { builtins } from "../../deps/peer";
+import { builtins } from "../../adaptor/adaptor";
 const { SortableContainer, SortableElement, usePrefixCls } = builtins;
 import { ReactFC, useFieldSchema } from "@formily/react";
 import cls from "classnames";

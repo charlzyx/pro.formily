@@ -1,0 +1,16 @@
+{
+  "name": "antd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@formily/antd-v5": "^1.*.*",
+    "antd": "^5.*.*"
+  }
+}

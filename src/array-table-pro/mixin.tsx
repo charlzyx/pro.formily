@@ -1,8 +1,7 @@
-import { ArrayBaseMixins } from "@formily/antd";
 import { ReactFC, observer } from "@formily/react";
 import React, { Fragment } from "react";
-import { ArrayBase, ColumnProps } from "../deps/peer";
-import { Alert, Button, Divider, Space } from "../deps/ui";
+import { Alert, Button, Divider, Space } from "../adaptor";
+import { ArrayBase, ArrayBaseMixins, ColumnProps } from "../adaptor/adaptor";
 import { useArrayCompPropsOf } from "./features/hooks";
 
 export const Column: ReactFC<ColumnProps<any>> = () => {
@@ -14,7 +13,7 @@ export const RowExpand: ReactFC<ColumnProps<any>> = () => {
 
 export const Addition: ArrayBaseMixins["Addition"] = observer((props) => {
   const array = ArrayBase.useArray();
-  const [, $page] = useArrayCompPropsOf(array.field, "pagination");
+  const [, $page] = useArrayCompPropsOf(array?.field, "pagination");
   return (
     <ArrayBase.Addition
       block={false}
@@ -62,7 +61,7 @@ export const RowSelectionPro = (props: {
 }) => {
   const { ds, rowKey } = props;
   const array = ArrayBase.useArray();
-  const [, $row] = useArrayCompPropsOf(array.field, "rowSelection");
+  const [, $row] = useArrayCompPropsOf(array?.field, "rowSelection");
   return ds.length > 0 ? (
     <Alert
       style={{ padding: "3px 4px" }}

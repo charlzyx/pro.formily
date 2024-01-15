@@ -9,14 +9,6 @@ import { toJS } from "@formily/reactive";
 import useCreation from "ahooks/es/useCreation";
 import React, { useMemo } from "react";
 import {
-  Checkbox,
-  FormItem,
-  Input,
-  NumberPicker,
-  PreviewText,
-  Radio,
-} from "../../deps/peer";
-import {
   Button,
   ColumnHeightOutlined,
   ConfigProvider,
@@ -25,7 +17,15 @@ import {
   SettingOutlined,
   Slider,
   Space,
-} from "../../deps/ui";
+} from "../../adaptor";
+import {
+  Checkbox,
+  FormItem,
+  Input,
+  NumberPicker,
+  PreviewText,
+  Radio,
+} from "../../adaptor/adaptor";
 import { useArrayTableColumns } from "../hooks";
 import { ArrayTablePro } from "../pro";
 

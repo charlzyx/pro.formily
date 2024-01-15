@@ -1,35 +1,37 @@
 {
-  "name": "rspress-doc-template",
+  "name": "@proformily/antd",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "rspress dev",
+    "d4": "node scripts/switch.js antd dev && rspress dev",
+    "d5": "node scripts/switch.js antd dev && rspress dev",
     "build:docs": "rspress build",
     "preview": "rspress preview"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
-    "@formily/antd": "^2.3.1",
     "@formily/core": "^2.3.1",
     "@formily/react": "^2.3.1",
     "@formily/reactive": "^2.3.1",
     "@formily/shared": "^2.3.1",
     "ahooks": "^3.7.8",
-    "antd": "^4.24.15",
     "moment": "^2.30.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-resizable": "^3.0.5"
+    "react-resizable": "^3.0.5",
+    "@formily/antd": "^2.*.*",
+    "antd": "^4.*.*"
   },
   "devDependencies": {
-    "rspress": "^1.9.3",
     "@biomejs/biome": "^1.5.0",
+    "@faker-js/faker": "^8.3.1",
     "@rsbuild/plugin-react": "^0.2.18",
     "@rspress/plugin-preview": "^1.9.3",
+    "@types/node": "^16.18.70",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@types/react-resizable": "^3.0.7",
-    "@faker-js/faker": "^8.3.1",
-    "@types/node": "^16.18.70"
+    "rimraf": "^5.0.5",
+    "rspress": "^1.9.3"
   }
 }
