@@ -17,7 +17,12 @@ export default defineConfig({
   builderConfig: {
     ...RsBuildConfig,
   },
-  plugins: [pluginPreview()],
+  plugins: [
+    pluginPreview(),
+    () => {
+      require("./scripts/patch.js");
+    },
+  ],
   themeConfig: {
     socialLinks: [
       {

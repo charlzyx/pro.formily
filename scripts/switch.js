@@ -44,34 +44,29 @@ const docs = () => {
   return list;
 };
 
+const replaeer = (c) => {
+  if (adaptor === "antd") {
+    return c
+      .replace(`@formily/antd-v5"`, `@formily/antd"`)
+      .replace(`@proformily/antd-v5"`, `@proformily/antd"`)
+      .replace(`proformily-antd-v5"`, `proformily-antd"`)
+      .replace("antd/dist/reset.css", "antd/dist/antd.css");
+  } else {
+    return c
+      .replace(`@formily/antd"`, `@formily/antd-v5"`)
+      .replace(`@proformily/antd"`, `@proformily/antd-v5"`)
+      .replace(`proformily-antd"`, `proformily-antd-v5"`)
+      .replace("antd/dist/antd.css", "antd/dist/reset.css");
+  }
+};
 docs()
   .filter((x) => /\.(mdx|md|tsx|ts|js|js)$/.test(x))
   .forEach((item) => {
-    rewite(item, (c) => {
-      if (adaptor === "antd") {
-        return c
-          .replace("formily/antd-v5", "formily/antd")
-          .replace("antd/dist/reset.css", "antd/dist/antd.css");
-      } else {
-        return c
-          .replace("formily/antd", "formily/antd-v5")
-          .replace("antd/dist/antd.css", "antd/dist/reset.css");
-      }
-    });
+    rewite(item, replaeer);
   });
 
 files.forEach((item) => {
-  rewite(item, (c) => {
-    if (adaptor === "antd") {
-      return c
-        .replace("formily/antd-v5", "formily/antd")
-        .replace("proformily-antd-v5", "proformily-antd");
-    } else {
-      return c
-        .replace("formily/antd", "formily/antd-v5")
-        .replace("proformily-antd", "proformily-antd-v5");
-    }
-  });
+  rewite(item, replaeer);
 });
 
 const shadow = path.resolve(__dirname, "../src/adaptor");
@@ -105,13 +100,13 @@ const deps = {
 };
 
 // sed -i 's/@proformily\/antd/@proformily\/antd-v5/g' *
-fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), "utf-8");
 
 if (!pkg.dependencies[`@formily/${adaptor}`]) {
   pkg.dependencies = {
     ...deps,
     ...adaptorPkg.dependencies,
   };
+  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), "utf-8");
   rmrf.sync(path.resolve(__dirname, "../node_modules"));
 }
 
