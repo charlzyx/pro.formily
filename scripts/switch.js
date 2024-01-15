@@ -81,6 +81,8 @@ if (mode === "dev") {
 } else {
   execSync(`rm -rf ${shadow}`);
   execSync(`cp -R ${ui} ${shadow}`);
+  rmrf.sync(path.resolve(__dirname, "../node_modules"));
+  rmrf.sync(path.resolve(__dirname, "../doc_build"));
 }
 const pkgPath = path.resolve(__dirname, "../package.json");
 const pkg = JSON.parse(fs.readFileSync(pkgPath));
@@ -101,14 +103,12 @@ const deps = {
 
 // sed -i 's/@proformily\/antd/@proformily\/antd-v5/g' *
 
-if (!pkg.dependencies[`@formily/${adaptor}`]) {
-  pkg.dependencies = {
-    ...deps,
-    ...adaptorPkg.dependencies,
-  };
-  fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), "utf-8");
-  rmrf.sync(path.resolve(__dirname, "../node_modules"));
-}
+pkg.dependencies = {
+  ...deps,
+  ...adaptorPkg.dependencies,
+};
+fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), "utf-8");
+rmrf.sync(path.resolve(__dirname, "../node_modules"));
 
 rmrf.sync(path.resolve(__dirname, "../doc_build"));
 execSync("bun i");
