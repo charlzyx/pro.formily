@@ -1,10 +1,11 @@
-import type { ArrayField, ObjectField } from "@formily/core";
+import type { ArrayField } from "@formily/core";
 import { observer, useField } from "@formily/react";
-import { TablePaginationConfig } from "antd";
 import { useEffect } from "react";
-import { ArrayTablePro, ArrayTableProProps } from "../array-table-pro";
-import { ArrayBase } from "../array-table-pro/array-base";
+import { ArrayTableProProps } from "src/array-table-pro/types";
 import { Addition, Column, RowExpand } from "../array-table-pro/mixin";
+import { ArrayTablePro } from "../array-table-pro/pro";
+import { ArrayBase } from "../deps/peer";
+import { TablePaginationConfig } from "../deps/ui";
 import { useQueryListContext } from "../query-list";
 
 export const QueryTablePro = observer((overprops: ArrayTableProProps) => {

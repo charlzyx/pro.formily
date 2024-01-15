@@ -1,9 +1,8 @@
 import { ArrayBaseMixins } from "@formily/antd";
 import { ReactFC, observer } from "@formily/react";
-import { Alert, Button, Divider, Space } from "antd";
-import { ColumnProps } from "antd/es/table";
 import React, { Fragment } from "react";
-import { ArrayBase } from "./array-base";
+import { ArrayBase, ColumnProps } from "../deps/peer";
+import { Alert, Button, Divider, Space } from "../deps/ui";
 import { useArrayCompPropsOf } from "./features/hooks";
 
 export const Column: ReactFC<ColumnProps<any>> = () => {
@@ -56,7 +55,8 @@ export const Flex = (
     </div>
   );
 };
-export const RowSelection = (props: {
+
+export const RowSelectionPro = (props: {
   ds: any[];
   rowKey: (record: any) => string | number;
 }) => {

@@ -2,15 +2,10 @@ import { ArrayField, isArrayField } from "@formily/core";
 import { Schema } from "@formily/json-schema";
 import { RecursionField, useField, useFieldSchema } from "@formily/react";
 import { isArr } from "@formily/shared";
-import { useWhyDidYouUpdate } from "ahooks";
-import { TableColumnType } from "antd";
-import { ColumnsType } from "antd/es/table";
-import { useContext, useMemo, useState } from "react";
+import { useState } from "react";
 import type { ResizeCallbackData } from "react-resizable";
-import { ArrayBase } from "./array-base";
-import { ArrayTableProSettingsContext } from "./context";
+import { ArrayBase, ColumnsType } from "../deps/peer";
 import {
-  ObservableColumnSource,
   isAdditionComponent,
   isColumnComponent,
   isExpandComponent,
@@ -18,6 +13,7 @@ import {
   isOperationsComponent,
   isToolbarComponent,
 } from "./helper";
+import { ObservableColumnSource } from "./types";
 
 const parseSources = (
   arrayField: ArrayField,
@@ -139,6 +135,8 @@ export const useArrayTableColumns = (
         dataIndex: name,
         onHeaderCell: () => {
           return {
+            // 默认开启
+            resizeable: columnProps.resizeable ?? true,
             width: resize[key] ?? columnProps.width,
             onResize(e: any, data: ResizeCallbackData) {
               setResizes((prev) => {

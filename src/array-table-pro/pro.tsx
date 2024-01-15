@@ -1,16 +1,15 @@
 import { usePrefixCls } from "@formily/antd/esm/__builtins__";
 import { ArrayField } from "@formily/core";
 import { ReactFC, RecursionField, observer, useField } from "@formily/react";
-// import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
-import { Pagination, Table, Typography } from "antd";
-import { TableProps } from "antd/es/table";
 import React, { useEffect, useRef } from "react";
-import { ArrayBase } from "./array-base";
+import { ArrayBase } from "../deps/peer";
+// import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
+import { Pagination, Table, Typography } from "../deps/ui";
 import { ProSettings } from "./features/pro-settings";
 import { ResizableTitle } from "./features/resizeable";
 import { useSortable } from "./features/sortable";
 import { useExpandableAttach } from "./features/use-expandable-attach";
-import { usePagination } from "./features/use-pagination";
+import { usePagination } from "./features/use-pagination-attach";
 import { useRowSelectionAttach } from "./features/use-row-selection-attach";
 import { isColumnComponent } from "./helper";
 import {
@@ -20,31 +19,8 @@ import {
   useFooter,
   useToolbar,
 } from "./hooks";
-import { Addition, Column, Flex, RowExpand, RowSelection } from "./mixin";
-import "./style";
-export { useArrayField } from "./hooks";
-
-export type ArrayTableProProps = Omit<TableProps<any>, "title"> & {
-  title: string | TableProps<any>["title"];
-  footer: string | TableProps<any>["footer"];
-  /** 列表配置齿轮, 默认 true */
-  settings?: boolean;
-  /** 表头列宽是否可拖动, 默认 true */
-  resizeable?: boolean;
-  /** 是否开启根据 page 信息 slice 性能优化, 默认开启  */
-  slice?: boolean;
-  /** onChange 与 formily#field 的 onChange 冲突，但很有用， 所以改个名字 */
-  onTableChange?: TableProps<any>["onChange"];
-};
-
-type TableChangeParams = Parameters<Required<TableProps<any>>["onChange"]>;
-
-export type IChangeData = {
-  pagination: TableChangeParams[0];
-  filters: TableChangeParams[1];
-  sorter: TableChangeParams[2];
-  extra: TableChangeParams[3];
-};
+import { Addition, Column, Flex, RowExpand, RowSelectionPro } from "./mixin";
+import { ArrayTableProProps, IChangeData } from "./types";
 
 const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -139,10 +115,9 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
           </Typography.Title>
         )
       ) : null}
-      {props.rowSelection ? (
-        <RowSelection ds={dataSlice} rowKey={rowKey}></RowSelection>
+      {(props.rowSelection as any)?.position === "top" ? (
+        <RowSelectionPro ds={dataSlice} rowKey={rowKey}></RowSelectionPro>
       ) : null}
-
       {toolbar}
       {addition}
       {props.settings !== false ? (
@@ -160,6 +135,9 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
         ) : (
           <Typography.Title level={5}>{props.footer}</Typography.Title>
         )
+      ) : null}
+      {(props.rowSelection as any)?.position === "bottom" ? (
+        <RowSelectionPro ds={dataSlice} rowKey={rowKey}></RowSelectionPro>
       ) : null}
       {footer}
       <Flex justifyContent={"flex-end"}>{pagination}</Flex>

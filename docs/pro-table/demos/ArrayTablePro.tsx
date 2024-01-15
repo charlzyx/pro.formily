@@ -49,11 +49,15 @@ const CustomeToolbar = () => {
 const CustomeFooter = () => {
   const array = ArrayBase.useArray!();
   const [, $page] = useArrayCompPropsOf(array.field, "pagination");
-  const totalPage = (($page?.total || 0)! / ($page?.pageSize || 1)).toFixed(0);
+  const totalPage =
+    $page === false
+      ? 0
+      : (($page?.total || 0)! / ($page?.pageSize || 1)).toFixed(0);
   return (
     <Space>
       自定义底部
-      {$page?.current}/{totalPage}, 共计{array.field.value.length}条数据
+      {$page === false ? 0 : $page!.current}/{totalPage}, 共计
+      {array.field.value.length}条数据
     </Space>
   );
 };

@@ -1,6 +1,5 @@
-import { FormGrid } from "@formily/antd";
-import type React from "react";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
+import { FormGrid } from "../deps/peer";
 
 export const useGrid = (conf: React.ComponentProps<typeof FormGrid> = {}) => {
   const maxRows = conf.maxRows || 2;

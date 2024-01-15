@@ -1,16 +1,15 @@
 import { ArrayField } from "@formily/core";
 import { useField } from "@formily/react";
 import { toJS } from "@formily/reactive";
-import { Table } from "antd";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import { ArrayTableProProps } from "../types";
 
-export type IRowSelection = Exclude<
-  Required<React.ComponentProps<typeof Table>>["rowSelection"],
-  boolean
-> & {
+export type IRowSelection = Required<ArrayTableProProps>["rowSelection"] & {
   selectedRows?: Parameters<Required<IRowSelection>["onChange"]>[1];
   info?: Parameters<Required<IRowSelection>["onChange"]>[2];
 };
+
+export type IRowSelectionConfig = Exclude<IRowSelection, true | undefined>;
 
 type RowKey = string | ((row: any) => React.Key);
 
@@ -34,12 +33,12 @@ export const useRowSelectionAttach = (
       if (s.componentProps?.rowSelection === true) {
         s.componentProps.rowSelection = {};
       }
-      const $row: IRowSelection = s.componentProps?.rowSelection;
+      const $row: IRowSelectionConfig = s.componentProps?.rowSelection;
       if (!$row) return;
 
       const _onChange = $row?.onChange;
 
-      const override: IRowSelection = {
+      const override: IRowSelectionConfig = {
         selectedRowKeys: [],
         selectedRows:
           $row?.selectedRowKeys && rowKeyRef?.current

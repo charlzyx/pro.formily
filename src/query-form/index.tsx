@@ -1,16 +1,10 @@
-import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
-  DownOutlined,
-  UpOutlined,
-} from "@ant-design/icons";
-import type { FormLayout } from "@formily/antd";
-import { FormButtonGroup, FormGrid } from "@formily/antd";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import type { ObjectField } from "@formily/core";
 import { observer, useField } from "@formily/react";
 import { clone } from "@formily/shared";
 import { Button } from "antd";
 import React, { useEffect } from "react";
+import { FormButtonGroup, FormGrid, FormLayout } from "../deps/peer";
 import { useQueryListContext } from "../query-list";
 import { useGrid } from "./useGrid";
 

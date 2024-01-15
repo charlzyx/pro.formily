@@ -1,14 +1,11 @@
 import { ArrayField } from "@formily/core";
 import { useField } from "@formily/react";
 import { toJS } from "@formily/reactive";
-import { Table } from "antd";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useExpandRender } from "../hooks";
+import { ArrayTableProProps } from "../types";
 
-export type IExpandableProps = Exclude<
-  Required<React.ComponentProps<typeof Table>>["expandable"],
-  boolean
-> & {};
+export type IExpandableProps = Required<ArrayTableProProps>["expandable"] & {};
 
 type GetParamsAt<T extends 0 | 1 | 2 | 3 | 4> = Parameters<
   Required<IExpandableProps>["expandedRowRender"]

@@ -1,8 +1,5 @@
-import {
-  SortableContainer,
-  SortableElement,
-  usePrefixCls,
-} from "@formily/antd/esm/__builtins__";
+import { builtins } from "../../deps/peer";
+const { SortableContainer, SortableElement, usePrefixCls } = builtins;
 import { ReactFC, useFieldSchema } from "@formily/react";
 import cls from "classnames";
 import React from "react";

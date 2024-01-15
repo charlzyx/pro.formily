@@ -1,14 +1,4 @@
-import { FieldDisplayTypes, GeneralField } from "@formily/core";
 import { Schema } from "@formily/json-schema";
-import { ColumnProps } from "antd/es/table";
-
-export interface ObservableColumnSource {
-  field?: GeneralField;
-  columnProps: ColumnProps<any>;
-  schema: Schema;
-  display: FieldDisplayTypes;
-  name: string;
-}
 
 export const isColumnComponent = (schema: Schema) => {
   return schema["x-component"]?.indexOf("Column") > -1;

@@ -1,7 +1,6 @@
-import { ArrayField, Field, GeneralField } from "@formily/core";
+import { ArrayField, Field } from "@formily/core";
 import { useForm } from "@formily/react";
 import { clone } from "@formily/shared";
-import { TableProps } from "antd";
 import React, {
   createContext,
   useContext,
@@ -10,6 +9,7 @@ import React, {
   useState,
 } from "react";
 import { noop } from "src/__builtins__";
+import type { TableProps } from "../deps/ui";
 
 type TableChangeParams = Parameters<Required<TableProps<any>>["onChange"]>;
 

@@ -1,9 +1,13 @@
+import { createForm, onFieldInputValueChange } from "@formily/core";
 import {
-  ColumnHeightOutlined,
-  FontSizeOutlined,
-  SettingOutlined,
-} from "@ant-design/icons";
-
+  FormProvider,
+  ISchema,
+  connect,
+  createSchemaField,
+} from "@formily/react";
+import { toJS } from "@formily/reactive";
+import useCreation from "ahooks/es/useCreation";
+import React, { useMemo } from "react";
 import {
   Checkbox,
   FormItem,
@@ -11,22 +15,19 @@ import {
   NumberPicker,
   PreviewText,
   Radio,
-} from "@formily/antd";
-import { createForm, onFieldInputValueChange } from "@formily/core";
+} from "../../deps/peer";
 import {
-  FormProvider,
-  ISchema,
-  connect,
-  createSchemaField,
-  observer,
-} from "@formily/react";
-import { toJS } from "@formily/reactive";
-import useCreation from "ahooks/es/useCreation";
-import { Button, ConfigProvider, Popover, Row, Slider, Space } from "antd";
-import React, { useContext, useMemo } from "react";
-import { ArrayTableProSettingsContext } from "../context";
+  Button,
+  ColumnHeightOutlined,
+  ConfigProvider,
+  Popover,
+  Row,
+  SettingOutlined,
+  Slider,
+  Space,
+} from "../../deps/ui";
 import { useArrayTableColumns } from "../hooks";
-import { ArrayTablePro } from "../index";
+import { ArrayTablePro } from "../pro";
 
 const schema: ISchema = {
   type: "object",

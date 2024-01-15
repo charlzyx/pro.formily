@@ -1,14 +1,10 @@
 import { ArrayField } from "@formily/core";
 import { useField } from "@formily/react";
 import { toJS } from "@formily/reactive";
-import { Table } from "antd";
 import React, { useEffect } from "react";
-import { ArrayTableProProps, IChangeData } from "..";
+import { ArrayTableProProps, IChangeData } from "../types";
 
-export type IPaginationProps = Exclude<
-  Required<React.ComponentProps<typeof Table>>["pagination"],
-  boolean
-> & {
+export type IPaginationProps = Required<ArrayTableProProps>["pagination"] & {
   reset: () => void;
 };
 

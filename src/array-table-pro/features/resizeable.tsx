@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import type { ResizeCallbackData } from "react-resizable";
 import { Resizable } from "react-resizable";
 
@@ -19,6 +19,7 @@ export class ResizableTitle extends React.Component<
       data: ResizeCallbackData,
     ) => void;
     style: React.CSSProperties;
+    resizeable?: boolean;
   },
   {
     width: number;
@@ -57,8 +58,8 @@ export class ResizableTitle extends React.Component<
   };
 
   render() {
-    const { width, onResize, ...others } = this.props;
-    return !width ? (
+    const { width, resizeable, onResize, ...others } = this.props;
+    return !width || !resizeable ? (
       <th
         {...others}
         style={{
