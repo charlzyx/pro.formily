@@ -4,7 +4,7 @@ import { defineConfig } from "rspress/config";
 import RsBuildConfig from "./rsbuild.config";
 
 export default defineConfig({
-  base: "/pro.formily/",
+  base: "/proformily-antd/",
   root: path.join(__dirname, "docs"),
   title: "ProFormily",
   description: "Pro Formily, 启动!",
@@ -17,7 +17,12 @@ export default defineConfig({
   builderConfig: {
     ...RsBuildConfig,
   },
-  plugins: [pluginPreview()],
+  plugins: [
+    pluginPreview(),
+    () => {
+      require("./scripts/patch.js");
+    },
+  ],
   themeConfig: {
     socialLinks: [
       {

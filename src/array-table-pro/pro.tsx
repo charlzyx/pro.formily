@@ -1,10 +1,9 @@
-import { usePrefixCls } from "@formily/antd/esm/__builtins__";
 import { ArrayField } from "@formily/core";
 import { ReactFC, RecursionField, observer, useField } from "@formily/react";
 import React, { useEffect, useRef } from "react";
-import { ArrayBase } from "../deps/peer";
 // import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
-import { Pagination, Table, Typography } from "../deps/ui";
+import { Pagination, Table, Typography } from "../adaptor";
+import { ArrayBase, builtins } from "../adaptor/adaptor";
 import { ProSettings } from "./features/pro-settings";
 import { ResizableTitle } from "./features/resizeable";
 import { useSortable } from "./features/sortable";
@@ -21,11 +20,14 @@ import {
 } from "./hooks";
 import { Addition, Column, Flex, RowExpand, RowSelectionPro } from "./mixin";
 import { ArrayTableProProps, IChangeData } from "./types";
+const { usePrefixCls } = builtins;
+import useStyle from "../adaptor/themes/array-table-pro/useStyle";
 
 const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   const field = useField<ArrayField>();
   const prefixCls = usePrefixCls("formily-array-table");
+  const [wrapSSR, hasId] = useStyle(prefixCls);
   /**
    * 优化笔记：
    * 本来以为这个 slice 没什么用，直到我膝盖中了一箭
@@ -144,10 +146,10 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
     </Flex>
   );
 
-  return (
+  return wrapSSR(
     <ArrayBase>
       {_header}
-      <div ref={ref} className={prefixCls}>
+      <div ref={ref} className={`${prefixCls} ${hasId}`}>
         <Table
           bordered
           rowKey={rowKey}
@@ -197,7 +199,7 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
           key,
         });
       })}
-    </ArrayBase>
+    </ArrayBase>,
   );
 });
 

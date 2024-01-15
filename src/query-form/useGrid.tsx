@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { FormGrid } from "../deps/peer";
+import { FormGrid } from "../adaptor/adaptor";
 
 export const useGrid = (conf: React.ComponentProps<typeof FormGrid> = {}) => {
   const maxRows = conf.maxRows || 2;

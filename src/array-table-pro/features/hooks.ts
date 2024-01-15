@@ -26,7 +26,7 @@ type SupportedProps = {
   expandable: IExpandableProps;
 };
 export const useArrayCompPropsOf = <K extends keyof SupportedProps>(
-  field: GeneralField,
+  field: GeneralField | undefined,
   key: K,
 ) => {
   const $props = (field?.componentProps as any)?.[key];

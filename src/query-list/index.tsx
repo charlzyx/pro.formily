@@ -8,8 +8,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { noop } from "src/__builtins__";
-import type { TableProps } from "../deps/ui";
+import { noop } from "../__builtins__";
+import type { TableProps } from "../adaptor";
 
 type TableChangeParams = Parameters<Required<TableProps<any>>["onChange"]>;
 

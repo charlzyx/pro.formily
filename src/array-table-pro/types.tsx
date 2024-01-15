@@ -1,6 +1,6 @@
 import { FieldDisplayTypes, GeneralField } from "@formily/core";
 import { Schema } from "@formily/json-schema";
-import type { ColumnProps, TableProps } from "../deps/peer";
+import type { ColumnProps, TableProps } from "../adaptor/adaptor";
 
 type TableChangeParams = Parameters<Required<TableProps<any>>["onChange"]>;
 

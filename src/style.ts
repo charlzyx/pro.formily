@@ -1,1 +1,1 @@
-import "./array-table-pro/style";
+import "./adaptor/themes/index";

@@ -4,7 +4,7 @@ import { RecursionField, useField, useFieldSchema } from "@formily/react";
 import { isArr } from "@formily/shared";
 import { useState } from "react";
 import type { ResizeCallbackData } from "react-resizable";
-import { ArrayBase, ColumnsType } from "../deps/peer";
+import { ArrayBase, ColumnsType } from "../adaptor/adaptor";
 import {
   isAdditionComponent,
   isColumnComponent,
@@ -200,7 +200,10 @@ export const useExpandRender = (index: number) => {
   return schema.reduceProperties((expand, schema, key) => {
     if (isExpandComponent(schema)) {
       return (
-        <ArrayBase.Item index={index} record={() => array.field.value?.[index]}>
+        <ArrayBase.Item
+          index={index}
+          record={() => array?.field.value?.[index]}
+        >
           <RecursionField onlyRenderProperties schema={schema} name={index} />
         </ArrayBase.Item>
       );

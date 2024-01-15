@@ -14,6 +14,7 @@ import {
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { Button, ConfigProvider, Divider, Space } from "antd";
 import "antd/dist/antd.css";
+// import "antd/dist/antd.css";
 import zhCN from "antd/lib/locale/zh_CN";
 import moment from "moment";
 import "moment/locale/zh-cn";
@@ -23,18 +24,19 @@ import {
   ArrayTablePro,
   useArrayCompPropsOf,
   useFormArrayProps,
-} from "proformily";
+} from "@proformily/antd";
 import { useEffect } from "react";
 
 const CustomeToolbar = () => {
   const array = ArrayBase.useArray!();
-  const [, $row] = useArrayCompPropsOf(array.field, "rowSelection");
+  const [, $row] = useArrayCompPropsOf(array?.field, "rowSelection");
   return (
     <Space>
       <Button
         type="primary"
         onClick={() => {
           // ok
+          if (!array) return;
           console.log(array.field.componentProps.rowSelection.selectedRowKeys);
           if (!$row) return;
           // but quick
@@ -48,7 +50,8 @@ const CustomeToolbar = () => {
 };
 const CustomeFooter = () => {
   const array = ArrayBase.useArray!();
-  const [, $page] = useArrayCompPropsOf(array.field, "pagination");
+  const [, $page] = useArrayCompPropsOf(array?.field, "pagination");
+  console.log("🚀 ~ CustomeFooter ~ $page:", $page);
   const totalPage =
     $page === false
       ? 0
@@ -56,15 +59,16 @@ const CustomeFooter = () => {
   return (
     <Space>
       自定义底部
-      {$page === false ? 0 : $page!.current}/{totalPage}, 共计
-      {array.field.value.length}条数据
+      {$page === false ? 0 : $page?.current}/{totalPage}, 共计
+      {array?.field?.value?.length}条数据
     </Space>
   );
 };
 
 const RowSummary = () => {
   const row = ArrayBase.useRecord!();
-  const summary = row.a1 + row.a2 + row.a3;
+  console.log("🚀 ~ RowSummary ~ row:", row);
+  const summary = row ? "" : row.a1 + row.a2 + row.a3;
   return (
     <div
       style={{

@@ -13,8 +13,12 @@
     "declaration": true,
     "moduleResolution": "node",
     "paths": {
-      "proformily": ["./src"]
+      "@proformily/antd": ["src"]
     }
   },
-  "include": ["src", "docs"]
+  "include": [
+    "src",
+    "docs",
+    "ui",
+  ]
 }
