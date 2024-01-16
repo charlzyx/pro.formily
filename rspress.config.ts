@@ -2,10 +2,12 @@ import * as path from "path";
 import { pluginPreview } from "@rspress/plugin-preview";
 import { defineConfig } from "rspress/config";
 import RsBuildConfig from "./rsbuild.config";
+import { pluginFixCss } from "./scripts/fixcss";
 
 export default defineConfig({
-  base: "/pro.formily/",
+  base: "/pro.formily/antd-v5/",
   root: path.join(__dirname, "docs"),
+  outDir: "./doc_build/antd-v5",
   title: "ProFormily",
   description: "Pro Formily, 启动!",
   icon: "/rspress-icon.png",
@@ -17,12 +19,7 @@ export default defineConfig({
   builderConfig: {
     ...RsBuildConfig,
   },
-  plugins: [
-    pluginPreview(),
-    () => {
-      require("./scripts/patch.js");
-    },
-  ],
+  plugins: [pluginPreview(), pluginFixCss()],
   themeConfig: {
     socialLinks: [
       {

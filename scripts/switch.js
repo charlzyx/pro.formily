@@ -49,13 +49,16 @@ const replaeer = (c) => {
     return c
       .replace(`@formily/antd-v5"`, `@formily/antd"`)
       .replace(`@proformily/antd-v5"`, `@proformily/antd"`)
-      .replace(`proformily-antd-v5"`, `proformily-antd"`)
+      .replace(`/pro.formily/antd-v5"`, `/pro.formily/antd"`)
+      .replace(`/doc_build/antd-v5"`, `/doc_build/antd"`)
       .replace("antd/dist/reset.css", "antd/dist/antd.css");
   } else {
     return c
       .replace(`@formily/antd"`, `@formily/antd-v5"`)
       .replace(`@proformily/antd"`, `@proformily/antd-v5"`)
       .replace(`proformily-antd"`, `proformily-antd-v5"`)
+      .replace(`/pro.formily/antd"`, `/pro.formily/antd-v5"`)
+      .replace(`/doc_build/antd"`, `/doc_build/antd-v5"`)
       .replace("antd/dist/antd.css", "antd/dist/reset.css");
   }
 };
@@ -78,11 +81,10 @@ rmrf.sync(shadow);
 if (mode === "dev") {
   execSync(`rm -rf ${shadow}`);
   execSync(`ln -s ${ui} ${shadow}`);
+  rmrf.sync(path.resolve(__dirname, "../doc_build"));
 } else {
   execSync(`rm -rf ${shadow}`);
   execSync(`cp -R ${ui} ${shadow}`);
-  rmrf.sync(path.resolve(__dirname, "../node_modules"));
-  rmrf.sync(path.resolve(__dirname, "../doc_build"));
 }
 const pkgPath = path.resolve(__dirname, "../package.json");
 const pkg = JSON.parse(fs.readFileSync(pkgPath));
@@ -110,6 +112,5 @@ pkg.dependencies = {
 fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), "utf-8");
 rmrf.sync(path.resolve(__dirname, "../node_modules"));
 
-rmrf.sync(path.resolve(__dirname, "../doc_build"));
 execSync("bun i");
 console.log("ready for --", adaptor);
