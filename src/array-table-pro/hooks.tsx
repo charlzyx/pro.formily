@@ -23,8 +23,7 @@ const parseSources = (
     isColumnComponent(schema) ||
     isOperationsComponent(schema) ||
     isAdditionComponent(schema) ||
-    isToolbarComponent(schema) ||
-    isExpandComponent(schema)
+    isToolbarComponent(schema)
   ) {
     if (!schema["x-component-props"]?.dataIndex && !schema.name) return [];
     const name = schema["x-component-props"]?.dataIndex || schema.name;
@@ -196,8 +195,12 @@ export const useArrayTableSources = () => {
 export const useExpandRender = (index: number) => {
   const schema = useFieldSchema();
   const array = ArrayBase.useArray();
+  const items = schema.items as Schema;
+  if (!items) return;
 
-  return schema.reduceProperties((expand, schema, key) => {
+  // 只支持单个
+  const expandRender = items.reduceProperties((expand: any, schema) => {
+    if (expand) return;
     if (isExpandComponent(schema)) {
       return (
         <ArrayBase.Item
@@ -210,6 +213,7 @@ export const useExpandRender = (index: number) => {
     }
     return expand;
   }, null);
+  return expandRender;
 };
 
 export const useAddition = () => {

@@ -6,9 +6,11 @@ import React from "react";
 import { empty } from "../../__builtins__";
 import { hasSortable } from "../helper";
 
-export const SortableRow = SortableElement((props) => <tr {...props} />);
+export const SortableRow = SortableElement((props: any) => <tr {...props} />);
 
-export const SortableBody = SortableContainer((props) => <tbody {...props} />);
+export const SortableBody = SortableContainer((props: any) => (
+  <tbody {...props} />
+));
 
 export const RowComp: ReactFC<React.HTMLAttributes<HTMLTableRowElement>> = (
   props,
@@ -62,10 +64,10 @@ export const getWrapperComp = (opts: {
           }}
           start={start}
           list={list}
-          onSortStart={(event) => {
+          onSortStart={(event: any) => {
             addTdStyles(event.active.id as number, ref, prefixCls);
           }}
-          onSortEnd={(event) => {
+          onSortEnd={(event: any) => {
             const { oldIndex, newIndex } = event;
             window.requestAnimationFrame(() => {
               onSortEnd(oldIndex, newIndex);

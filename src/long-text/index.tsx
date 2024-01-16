@@ -3,13 +3,21 @@ import { Typography } from "../adaptor";
 
 const { Paragraph } = Typography;
 
-export const LongText = (
-  props: {
+export const LongText: React.FC<
+  React.ComponentProps<typeof Paragraph> & {
     value?: string;
-  } & React.ComponentProps<typeof Paragraph>,
-) => {
+    maxRows?: number;
+  }
+> = (props) => {
   return (
-    <Paragraph copyable ellipsis {...props} style={{ marginBottom: 0 }}>
+    <Paragraph
+      copyable={{
+        tooltips: [props.value],
+      }}
+      ellipsis
+      {...props}
+      style={{ marginBottom: 0, whiteSpace: "break-spaces" }}
+    >
       {props.value}
     </Paragraph>
   );

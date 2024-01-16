@@ -5,7 +5,7 @@ import {
   FormItem,
   Input,
   Submit,
-} from "@formily/antd";
+} from "@formily/antd-v5";
 import {
   createForm,
   onFieldValueChange,
@@ -13,7 +13,7 @@ import {
 } from "@formily/core";
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { Button, ConfigProvider, Divider, Space } from "antd";
-import "antd/dist/antd.css";
+import "antd/dist/reset.css";
 // import "antd/dist/antd.css";
 import zhCN from "antd/lib/locale/zh_CN";
 import moment from "moment";
@@ -24,7 +24,7 @@ import {
   ArrayTablePro,
   useArrayCompPropsOf,
   useFormArrayProps,
-} from "@proformily/antd";
+} from "@proformily/antd-v5";
 import { useEffect } from "react";
 
 const CustomeToolbar = () => {
@@ -209,6 +209,31 @@ delete (subRow as any).items.properties._sort;
 // biome-ignore lint/performance/noDelete: <explanation>
 delete (subRow as any).items.properties._action;
 
+(row.items as any).properties = {
+  ...(row.items as any).properties,
+  _expand: {
+    type: "void",
+    "x-component": "ArrayTablePro.RowExpand",
+    properties: {
+      summary: {
+        type: "void",
+        "x-component": "RowSummary",
+      },
+      subitems: {
+        type: "array",
+        "x-component": "ArrayTablePro",
+        "x-read-pretty": true,
+        "x-component-props": {
+          showHeader: false,
+          settings: false,
+          bordered: false,
+        },
+        items: subRow.items,
+      },
+    },
+  },
+};
+
 const schema: ISchema = {
   type: "object",
   properties: {
@@ -237,27 +262,6 @@ const schema: ISchema = {
         footer: {
           type: "void",
           "x-component": "CustomeFooter",
-        },
-        expand: {
-          type: "void",
-          "x-component": "ArrayTablePro.RowExpand",
-          properties: {
-            summary: {
-              type: "void",
-              "x-component": "RowSummary",
-            },
-            subitems: {
-              type: "array",
-              "x-component": "ArrayTablePro",
-              "x-read-pretty": true,
-              "x-component-props": {
-                showHeader: false,
-                settings: false,
-                bordered: false,
-              },
-              items: subRow.items,
-            },
-          },
         },
       },
     },

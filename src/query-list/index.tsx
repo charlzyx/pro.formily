@@ -1,9 +1,11 @@
 import { ArrayField, Field } from "@formily/core";
 import { useForm } from "@formily/react";
+import { markRaw } from "@formily/reactive";
 import { clone } from "@formily/shared";
 import React, {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -34,6 +36,7 @@ export interface IQueryListProps<Record = any, Params = any> {
     list: Record[];
     total: number;
   }>;
+  queryRef?: React.MutableRefObject<IQueryListContext>;
   /** 首次自动刷新 */
   autoload?: boolean;
   /** 是否将查询参数同步到url上 */
@@ -74,6 +77,12 @@ const QueryListContext = createContext<IQueryListContext>({
 export const useQueryListContext = () => {
   const ctx = useContext(QueryListContext);
   return ctx;
+};
+
+export const useQueryListRef = () => {
+  const ref = useRef<IQueryListContext>();
+  markRaw(ref);
+  return ref;
 };
 
 export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
@@ -158,6 +167,12 @@ export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
       });
       return merge;
     }, [props, loading, methods, form]);
+
+    useEffect(() => {
+      if (props.queryRef) {
+        props.queryRef.current = ctx;
+      }
+    }, [props.queryRef]);
 
     return (
       <QueryListContext.Provider value={ctx}>

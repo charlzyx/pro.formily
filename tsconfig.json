@@ -13,7 +13,7 @@
     "declaration": true,
     "moduleResolution": "node",
     "paths": {
-      "@proformily/antd": ["src"]
+      "@proformily/antd-v5": ["src"]
     }
   },
   "include": [

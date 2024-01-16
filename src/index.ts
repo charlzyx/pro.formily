@@ -6,3 +6,5 @@ export * from "./dict";
 export * from "./image-view";
 export * from "./long-text";
 export * from "./suggestion";
+export * from "./editable-pro";
+export * from "./shared";

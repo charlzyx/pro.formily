@@ -1,1 +1,1 @@
-export default () => [<T>(x: T) => x, ""] as const;
+export default (x: string) => [<T>(x: T) => x, ""] as const;

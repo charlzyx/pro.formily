@@ -2,7 +2,7 @@ import type { ArrayField } from "@formily/core";
 import { observer, useField } from "@formily/react";
 import { useEffect } from "react";
 import { ArrayTableProProps } from "src/array-table-pro/types";
-import { TablePaginationConfig } from "../adaptor";
+import { Button, SyncOutlined, TablePaginationConfig } from "../adaptor";
 import { ArrayBase } from "../adaptor/adaptor";
 import { Addition, Column, RowExpand } from "../array-table-pro/mixin";
 import { ArrayTablePro } from "../array-table-pro/pro";
@@ -44,10 +44,20 @@ export const QueryTablePro = observer((overprops: ArrayTableProProps) => {
       querylist.run();
     },
   };
+  const extra = (
+    <Button
+      size="small"
+      type="link"
+      loading={querylist.loading}
+      onClick={() => querylist.run()}
+      icon={<SyncOutlined></SyncOutlined>}
+    ></Button>
+  );
 
   return (
     <ArrayTablePro
       {...props}
+      extra={extra}
       slice={false}
       loading={props.loading ?? querylist.loading}
     ></ArrayTablePro>

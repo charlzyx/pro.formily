@@ -2,7 +2,7 @@ import { ArrayField } from "@formily/core";
 import { ReactFC, RecursionField, observer, useField } from "@formily/react";
 import React, { useEffect, useRef } from "react";
 // import useWhyDidYouUpdate from "ahooks/es/useWhyDidYouUpdate";
-import { Pagination, Table, Typography } from "../adaptor";
+import { Pagination, Space, Table, Typography } from "../adaptor";
 import { ArrayBase, builtins } from "../adaptor/adaptor";
 import { ProSettings } from "./features/pro-settings";
 import { ResizableTitle } from "./features/resizeable";
@@ -122,9 +122,14 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
       ) : null}
       {toolbar}
       {addition}
-      {props.settings !== false ? (
-        <ProSettings columns={proColumns}></ProSettings>
-      ) : null}
+      {!props.extra && props.settings === false ? null : (
+        <Space size="small">
+          {props.extra}
+          {props.settings !== false ? (
+            <ProSettings columns={proColumns}></ProSettings>
+          ) : null}
+        </Space>
+      )}
     </Flex>
   );
 

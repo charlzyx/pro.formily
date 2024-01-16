@@ -1,16 +1,7 @@
 [
-	{
-		"text": "ProTable",
-		"link": "/pro-table/",
-		"activeMatch": "/pro-table/"
-	},
-	{
-		"text": "启动!",
-		"link": "/hello/",
-		"activeMatch": "/hello/"
-	},
-	{
-		"text": "API",
-		"link": "https://rspress.dev/api/index.html"
-	}
+  {
+    "text": "组件文档",
+    "link": "/components",
+    "activeMatch": "/components"
+  }
 ]

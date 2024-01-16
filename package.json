@@ -1,5 +1,5 @@
 {
-  "name": "@proformily/antd",
+  "name": "@proformily/antd-v5",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -20,8 +20,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-resizable": "^3.0.5",
-    "@formily/antd": "^2.*.*",
-    "antd": "^4.*.*"
+    "@formily/antd-v5": "^1.*.*",
+    "antd": "^5.*.*"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.0",
