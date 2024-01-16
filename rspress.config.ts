@@ -21,6 +21,9 @@ export default defineConfig({
   },
   plugins: [pluginPreview(), pluginFixCss()],
   themeConfig: {
+    footer: {
+      message: "Powered by RsPress. © 2024 charlzyx All Rights Reserved.",
+    },
     socialLinks: [
       {
         icon: "github",
