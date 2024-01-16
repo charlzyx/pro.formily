@@ -40,6 +40,7 @@ import "antd/lib/space/style/index";
 import "antd/lib/table/style/index";
 import "antd/lib/tag/style/index";
 import "antd/lib/typography/style/index";
+import "./themes/index";
 
 export type {
   PopconfirmProps,

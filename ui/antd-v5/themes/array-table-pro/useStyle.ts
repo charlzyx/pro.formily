@@ -9,6 +9,7 @@ export default builtins.genStyleHook("array-table", (token) => {
     colorBgBase,
     colorBorder,
     colorBgContainer,
+    colorPrimary,
   } = token;
   const itemCls = `${antCls}-formily-item`;
 
@@ -25,6 +26,34 @@ export default builtins.genStyleHook("array-table", (token) => {
         },
       },
       [`${antCls}-table`]: {
+        "th.react-resizable": {
+          position: "relative",
+          backgroundClip: "padding-box",
+        },
+        th: {
+          ".react-resizable-handle": {
+            position: "absolute",
+            backgroundClip: "padding-box",
+            right: "-4px",
+            top: 0,
+            backgroundColor: colorPrimary,
+            backgroundSize: "50% 100%",
+            opacity: 0,
+            bottom: 0,
+            transition: "opacity 0.3s ease",
+            zIndex: 10000,
+            width: "10px",
+            border: "4px solid transparent",
+            borderTop: 0,
+            borderBottom: 0,
+            height: "100%",
+            cursor: "col-resize",
+          },
+          ".react-resizable-handle.active": {
+            border: "4px solid transparent",
+            opacity: 0.5,
+          },
+        },
         td: {
           visibility: "visible",
           [`${itemCls}:not(${itemCls}-feedback-layout-popover)`]: {

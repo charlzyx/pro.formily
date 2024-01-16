@@ -27,6 +27,7 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   const field = useField<ArrayField>();
   const prefixCls = usePrefixCls("formily-array-table");
+
   const [wrapSSR, hasId] = useStyle(prefixCls);
   /**
    * 优化笔记：
