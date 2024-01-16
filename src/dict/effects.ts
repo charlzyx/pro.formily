@@ -2,28 +2,9 @@ import type { Form } from "@formily/core";
 import { onFieldMount, onFieldReact } from "@formily/core";
 import { observable } from "@formily/reactive";
 import type React from "react";
-import {
-  ColorsKey,
-  convertListToDict,
-  convertToOptionList,
-} from "../__builtins__";
+import { TDictShape, convertListToDict, convertToOptionList } from "../shared";
 import { Dict } from "./index";
-export type TDictShape = {
-  emap: {
-    [x: string]: string | number;
-    [x: number]: string | number;
-  };
-  colors: {
-    [x: string]: string;
-    [x: number]: string;
-  };
-  options: {
-    key: string | number;
-    label: string;
-    value: number | string;
-    color?: ColorsKey;
-  }[];
-};
+
 export type TDictLoaderFactory = (
   converter: typeof convertToOptionList,
 ) => Promise<ReturnType<typeof convertToOptionList>>;

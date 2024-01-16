@@ -8,7 +8,7 @@ const size: React.CSSProperties = {
   objectFit: "contain",
 };
 
-export const ImageView = (props: {
+export const ImageView: React.FC<{
   /** 图片地址(支持数组) */
   value?: string | string[];
   /**
@@ -16,7 +16,7 @@ export const ImageView = (props: {
    * @default  { width: '60px', height: '60px', objectFit: 'contain' }
    */
   style?: React.CSSProperties;
-}) => {
+}> = (props) => {
   const { value, style } = props;
 
   const uris = useMemo(() => {

@@ -6,7 +6,7 @@ import React, { useEffect } from "react";
 import { Button } from "../adaptor";
 import { FormButtonGroup, FormGrid, FormLayout } from "../adaptor/adaptor";
 import { useQueryListContext } from "../query-list";
-import { useGrid } from "./useGrid";
+import { useGrid } from "../shared/useGrid";
 
 type QueryFormProps = React.PropsWithChildren<{
   resetText?: string;
@@ -86,7 +86,7 @@ export const QueryForm = observer((props: QueryFormProps) => {
   };
 
   return props.children ? (
-    <FormGrid {...grid} grid={grid}>
+    <FormGrid grid={grid}>
       {props.children}
       <FormGrid.GridColumn
         gridSpan={-1}

@@ -1,8 +1,8 @@
 import React, { Fragment } from "react";
 import { useMemo } from "react";
-import type { TDictShape } from "../__builtins__";
-import { isColorStatus } from "../__builtins__";
 import { Badge, Space, Tag } from "../adaptor/index";
+import type { TDictShape } from "../shared";
+import { isColorStatus } from "../shared";
 
 type Input = string | number | Input[];
 

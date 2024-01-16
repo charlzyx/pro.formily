@@ -1,12 +1,14 @@
 {
-  "name": "@proformily/antd",
+  "name": "@proformily/antd-v5",
   "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "rspress dev",
     "v4": "node scripts/switch.js antd dev && rspress dev",
     "v5": "node scripts/switch.js antd-v5 dev && rspress dev",
-    "build:docs": "node scripts/switch.js antd && rspress build",
+    "build:docs:v4": "node scripts/switch.js antd && rspress build",
+    "build:docs:v5": "node scripts/switch.js antd-v5 && rspress build",
+    "build:docs": "npm run build:docs:v4 && npm run build:docs:v5",
     "preview": "rspress preview"
   },
   "dependencies": {
@@ -20,8 +22,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-resizable": "^3.0.5",
-    "@formily/antd": "^2.*.*",
-    "antd": "^4.*.*"
+    "@formily/antd-v5": "^1.*.*",
+    "antd": "^5.*.*"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.5.0",

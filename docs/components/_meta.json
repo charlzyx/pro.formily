@@ -1,0 +1,17 @@
+[
+  {
+    "type": "dir",
+    "name": "pro",
+    "label": "Pro 专业级组件"
+  },
+  {
+    "type": "dir",
+    "name": "plus",
+    "label": "Plus 增强型组件"
+  },
+  {
+    "type": "dir",
+    "name": "pretty",
+    "label": "Pretty 优雅阅读态"
+  }
+]
