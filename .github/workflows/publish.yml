@@ -65,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: |
           bun i
-          bun scripts/switch.ts ${{needs.parse_tag.outputs.module_name}} build
+          bun scripts/switch.ts ${{steps.parse_tag.outputs.module_name}} build
           bunx father build
           # 更新 package.json 文件中的版本号
           sed -i "s/\"version\": \".*\"/\"version\": \"$new_version\"/" package.json
@@ -74,12 +74,12 @@ jobs:
           node-version: 16
           registry-url: https://registry.npmjs.org/
       - run: |
-          npm publish --tag ${{needs.parse_tag.outputs.tag}}
+          npm publish --tag ${{steps.parse_tag.outputs.tag}}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
       - uses: actions/setup-node@v3
         with:
           registry-url: "https://npm.pkg.github.com"
-      - run: npm publish --tag ${{needs.parse_tag.outputs.tag}}
+      - run: npm publish --tag ${{steps.parse_tag.outputs.tag}}
         env:
           NODE_AUTH_TOKEN: ${{ github.token }}
