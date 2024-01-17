@@ -4,11 +4,6 @@ import { pluginReact } from "@rsbuild/plugin-react";
 
 export default defineConfig({
   plugins: [pluginReact()],
-  source: {
-    alias: {
-      // proformily: path.resolve(__dirname, "./src"),
-    },
-  },
   tools: {
     less: {
       lessOptions: {

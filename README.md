@@ -1,6 +1,9 @@
 # 💎 Formily, Pro！
 
-![welcome](./docs/public/welcome.png)
+|||
+|--|--|
+|@proformily/antd| [![version](https://badgen.net/npm/v/@proformily/antd)](https://www.npmjs.com/package/@proformily/antd) |
+|@proformily/antd-v5| [![version](https://badgen.net/npm/v/@proformily/antd-v5)](https://www.npmjs.com/package/@proformily/antd-v5)|
 
 为 formily 宇宙添加的开箱即用的高级组件库, @formily/antd@4,5 双版本适配
 
@@ -8,11 +11,13 @@
 - 🐙 **原汁原味** 尽可能符合 AntD × formily 设计规范与直觉
 - 🚀 **拓展强大** 查询表单/多选/行展开/枚举词典等实用拓展
 
+![welcome](./docs/public/welcome.png)
+
 ## 在线文档地址
 
-[for/antd@4](https://charlzyx.github.io/pro.formily/antd/)
+[for/antd@4](https://charlzyx.github.io/proformily/antd/)
 
-[for/antd@5](https://charlzyx.github.io/pro.formily/antd-v5/)
+[for/antd@5](https://charlzyx.github.io/proformily/antd-v5/)
 
 
 ## powered by
@@ -23,3 +28,4 @@
 - [@formily/antd](https://github.com/alibaba/formily)
 - [@formily/antd-v5](https://github.com/formilyjs/antd)
 - [Rspress](https://rspress.dev/)
+

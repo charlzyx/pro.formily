@@ -15,7 +15,7 @@ export const SortableBody = SortableContainer((props: any) => (
 export const RowComp: ReactFC<React.HTMLAttributes<HTMLTableRowElement>> = (
   props,
 ) => {
-  const prefixCls = usePrefixCls("formily-array-table");
+  const prefixCls = usePrefixCls("formily-array-table-pro");
   const index = (props as any)["data-row-key"] || 0;
   return (
     <SortableRow

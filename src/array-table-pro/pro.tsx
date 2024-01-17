@@ -26,7 +26,7 @@ import useStyle from "../adaptor/themes/array-table-pro/useStyle";
 const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
   const field = useField<ArrayField>();
-  const prefixCls = usePrefixCls("formily-array-table");
+  const prefixCls = usePrefixCls("formily-array-table-pro");
 
   const [wrapSSR, hasId] = useStyle(prefixCls);
   /**
