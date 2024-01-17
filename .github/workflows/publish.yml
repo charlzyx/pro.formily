@@ -77,9 +77,3 @@ jobs:
           npm publish --access=public --tag ${{steps.parse_tag.outputs.tag}}
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
-      - uses: actions/setup-node@v3
-        with:
-          registry-url: "https://npm.pkg.github.com"
-      - run: npm publish --access=public --tag ${{steps.parse_tag.outputs.tag}}
-        env:
-          NODE_AUTH_TOKEN: ${{ github.token }}
