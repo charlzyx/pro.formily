@@ -1,0 +1,85 @@
+# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+
+name: Release CI
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - "*/v*.*.*" # Match tags like antd/v1.0.0-alpha.0, antd-v5/v1.0.0-beta.0
+
+permissions:
+  contents: write
+  discussions: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    outputs:
+      RELEASE_UPLOAD_ID: ${{ steps.create_release.outputs.id }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Query version number
+        id: get_version
+        run: |
+          echo "using version tag ${GITHUB_REF:10}"
+          echo ::set-output name=VERSION::"${GITHUB_REF:10}"
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "${{ steps.get_version.outputs.VERSION }}"
+          body: '<a href="https://github.com/charlzyx/proformily/blob/master/CHANGELOG.md">CHANGELOG</a>'
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Parse Tag
+        id: parse_tag
+        run: |
+          # 获取标签名称
+          tag_name="${GITHUB_REF##*/}"
+
+          # 提取功能模块名称
+          module_name=$(echo $tag_name | cut -d'/' -f1)
+
+          # 提取版本号
+          version=$(echo $tag_name | cut -d'/' -f2)
+
+          tag="latest"
+          # 检查是否预发布
+          if [[ $tag_name == *"alpha"* ]]; then
+            tag="alpha"
+          fi
+
+          if [[ $tag_name == *"beta"* ]]; then
+            tag="beta"
+          fi
+
+          echo "::set-output name=module_name::$module_name"
+          echo "::set-output name=version::$version"
+          echo "::set-output name=tag::$tag"
+      - uses: oven-sh/setup-bun@v1
+      - name: Install dependencies
+        run: |
+          bun i
+          bun scripts/switch.ts ${{needs.parse_tag.outputs.module_name}} build
+          bunx father build
+          # 更新 package.json 文件中的版本号
+          sed -i "s/\"version\": \".*\"/\"version\": \"$new_version\"/" package.json
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - run: |
+          npm publish --tag ${{needs.parse_tag.outputs.tag}}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_ACCESS_TOKEN}}
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: "https://npm.pkg.github.com"
+      - run: npm publish --tag ${{needs.parse_tag.outputs.tag}}
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}

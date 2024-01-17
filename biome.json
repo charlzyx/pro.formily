@@ -7,9 +7,10 @@
     "indentWidth": 2,
     "lineWidth": 80,
     "lineEnding": "lf",
-    "ignore": []
+    "ignore": ["dist", "doc_build"]
   },
   "linter": {
+    "ignore": ["dist", "doc_build"],
     "rules": {
       "recommended": true,
       "suspicious": {
