@@ -40,7 +40,7 @@ jobs:
         id: parse_tag
         run: |
           # 获取标签名称
-          tag_name="${GITHUB_REF##*/}"
+          tag_name="${GITHUB_REF:10}"
 
           # 提取功能模块名称
           module_name=$(echo $tag_name | cut -d'/' -f1)
