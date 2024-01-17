@@ -66,7 +66,7 @@ rimraf.sync(shadow);
 // 文档用软连接就好
 if (mode === "doc") {
   execSync(`ln -s ${ui} ${shadow}`);
-  rimraf.sync(byRoot("doc_build"));
+  // rimraf.sync(byRoot("doc_build"));
 } else {
   execSync(`cp -R ${ui} ${shadow}`);
 }
