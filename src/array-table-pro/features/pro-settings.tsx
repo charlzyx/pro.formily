@@ -6,7 +6,7 @@ import {
   createSchemaField,
 } from "@formily/react";
 import { toJS } from "@formily/reactive";
-import useCreation from "ahooks/es/useCreation";
+import { useCreation } from "ahooks";
 import React, { useMemo } from "react";
 import {
   Button,

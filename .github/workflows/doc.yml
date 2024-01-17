@@ -1,9 +1,6 @@
 name: Deploy Rspress site to Pages
 
 on:
-  push:
-    branches: [master]
-
   workflow_dispatch:
 
 permissions:
