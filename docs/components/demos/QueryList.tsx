@@ -9,18 +9,18 @@ import {
   Input,
   Select,
   Submit,
-} from "@formily/antd-v5";
+} from "@formily/antd";
 import { createForm } from "@formily/core";
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { ConfigProvider, Divider } from "antd";
-import "antd/dist/reset.css";
+import "antd/dist/antd.css";
 // import "antd/dist/antd.css";
 import zhCN from "antd/lib/locale/zh_CN";
 import moment from "moment";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
-import { QueryForm, QueryList, QueryTable } from "@proformily/antd-v5";
+import { QueryForm, QueryList, QueryTable } from "@proformily/antd";
 
 const log = (label: string, x: any) => {
   console.log("LABEL:", label);

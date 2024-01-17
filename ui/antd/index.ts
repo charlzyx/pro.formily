@@ -1,10 +1,15 @@
 export {
-  SyncOutlined,
   ColumnHeightOutlined,
   SettingOutlined,
+  SyncOutlined,
+  CopyOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  ToTopOutlined,
 } from "@ant-design/icons";
 export {
   Alert,
+  Cascader,
   Divider,
   Badge,
   Select,
@@ -26,6 +31,7 @@ export {
 import "antd/lib/alert/style/index";
 import "antd/lib/badge/style/index";
 import "antd/lib/button/style/index";
+import "antd/lib/cascader/style/index";
 import "antd/lib/divider/style/index";
 import "antd/lib/drawer/style/index";
 import "antd/lib/image/style/index";
@@ -49,4 +55,5 @@ export type {
   BadgeProps,
   TablePaginationConfig,
   TableProps,
+  CascaderProps,
 } from "antd";
