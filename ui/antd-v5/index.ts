@@ -2,6 +2,10 @@ export {
   ColumnHeightOutlined,
   SettingOutlined,
   SyncOutlined,
+  CopyOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  ToTopOutlined,
 } from "@ant-design/icons";
 export {
   Alert,
@@ -13,6 +17,7 @@ export {
   Table,
   Button,
   ConfigProvider,
+  Cascader,
   Popover,
   Popconfirm,
   Row,
@@ -31,4 +36,5 @@ export type {
   BadgeProps,
   TablePaginationConfig,
   TableProps,
+  CascaderProps,
 } from "antd";

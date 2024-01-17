@@ -1,4 +1,4 @@
-import { ImageView } from "@proformily/antd-v5";
+import { ImageView } from "@proformily/antd";
 import { Divider } from "antd";
 import React from "react";
 

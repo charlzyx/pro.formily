@@ -8,3 +8,4 @@ export * from "./long-text";
 export * from "./suggestion";
 export * from "./editable-pro";
 export * from "./shared";
+export * from './linkage'

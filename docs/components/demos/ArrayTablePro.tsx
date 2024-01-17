@@ -5,7 +5,7 @@ import {
   FormItem,
   Input,
   Submit,
-} from "@formily/antd-v5";
+} from "@formily/antd";
 import {
   createForm,
   onFieldValueChange,
@@ -13,7 +13,7 @@ import {
 } from "@formily/core";
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { Button, ConfigProvider, Divider, Space } from "antd";
-import "antd/dist/reset.css";
+import "antd/dist/antd.css";
 // import "antd/dist/antd.css";
 import zhCN from "antd/lib/locale/zh_CN";
 import moment from "moment";
@@ -24,7 +24,7 @@ import {
   ArrayTablePro,
   useArrayCompPropsOf,
   useFormArrayProps,
-} from "@proformily/antd-v5";
+} from "@proformily/antd";
 import { useEffect } from "react";
 
 const CustomeToolbar = () => {

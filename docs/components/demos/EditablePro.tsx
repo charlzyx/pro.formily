@@ -5,11 +5,11 @@ import {
   FormItem,
   FormLayout,
   Input,
-} from "@formily/antd-v5";
+} from "@formily/antd";
 import { createForm } from "@formily/core";
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { ConfigProvider } from "antd";
-import "antd/dist/reset.css";
+import "antd/dist/antd.css";
 // import "antd/dist/antd.css";
 import zhCN from "antd/lib/locale/zh_CN";
 import moment from "moment";
@@ -21,7 +21,7 @@ import {
   QueryForm,
   QueryList,
   QueryTable,
-} from "@proformily/antd-v5";
+} from "@proformily/antd";
 import { useMemo } from "react";
 
 const form = createForm({});

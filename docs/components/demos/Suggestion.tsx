@@ -1,7 +1,7 @@
-import { FormGrid, FormItem, FormLayout } from "@formily/antd-v5";
+import { FormGrid, FormItem, FormLayout } from "@formily/antd";
 import { createForm } from "@formily/core";
 import { FormProvider, createSchemaField } from "@formily/react";
-import { Suggestion } from "@proformily/antd-v5";
+import { Suggestion } from "@proformily/antd";
 import jsonp from "fetch-jsonp";
 import qs from "qs";
 import React, { useMemo } from "react";
