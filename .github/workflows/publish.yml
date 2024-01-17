@@ -68,7 +68,7 @@ jobs:
           bun scripts/switch.ts ${{steps.parse_tag.outputs.module_name}} build
           bunx father build
           # 更新 package.json 文件中的版本号
-          sed -i "s/\"version\": \".*\"/\"version\": \"$new_version\"/" package.json
+          sed -i "s/\"version\": \".*\"/\"version\": \"${{steps.parse_tag.outputs.version}}\"/" package.json
       - uses: actions/setup-node@v3
         with:
           node-version: 16
