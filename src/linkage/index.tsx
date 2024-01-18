@@ -1,7 +1,7 @@
 import { observer } from "@formily/react";
 import { model } from "@formily/reactive";
 import React, { useEffect, useMemo, useRef } from "react";
-import { Cascader, CascaderProps } from "../adaptor";
+import { Cascader } from "../adaptor";
 
 export interface LinkageOption<Value extends ValueType> {
   label?: string;
@@ -21,7 +21,9 @@ type LabelValueType = { label: string; value: ValueType };
 
 export type LinkageValueType = LabelValueType[] | ValueType[];
 
-const display: CascaderProps["displayRender"] = (label, options) => {
+type CascaderProps = React.ComponentProps<typeof Cascader>;
+
+const display: CascaderProps["displayRender"] = (label) => {
   return label.join("/");
 };
 
@@ -120,19 +122,16 @@ const fill = <
 };
 
 export const Linkage = observer(
-  <
-    TLabelInValue extends boolean,
-    TValueType = TLabelInValue extends true ? ValueType[] : LabelValueType[],
-  >(
+  <TValueType = ValueType[] | LabelValueType[]>(
     props: Omit<CascaderProps, "value" | "onChange" | "loadData"> & {
       value: TValueType;
       onChange: (neo: TValueType) => void;
       multiple?: boolean;
       disabled?: boolean;
-      labelInValue?: TLabelInValue;
+      labelInValue?: boolean;
       /** 懒加载, 与整棵树加载不能共存 */
       loadData?: (
-        selectOptions: TLabelInValue[],
+        selectOptions: LabelValueType[],
       ) => Promise<LinkageOption<ValueType>[]>;
       /** loadData 是否返回整棵树加载, 与懒加载不能共存 */
       all?: boolean;
@@ -207,7 +206,7 @@ export const Linkage = observer(
         changeOnSelect
         {...others}
         loading={state.loading}
-        value={value}
+        value={value as any}
         style={props.style || fullWithStyle}
         options={[...state.options]}
         loadData={_loadData as any}

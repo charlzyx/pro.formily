@@ -1,0 +1,83 @@
+@import (reference) "@arco-design/web-react/es/style/theme/default.less";
+
+@array-table-prefix-cls: ~'@{prefix}-formily-array-table-pro';
+
+.@{array-table-prefix-cls} {
+  .react-resizable {
+    position: relative;
+    background-clip: padding-box;
+  }
+
+  th:hover {
+    .react-resizable-handle {
+      opacity: 0.2;
+    }
+  }
+
+  .react-resizable-handle {
+    position: absolute;
+    background-clip: padding-box;
+    right: -4px;
+    top: 0;
+    background-color: @color-primary-5;
+    background-size: 50% 100%;
+    opacity: 0;
+    bottom: 0;
+    transition: opacity width 0.3s ease;
+    z-index: 10000;
+    width: 9px;
+    border: 4px solid transparent;
+    border-top: 0;
+    border-bottom: 0;
+    height: 100%;
+    cursor: col-resize;
+
+  }
+
+  .react-resizable-handle.active {
+    border: 4px solid transparent;
+    opacity: 0.5;
+  }
+
+  .@{prefix}-table-expanded-row {
+    >.@{prefix}-table-cell {
+      padding-bottom: 1px !important;
+    }
+  }
+
+  .@{prefix}-table {
+    table {
+      overflow: hidden;
+    }
+
+    td {
+      visibility: visible;
+
+      .@{prefix}-formily-item:not(.@{prefix}-formily-item-feedback-layout-popover) {
+        margin-bottom: 0 !important;
+
+        .@{prefix}-formily-item-help {
+          position: absolute;
+          font-size: 12px;
+          top: 100%;
+          background: #fff;
+          width: 100%;
+          margin-top: 3px;
+          padding: 3px;
+          z-index: 1;
+          border-radius: 3px;
+          box-shadow: 0 0 10px #eee;
+          animation: none;
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  .@{array-table-prefix-cls}-sort-helper {
+    background: #fff;
+    border: 1px solid #eee;
+    z-index: 10;
+  }
+}

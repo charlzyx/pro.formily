@@ -1,8 +1,10 @@
 import { ReactFC, observer } from "@formily/react";
-import React, { Fragment } from "react";
-import { Alert, Button, Divider, Space } from "../adaptor";
-import { ArrayBase, ArrayBaseMixins, ColumnProps } from "../adaptor/adaptor";
-import { useArrayCompPropsOf } from "./features/hooks";
+import React, { Fragment, useContext } from "react";
+import { Alert, BUTTON_TYPE, Button, Divider, Space } from "../adaptor";
+import { ArrayBase, ArrayBaseMixins } from "../adaptor/adaptor";
+import { ArrayPaginationContext } from "./features/pagination";
+import { ArrayRowSelectionContext } from "./features/row-selection";
+import type { ColumnProps } from "./types";
 
 export const Column: ReactFC<ColumnProps<any>> = () => {
   return <Fragment />;
@@ -13,18 +15,20 @@ export const RowExpand: ReactFC<ColumnProps<any>> = () => {
 
 export const Addition: ArrayBaseMixins["Addition"] = observer((props) => {
   const array = ArrayBase.useArray();
-  const [, $page] = useArrayCompPropsOf(array?.field, "pagination");
+  const page = useContext(ArrayPaginationContext);
   return (
     <ArrayBase.Addition
       block={false}
-      type="link"
+      type={BUTTON_TYPE}
       {...props}
       onClick={(e) => {
         // 如果添加数据后将超过当前页，则自动切换到下一页
-        if (!$page) return;
+        if (!page) return;
         const total = array?.field?.value.length || 0;
-        if (total >= $page!.current! * $page.pageSize!) {
-          $page.current! += 1;
+        if (total >= page!.current! * page.pageSize!) {
+          page.setPagination((memo) => {
+            return { ...memo, current: memo.current + 1 };
+          });
         }
         props.onClick?.(e);
       }}
@@ -61,7 +65,8 @@ export const RowSelectionPro = (props: {
 }) => {
   const { ds, rowKey } = props;
   const array = ArrayBase.useArray();
-  const [, $row] = useArrayCompPropsOf(array?.field, "rowSelection");
+  const $row = useContext(ArrayRowSelectionContext);
+  // const [, $row] = useArrayCompPropsOf(array?.field, "rowSelection");
   return ds.length > 0 ? (
     <Alert
       style={{ padding: "3px 4px" }}
@@ -79,10 +84,9 @@ export const RowSelectionPro = (props: {
             size="small"
             onClick={() => {
               if (!$row) return;
-              $row.selectedRows = [];
-              $row.selectedRowKeys = [];
+              $row.setSelectedRowKeys([]);
             }}
-            type="link"
+            type={BUTTON_TYPE}
           >
             清空
           </Button>
@@ -91,16 +95,13 @@ export const RowSelectionPro = (props: {
             onClick={() => {
               if (!$row) return;
               const keys: (string | number)[] = [];
-              const rows: any[] = [];
               ds.forEach((item) => {
                 const key = rowKey(item);
                 keys.push(key);
-                rows.push(item);
               });
-              $row.selectedRowKeys = keys;
-              $row.selectedRows = rows;
+              $row.setSelectedRowKeys(keys);
             }}
-            type="link"
+            type={BUTTON_TYPE}
           >
             全选
           </Button>
@@ -109,7 +110,7 @@ export const RowSelectionPro = (props: {
             size="small"
             onClick={() => {
               if (!$row) return;
-              const selected = $row.selectedRowKeys!.reduce(
+              const selected = $row.selectedRowKeys.reduce(
                 (m: Record<string | number, true>, i: any) => {
                   m[i] = true;
                   return m;
@@ -117,18 +118,15 @@ export const RowSelectionPro = (props: {
                 {},
               );
               const keys: (string | number)[] = [];
-              const rows: any[] = [];
               ds.forEach((item) => {
                 const key = rowKey(item);
                 if (!selected[key]) {
                   keys.push(key);
-                  rows.push(item);
                 }
               });
-              $row.selectedRowKeys = keys;
-              $row.selectedRows = rows;
+              $row.setSelectedRowKeys(keys);
             }}
-            type="link"
+            type={BUTTON_TYPE}
           >
             反选
           </Button>

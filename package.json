@@ -13,16 +13,24 @@
   "main": "./dist/lib",
   "module": "./dist/esm",
   "types": "./dist/esm/index.d.ts",
-  "sideEffects": ["dist/*", "src/*.ts", "*.less", "**/*/style.js"],
+  "sideEffects": [
+    "dist/*",
+    "src/*.ts",
+    "*.less",
+    "**/*/style.js"
+  ],
   "scripts": {
     "dev": "rspress dev",
-    "v4": "bun scripts/switch.ts antd doc && rspress dev",
-    "v5": "bun scripts/switch.ts antd-v5 doc && rspress dev",
+    "v4": "bun scripts/switch.ts antd doc",
+    "v5": "bun scripts/switch.ts antd-v5 doc",
+    "arco": "bun scripts/switch.ts arco doc",
     "build:docs:v4": "bun scripts/switch.ts antd && rspress build",
     "build:docs:v5": "bun scripts/switch.ts antd-v5 && rspress build",
-    "build:docs": "npm run build:docs:v4 && npm run build:docs:v5",
+    "build:docs:arco": "bun scripts/switch.ts arco && rspress build",
+    "build:docs": "npm run build:docs:v4 && npm run build:docs:v5 && npm run build:docs:arco",
     "build:v4": "bun scripts/switch.ts antd build && father build",
-    "build:v5": "bun scripts/switch.ts antd-v5 build && father build"
+    "build:v5": "bun scripts/switch.ts antd-v5 build && father build",
+    "build:arco": "bun scripts/switch.ts arco build && father build"
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
@@ -57,5 +65,7 @@
     "rimraf": "^5.0.5",
     "rspress": "^1.9.3"
   },
-  "files": ["dist"]
+  "files": [
+    "dist"
+  ]
 }

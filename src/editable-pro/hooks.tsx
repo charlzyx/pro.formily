@@ -77,7 +77,7 @@ export const useFieldRecordForm = (props: RecordFormProps) => {
     </FormGrid.GridColumn>
   );
 
-  const FormBody: React.FC<React.PropsWithChildren> = (props) => (
+  const body = (
     <FormProvider form={form}>
       <FormLayout {...layout}>
         <FormGrid {...gridProps}>
@@ -88,5 +88,5 @@ export const useFieldRecordForm = (props: RecordFormProps) => {
     </FormProvider>
   );
 
-  return { FormBody, FormButtons, form };
+  return { body, FormButtons, form };
 };

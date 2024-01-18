@@ -8,7 +8,7 @@ const statusColors = {
   processing: "blue",
   error: "red",
   warning: "gold",
-  default: "#fafafa",
+  default: "#f1f1f1",
 } as const;
 
 export const colors = {
@@ -16,7 +16,7 @@ export const colors = {
   0: "magenta",
   1: "green",
   2: "cyan",
-  3: "geekblue",
+  3: "dodgerblue",
   4: "purple",
   5: "red",
   6: "orange",
@@ -27,7 +27,7 @@ export const colors = {
   magenta: "magenta",
   green: "green",
   cyan: "cyan",
-  geekblue: "geekblue",
+  dodgerblue: "dodgerblue",
   purple: "purple",
   red: "red",
   orange: "orange",
@@ -38,7 +38,9 @@ export const colors = {
   ...statusColors,
 } as const;
 
-export const isColorStatus = (x = ""): x is Required<BadgeProps>["status"] => {
+export const colorByStatus = (a?: ColorsKey) => (statusColors as any)[a!] ?? a;
+
+export const isColorStatus = (x = ""): x is keyof typeof statusColors => {
   return Boolean((statusColors as any)[x]);
 };
 

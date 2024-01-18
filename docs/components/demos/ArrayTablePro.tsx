@@ -22,48 +22,48 @@ moment.locale("zh-cn");
 
 import {
   ArrayTablePro,
-  useArrayCompPropsOf,
-  useFormArrayProps,
+  // useArrayCompPropsOf,
+  // useFormArrayProps,
 } from "@pro.formily/antd";
 import { useEffect } from "react";
 
-const CustomeToolbar = () => {
-  const array = ArrayBase.useArray!();
-  const [, $row] = useArrayCompPropsOf(array?.field, "rowSelection");
-  return (
-    <Space>
-      <Button
-        type="primary"
-        onClick={() => {
-          // ok
-          if (!array) return;
-          console.log(array.field.componentProps.rowSelection.selectedRowKeys);
-          if (!$row) return;
-          // but quick
-          console.log($row!.selectedRowKeys);
-        }}
-      >
-        自定义 toolbar , 点我试试
-      </Button>
-    </Space>
-  );
-};
-const CustomeFooter = () => {
-  const array = ArrayBase.useArray!();
-  const [, $page] = useArrayCompPropsOf(array?.field, "pagination");
-  console.log("🚀 ~ CustomeFooter ~ $page:", $page);
-  const totalPage =
-    $page === false
-      ? 0
-      : (($page?.total || 0)! / ($page?.pageSize || 1)).toFixed(0);
-  return (
-    <Space>
-      自定义底部
-      {$page === false ? 0 : $page?.current}/{totalPage}, 共计
-      {array?.field?.value?.length}条数据
-    </Space>
-  );
-};
+// const CustomeToolbar = () => {
+//   const array = ArrayBase.useArray!();
+//   const [, $row] = useArrayCompPropsOf(array?.field, "rowSelection");
+//   return (
+//     <Space>
+//       <Button
+//         type="primary"
+//         onClick={() => {
+//           // ok
+//           if (!array) return;
+//           console.log(array.field.componentProps.rowSelection.selectedRowKeys);
+//           if (!$row) return;
+//           // but quick
+//           console.log($row!.selectedRowKeys);
+//         }}
+//       >
+//         自定义 toolbar , 点我试试
+//       </Button>
+//     </Space>
+//   );
+// };
+// const CustomeFooter = () => {
+//   const array = ArrayBase.useArray!();
+//   const [, $page] = useArrayCompPropsOf(array?.field, "pagination");
+//   console.log("🚀 ~ CustomeFooter ~ $page:", $page);
+//   const totalPage =
+//     $page === false
+//       ? 0
+//       : (($page?.total || 0)! / ($page?.pageSize || 1)).toFixed(0);
+//   return (
+//     <Space>
+//       自定义底部
+//       {$page === false ? 0 : $page?.current}/{totalPage}, 共计
+//       {array?.field?.value?.length}条数据
+//     </Space>
+//   );
+// };
 
 const RowSummary = () => {
   const row = ArrayBase.useRecord!();
@@ -89,9 +89,9 @@ const SchemaField = createSchemaField({
     Input,
     ArrayTablePro: ArrayTablePro,
     // 组件名称必须包含 Toolbar
-    CustomeToolbar,
+    // CustomeToolbar,
     // 组件名称必须包含 Footer
-    CustomeFooter,
+    // CustomeFooter,
     RowSummary,
   },
 });
@@ -290,7 +290,7 @@ const range = (count: number) =>
 
 export default () => {
   console.log("form", form);
-  const [row, $row] = useFormArrayProps(form, "array", "rowSelection");
+  // const [row, $row] = useFormArrayProps(form, "array", "rowSelection");
   useEffect(() => {
     console.log("row is change ", row);
   }, [row]);
@@ -305,7 +305,7 @@ export default () => {
           </FormButtonGroup>
         </Divider>
         <Space>
-          <Button
+          {/* <Button
             onClick={() => {
               // simple way
               const hasIndex =
@@ -327,7 +327,7 @@ export default () => {
             }}
           >
             切换第三项选中框
-          </Button>
+          </Button> */}
           <Button
             onClick={() => {
               form.setInitialValues({

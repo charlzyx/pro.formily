@@ -1,17 +1,17 @@
 import { useField } from "@formily/react";
 import React, { useState } from "react";
-import { Button, Popconfirm, PopconfirmProps, Typography } from "../adaptor";
+import { BUTTON_TYPE, Button, Popconfirm, Typography } from "../adaptor";
 import { RecordFormProps, useFieldRecordForm } from "./hooks";
 
 export const ProPopconfirm: React.FC<
   RecordFormProps &
-    PopconfirmProps & {
+    React.ComponentProps<typeof Popconfirm> & {
       onCancel: () => void | Promise<void>;
       onConfirm: (data: any) => void | Promise<void>;
     }
-> = (props) => {
+> = ({ children, ...props }) => {
   const field = useField();
-  const { FormBody, form } = useFieldRecordForm(props);
+  const { body, form } = useFieldRecordForm(props);
   const [visible, setVisible] = useState(false);
 
   return (
@@ -19,12 +19,6 @@ export const ProPopconfirm: React.FC<
       icon={null}
       {...props}
       open={visible}
-      onOpenChange={(open, e) => {
-        setVisible(open);
-        if (props.onOpenChange) {
-          props.onOpenChange(open, e);
-        }
-      }}
       cancelText={props.cancelText}
       okText={props.okText}
       onCancel={() => {
@@ -42,13 +36,18 @@ export const ProPopconfirm: React.FC<
       title={
         <React.Fragment>
           <Typography.Title level={5}>{props.title as any}</Typography.Title>
-          <FormBody></FormBody>
+          {body}
         </React.Fragment>
       }
       destroyTooltipOnHide
       disabled={!field.editable}
     >
-      <Button type="link" {...props.buttonProps} disabled={!field.editable}>
+      <Button
+        onClick={() => setVisible(true)}
+        type={BUTTON_TYPE}
+        {...props.buttonProps}
+        disabled={!field.editable}
+      >
         {field.title}
       </Button>
     </Popconfirm>

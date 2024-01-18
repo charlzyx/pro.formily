@@ -1,4 +1,6 @@
 import { Card, Col, Divider, Row, Space, Tag, Typography } from "antd";
+// import Col from "@arco-design/web-react/es/Grid/col";
+// import Row from "@arco-design/web-react/es/Grid/row";
 
 import { useState } from "react";
 
@@ -120,7 +122,10 @@ export default () => {
           >
             {gidx === 0 ? null : <Divider />}
             <Title
+              // @ts-ignore
               level={2}
+              // @ts-ignore
+              heading={2}
               style={style.components_overview_group_title}
               className="components-overview-group-title"
             >
@@ -148,7 +153,7 @@ export default () => {
                         bodyStyle={{
                           backgroundRepeat: "no-repeat",
                           backgroundPosition: "bottom right",
-                          backgroundImage: `url(${component.tag})`,
+                          // backgroundImage: `url(${component.tag})`,
                           ...style.components_overview_card,
                           ...(hover.card === `${gidx}${idx}`
                             ? style.components_overview_card_hover

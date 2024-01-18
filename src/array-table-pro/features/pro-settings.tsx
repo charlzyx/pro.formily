@@ -9,6 +9,7 @@ import { toJS } from "@formily/reactive";
 import { useCreation } from "ahooks";
 import React, { useMemo } from "react";
 import {
+  BUTTON_TYPE,
   Button,
   ColumnHeightOutlined,
   ConfigProvider,
@@ -157,14 +158,19 @@ export const ProSettings: React.FC<{
     );
   }, []);
   return (
-    <ConfigProvider componentSize="small">
+    <ConfigProvider
+      // @ts-ignore for arco
+      componentSize="small"
+      // @ts-ignore for antd
+      size="small"
+    >
       <Space>
         <Button
-          type="link"
+          type={BUTTON_TYPE}
           icon={<ColumnHeightOutlined></ColumnHeightOutlined>}
         ></Button>
         <Popover content={content} title={title} trigger="click">
-          <Button icon={<SettingOutlined />} type="link"></Button>
+          <Button icon={<SettingOutlined />} type={BUTTON_TYPE}></Button>
         </Popover>
       </Space>
     </ConfigProvider>

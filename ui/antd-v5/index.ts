@@ -38,3 +38,4 @@ export type {
   TableProps,
   CascaderProps,
 } from "antd";
+export const BUTTON_TYPE = "link";

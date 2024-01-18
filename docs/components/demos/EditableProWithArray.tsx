@@ -1,11 +1,11 @@
-import { faker } from "@faker-js/faker";
-import { Editable, FormGrid, FormItem, FormLayout, Input } from "@formily/antd";
-import { createForm } from "@formily/core";
-import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { ConfigProvider } from "antd";
 import "antd/dist/antd.css";
 // import "antd/dist/antd.css";
 import zhCN from "antd/lib/locale/zh_CN";
+import { faker } from "@faker-js/faker";
+import { createForm } from "@formily/core";
+import { FormProvider, ISchema, createSchemaField } from "@formily/react";
+import { Editable, FormGrid, FormItem, FormLayout, Input } from "@formily/antd";
 import moment from "moment";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");

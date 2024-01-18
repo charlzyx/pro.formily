@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Badge, Space, Tag } from "../adaptor/index";
-import { isColorStatus } from "./colors";
+import { colorByStatus, isColorStatus } from "./colors";
 import type { TDictShape } from "./helper";
 
 type Input = string | number | Input[];
@@ -45,11 +45,11 @@ export const Dict = (props: {
             status={
               isColorStatus(item?.color) ? (item?.color as any) : undefined
             }
-            color={isColorStatus(item?.color) ? undefined : item?.color}
+            color={colorByStatus(item?.color)}
             text={item?.label}
           />
         ) : type === "tag" ? (
-          <Tag key={item?.key} color={item?.color}>
+          <Tag key={item?.key} color={colorByStatus(item?.color)}>
             {item?.label}
           </Tag>
         ) : (

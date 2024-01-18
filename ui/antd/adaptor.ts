@@ -16,4 +16,3 @@ export type { ArrayBaseMixins } from "@formily/antd";
 // 类型fix
 export const ArrayBase = AntdArrayBase as Required<typeof AntdArrayBase> &
   typeof AntdArrayBase;
-export type { ColumnsType, ColumnProps, TableProps } from "antd/es/table";

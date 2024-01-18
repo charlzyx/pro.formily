@@ -1,16 +1,17 @@
 import { builtins } from "../../adaptor/adaptor";
-const { SortableContainer, SortableElement, usePrefixCls } = builtins;
+// const { SortableContainer, SortableElement, usePrefixCls } = builtins;
+const { usePrefixCls } = builtins;
 import { ReactFC, useFieldSchema } from "@formily/react";
 import cls from "classnames";
 import React from "react";
 import { empty } from "../../__builtins__";
 import { hasSortable } from "../helper";
 
-export const SortableRow = SortableElement((props: any) => <tr {...props} />);
+// export const SortableRow = SortableElement((props: any) => <tr {...props} />);
+export const SortableRow = (props: any) => <tr {...props} />;
 
-export const SortableBody = SortableContainer((props: any) => (
-  <tbody {...props} />
-));
+// export const SortableBody = SortableContainer((props: any) => (
+export const SortableBody = (props: any) => <tbody {...props} />;
 
 export const RowComp: ReactFC<React.HTMLAttributes<HTMLTableRowElement>> = (
   props,
