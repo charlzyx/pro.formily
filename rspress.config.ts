@@ -5,7 +5,7 @@ import RsBuildConfig from "./rsbuild.config";
 import { pluginFixCss } from "./scripts/fixcss";
 
 export default defineConfig({
-  base: "/proformily/antd/",
+  base: "/pro.formily/antd/",
   root: path.join(__dirname, "docs"),
   outDir: "./doc_build/antd",
   title: "ProFormily",
@@ -28,7 +28,7 @@ export default defineConfig({
       {
         icon: "github",
         mode: "link",
-        content: "https://github.com/charlzyx/proformily",
+        content: "https://github.com/charlzyx/pro.formily",
       },
     ],
   },

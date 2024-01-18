@@ -1,5 +1,5 @@
 {
-  "name": "@proformily/antd",
+  "name": "@pro.formily/antd",
   "version": "1.0.0",
   "author": {
     "name": "charlzyx",
@@ -7,13 +7,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/charlzyx/proformily"
+    "url": "https://github.com/charlzyx/pro.formily"
   },
   "license": "MIT",
   "main": "./dist/lib",
   "module": "./dist/esm",
-  "sideEffects": ["dist/*", "src/*.ts", "*.less", "**/*/style.js"],
   "types": "./dist/esm/index.d.ts",
+  "sideEffects": ["dist/*", "src/*.ts", "*.less", "**/*/style.js"],
   "scripts": {
     "dev": "rspress dev",
     "v4": "bun scripts/switch.ts antd doc && rspress dev",

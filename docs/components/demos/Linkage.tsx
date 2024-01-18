@@ -1,4 +1,4 @@
-import { Linkage } from "@proformily/antd";
+import { Linkage } from "@pro.formily/antd";
 import { Button, Divider, Space } from "antd";
 import list from "china-location/dist/location.json";
 import React, { useEffect, useState } from "react";
