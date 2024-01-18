@@ -31,7 +31,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: "${{ steps.get_version.outputs.VERSION }}"
-          body: '<a href="https://github.com/charlzyx/proformily/blob/master/CHANGELOG.md">CHANGELOG</a>'
+          body: '<a href="https://github.com/charlzyx/pro.formily/blob/master/CHANGELOG.md">CHANGELOG</a>'
   publish-npm:
     runs-on: ubuntu-latest
     steps:

@@ -1,15 +1,57 @@
+import { ColorsKey, colors } from "./colors";
+
+export type TDictShape = {
+  emap: {
+    [x: string]: string | number;
+    [x: number]: string | number;
+  };
+  colors: {
+    [x: string]: string;
+    [x: number]: string;
+  };
+  options: {
+    key?: string | number;
+    label: string;
+    value: number | string;
+    color?: ColorsKey;
+  }[];
+};
+
+export type TDictItem = Omit<TDictShape["options"][0], "key">;
+
+const getColorByIdx = (idx: number) =>
+  colors[(idx % colors.length) as keyof typeof colors];
+
+export const listToDict = (list: TDictItem[] = []): TDictShape => {
+  const dict = {
+    emap: list.reduce((ret: any, cur: any) => {
+      ret[cur.value] = cur.label;
+      ret[cur.label] = cur.value;
+      return ret;
+    }, {}),
+    colors: list.reduce((ret: any, cur: any, idx) => {
+      const color = cur.color || getColorByIdx(idx);
+      ret[cur.value] = color;
+      ret[cur.label] = color;
+      return ret;
+    }, {}),
+    options: list.map((x, idx) => ({
+      ...x,
+      key: x.value,
+      color: x.color || (getColorByIdx(idx) as ColorsKey),
+    })),
+  };
+  return dict;
+};
 import type { Form } from "@formily/core";
 import { onFieldMount, onFieldReact } from "@formily/core";
-import { observable } from "@formily/reactive";
+import { model } from "@formily/reactive";
 import type React from "react";
-import { TDictShape, convertListToDict, convertToOptionList } from "../shared";
 import { Dict } from "./index";
 
-export type TDictLoaderFactory = (
-  converter: typeof convertToOptionList,
-) => Promise<ReturnType<typeof convertToOptionList>>;
+export type TDictLoaderFactory = () => Promise<TDictShape["options"]>;
 
-export const memo: Record<string, TDictShape> = observable({});
+export const memo: Record<string, TDictShape> = model({});
 
 export const dict = memo;
 
@@ -35,8 +77,8 @@ export const registerDictLoader = (
   loaderFactory: TDictLoaderFactory,
 ) => {
   loaders[name] = () => {
-    return loaderFactory(convertToOptionList).then((list) => {
-      const mydict = convertListToDict(list);
+    return loaderFactory().then((list) => {
+      const mydict = listToDict(list);
       memo[name] = mydict;
       return memo[name];
     });
