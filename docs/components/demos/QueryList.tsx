@@ -20,7 +20,7 @@ import moment from "moment";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
-import { QueryForm, QueryList, QueryTable } from "@proformily/antd";
+import { QueryForm, QueryList, QueryTable } from "@pro.formily/antd";
 
 const log = (label: string, x: any) => {
   console.log("LABEL:", label);

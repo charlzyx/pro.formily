@@ -1,8 +1,7 @@
-import React, { Fragment } from "react";
 import { useMemo } from "react";
 import { Badge, Space, Tag } from "../adaptor/index";
-import type { TDictShape } from "../shared";
-import { isColorStatus } from "../shared";
+import { isColorStatus } from "./colors";
+import type { TDictShape } from "./helper";
 
 type Input = string | number | Input[];
 
@@ -29,12 +28,10 @@ export const Dict = (props: {
     if (!Array.isArray(options)) return [];
     const ret = Array.isArray(value)
       ? value.map((v) =>
-          // eslint-disable-next-line eqeqeq
           // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
           options.find((x) => (strict ? x.value === v : x.value == v)),
         )
-      : // eslint-disable-next-line eqeqeq
-        // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
+      : // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
         [options.find((x) => (strict ? x.value === value : x.value == value))];
     return ret.filter(Boolean);
   }, [options, strict, value]);

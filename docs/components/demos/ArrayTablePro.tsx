@@ -24,7 +24,7 @@ import {
   ArrayTablePro,
   useArrayCompPropsOf,
   useFormArrayProps,
-} from "@proformily/antd";
+} from "@pro.formily/antd";
 import { useEffect } from "react";
 
 const CustomeToolbar = () => {

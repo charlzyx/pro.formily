@@ -1,11 +1,5 @@
 import { faker } from "@faker-js/faker";
-import {
-  Editable,
-  FormGrid,
-  FormItem,
-  FormLayout,
-  Input,
-} from "@formily/antd";
+import { Editable, FormGrid, FormItem, FormLayout, Input } from "@formily/antd";
 import { createForm } from "@formily/core";
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { ConfigProvider } from "antd";
@@ -22,7 +16,7 @@ import {
   QueryList,
   QueryTable,
   useQueryListRef,
-} from "@proformily/antd";
+} from "@pro.formily/antd";
 import { useMemo } from "react";
 
 const log = (label: string, x: any) => {
