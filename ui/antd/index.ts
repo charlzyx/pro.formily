@@ -48,12 +48,5 @@ import "antd/lib/tag/style/index";
 import "antd/lib/typography/style/index";
 import "./themes/index";
 
-export type {
-  PopconfirmProps,
-  ModalProps,
-  DrawerProps,
-  BadgeProps,
-  TablePaginationConfig,
-  TableProps,
-  CascaderProps,
-} from "antd";
+export type { TablePaginationConfig, TableProps } from "antd";
+export const BUTTON_TYPE = "link";

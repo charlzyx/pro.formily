@@ -8,7 +8,7 @@ import { ProSettings } from "./features/pro-settings";
 import { ResizableTitle } from "./features/resizeable";
 import { useSortable } from "./features/sortable";
 import { useExpandableAttach } from "./features/use-expandable-attach";
-import { usePagination } from "./features/use-pagination-attach";
+// import { usePagination } from "./features/use-pagination-attach";
 import { useRowSelectionAttach } from "./features/use-row-selection-attach";
 import { isColumnComponent } from "./helper";
 import {
@@ -22,6 +22,12 @@ import { Addition, Column, Flex, RowExpand, RowSelectionPro } from "./mixin";
 import { ArrayTableProProps, IChangeData } from "./types";
 const { usePrefixCls } = builtins;
 import useStyle from "../adaptor/themes/array-table-pro/useStyle";
+import { ArrayExpandableContext, useExpandable } from "./features/expandable";
+import { ArrayPaginationContext, usePagination } from "./features/pagination";
+import {
+  ArrayRowSelectionContext,
+  useRowSelection,
+} from "./features/row-selection";
 
 const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -43,22 +49,35 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   );
 
   /** 因为 pagination 被我们重写了， 所以需要很啰嗦的处理一下 */
-  const changeDataRef = useRef<IChangeData>({
+  const changeData = useRef<IChangeData>({
     pagination: {},
     filters: {},
     sorter: {},
     extra: {} as any,
   });
 
-  usePagination(dataSource, changeDataRef, props.onTableChange);
+  const handlePageChange = (
+    current: number,
+    pageSize: number,
+    other: typeof props.pagination,
+  ) => {
+    if (!props.onTableChange) return;
+    changeData.current.pagination = {
+      ...other,
+      current,
+      pageSize,
+    };
+  };
+  const [pageCtx, page] = usePagination(props.pagination, handlePageChange);
+  // usePagination(dataSource, changeDataRef, props.onTableChange);
 
-  const page = props.pagination;
+  // const page = props.pagination;
 
-  const startIndex = page ? (page.current! - 1) * page.pageSize! : 0;
-  const endIndex = page ? startIndex + page.pageSize! : 0;
+  const startIndex = pageCtx ? (pageCtx.current! - 1) * pageCtx.pageSize! : 0;
+  const endIndex = pageCtx ? startIndex + pageCtx.pageSize! : 0;
 
   const dataSlice =
-    page && props.slice !== false
+    pageCtx && props.slice !== false
       ? dataSource.slice(startIndex, endIndex)
       : dataSource;
 
@@ -67,16 +86,16 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
     prefixCls,
     start: startIndex,
   });
+
   const addition = useAddition();
   const toolbar = useToolbar();
   const footer = useFooter();
-  useExpandableAttach();
 
   const rowKey = (record: any) => {
     return props.rowKey
       ? typeof props.rowKey === "function"
         ? props.rowKey(record)
-        : record?.[props.rowKey]
+        : record?.[props.rowKey as string]
       : dataSource.indexOf(record);
   };
 
@@ -85,20 +104,28 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
     rowKeyRef.current = rowKey;
   }, [rowKey]);
 
-  useRowSelectionAttach(rowKeyRef);
+  const [expandableCtx, expandable] = useExpandable(
+    props.expandable,
+    dataSlice,
+    rowKeyRef,
+  );
 
-  const pagination = !page ? null : (
+  const [rowSelectionCtx, rowSelection] = useRowSelection(props.rowSelection);
+
+  // useRowSelectionAttach(rowKeyRef);
+
+  const pagination = pageCtx ? (
     <div>
       <Pagination
         style={{
           padding: "8px 0",
         }}
-        {...page}
-        disabled={page.disabled ?? !!props.loading}
-        size={page.size || (props.size as any)}
+        {...pageCtx}
+        disabled={page?.disabled ?? !!props.loading}
+        size={page?.size || (props.size as any)}
       ></Pagination>
     </div>
-  );
+  ) : null;
 
   const showHeader =
     props.title ||
@@ -153,59 +180,72 @@ const ProArrayTable: ReactFC<ArrayTableProProps> = observer((props) => {
   );
 
   return wrapSSR(
-    <ArrayBase>
-      {_header}
-      <div ref={ref} className={`${prefixCls} ${hasId}`}>
-        <Table
-          bordered
-          rowKey={rowKey}
-          {...props}
-          size={props.size ?? "small"}
-          title={undefined}
-          footer={undefined}
-          // 这里不处理 page 是因为 pagination 被我们重写了
-          onChange={(_page, filters, sorter, extra) => {
-            if (!props.onTableChange) return;
-            changeDataRef.current.filters = filters;
-            changeDataRef.current.sorter = sorter;
-            changeDataRef.current.extra = extra;
-            props.onTableChange(
-              changeDataRef.current.pagination,
-              filters,
-              sorter,
-              extra,
-            );
-          }}
-          pagination={false}
-          columns={columns}
-          dataSource={dataSlice}
-          components={{
-            ...props.components,
-            header: {
-              ...props.components?.header,
-              cell:
-                props.resizeable !== false
-                  ? ResizableTitle
-                  : props.components?.header?.cell,
-            },
-            body: {
-              ...body,
-              ...props.components?.body,
-            },
-          }}
-        />
-      </div>
-      {_footer}
-      {sources.map((column, key) => {
-        if (!isColumnComponent(column.schema)) return;
-        return React.createElement(RecursionField, {
-          name: column.name,
-          schema: column.schema,
-          onlyRenderSelf: true,
-          key,
-        });
-      })}
-    </ArrayBase>,
+    <ArrayPaginationContext.Provider value={pageCtx!}>
+      <ArrayExpandableContext.Provider value={expandableCtx!}>
+        <ArrayRowSelectionContext.Provider value={rowSelectionCtx!}>
+          <ArrayBase>
+            {_header}
+            <div ref={ref} className={`${prefixCls} ${hasId}`}>
+              <Table
+                size={"small"}
+                {...props}
+                rowKey={rowKey}
+                title={undefined}
+                footer={undefined}
+                rowSelection={rowSelection!}
+                expandable={expandable!}
+                // 这里不处理 page 是因为 pagination 被我们重写了
+                onChange={(_page, filters, sorter, extra) => {
+                  if (!props.onTableChange) return;
+                  changeData.current.filters = filters;
+                  changeData.current.sorter = sorter;
+                  changeData.current.extra = extra;
+                  props.onTableChange(
+                    changeData.current.pagination,
+                    filters,
+                    sorter,
+                    extra,
+                  );
+                }}
+                pagination={false as any}
+                columns={columns}
+                dataSource={dataSlice}
+                components={{
+                  ...props.components,
+                  header: {
+                    ...props.components?.header,
+                    // antd
+                    cell:
+                      props.resizeable !== false
+                        ? ResizableTitle
+                        : props.components?.header?.cell,
+                    // @ts-ignore arco
+                    th:
+                      props.resizeable !== false
+                        ? ResizableTitle
+                        : props.components?.header?.cell,
+                  },
+                  body: {
+                    ...body,
+                    ...props.components?.body,
+                  },
+                }}
+              />
+            </div>
+            {_footer}
+            {sources.map((column, key) => {
+              if (!isColumnComponent(column.schema)) return;
+              return React.createElement(RecursionField, {
+                name: column.name,
+                schema: column.schema,
+                onlyRenderSelf: true,
+                key,
+              });
+            })}
+          </ArrayBase>
+        </ArrayRowSelectionContext.Provider>
+      </ArrayExpandableContext.Provider>
+    </ArrayPaginationContext.Provider>,
   );
 });
 

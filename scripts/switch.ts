@@ -5,10 +5,10 @@ import { rimraf } from "rimraf";
 import { loop, rewite } from "./helper";
 
 const argv = process.argv.slice(2);
-const adaptor = argv[0] as "antd" | "antd-v5";
+const adaptor = argv[0] as "antd" | "antd-v5" | "arco";
 const mode = (argv[1] as "build" | "doc") ?? "doc";
 
-if (!/antd|antd-v5/.test(adaptor)) {
+if (!/^(antd|antd-v5|arco)$/.test(adaptor)) {
   throw new Error(`适配库${adaptor}不存在`);
 }
 
@@ -30,22 +30,39 @@ const docs = (() => {
   return list;
 })();
 
+// [antd, antd-v5, arco]
+const list = {
+  ui: [`"antd"`, `"antd"`, `"@arco-design/web-react"`],
+  formily: [`@formily/antd"`, `@fromily/antd-v5"`, `arco.formily"`],
+  pkg: [`@pro.formily/antd"`, `@pro.fromily/antd-v5"`, `@pro.formily/arco"`],
+  base: [
+    `/pro.formily/antd/"`,
+    `/pro.formily/antd-v5/"`,
+    `/pro.formily/arco/"`,
+  ],
+  out: [`/doc_build/antd"`, `/doc_build/antd-v5"`, `/doc_build/arco"`],
+  css: [
+    "antd/dist/antd.css",
+    "antd/dist/reset.css",
+    "@arco-design/web-react/dist/css/arco.css",
+  ],
+  local: [
+    "antd/lib/locale/zh_CN",
+    "antd/lib/locale/zh_CN",
+    "@arco-design/web-react/es/locale/zh-CN",
+  ],
+};
 const rewriter = (c: string) => {
-  if (adaptor === "antd") {
-    return c
-      .replace(`@formily/antd-v5"`, `@formily/antd"`)
-      .replace(`@pro.formily/antd-v5"`, `@pro.formily/antd"`)
-      .replace(`/pro.formily/antd-v5/"`, `/pro.formily/antd/"`)
-      .replace(`/doc_build/antd-v5"`, `/doc_build/antd"`)
-      .replace("antd/dist/reset.css", "antd/dist/antd.css");
-  } else {
-    return c
-      .replace(`@formily/antd"`, `@formily/antd-v5"`)
-      .replace(`@pro.formily/antd"`, `@pro.formily/antd-v5"`)
-      .replace(`/pro.formily/antd/"`, `/pro.formily/antd-v5/"`)
-      .replace(`/doc_build/antd"`, `/doc_build/antd-v5"`)
-      .replace("antd/dist/antd.css", "antd/dist/reset.css");
-  }
+  let neo = c;
+  const idx = adaptor === "antd" ? 0 : adaptor === "antd-v5" ? 1 : 2;
+  Object.values(list).forEach((ids) => {
+    const maybe = [...ids];
+    const [target] = maybe.splice(idx, 1);
+    maybe.forEach((id) => {
+      neo = neo.replace(id, target);
+    });
+  });
+  return neo;
 };
 
 docs

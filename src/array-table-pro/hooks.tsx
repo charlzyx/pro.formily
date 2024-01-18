@@ -4,7 +4,7 @@ import { RecursionField, useField, useFieldSchema } from "@formily/react";
 import { isArr } from "@formily/shared";
 import { useState } from "react";
 import type { ResizeCallbackData } from "react-resizable";
-import { ArrayBase, ColumnsType } from "../adaptor/adaptor";
+import { ArrayBase } from "../adaptor/adaptor";
 import {
   isAdditionComponent,
   isColumnComponent,
@@ -13,7 +13,7 @@ import {
   isOperationsComponent,
   isToolbarComponent,
 } from "./helper";
-import { ObservableColumnSource } from "./types";
+import { ColumnProps, ObservableColumnSource } from "./types";
 
 const parseSources = (
   arrayField: ArrayField,
@@ -123,7 +123,7 @@ export const useArrayTableColumns = (
     return rank;
   });
 
-  const columns = prebuild.reduce<ColumnsType<any>>(
+  const columns = prebuild.reduce<ColumnProps<any>[]>(
     (buf, { name, columnProps, schema, display }, key) => {
       // if (display !== "visible") return buf;
       // if (!isColumnComponent(schema)) return buf;

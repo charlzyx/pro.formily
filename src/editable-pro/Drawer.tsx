@@ -1,17 +1,17 @@
 import { useField } from "@formily/react";
 import React, { useState } from "react";
-import { Button, Drawer, DrawerProps } from "../adaptor";
+import { BUTTON_TYPE, Button, Drawer } from "../adaptor";
 import { RecordFormProps, useFieldRecordForm } from "./hooks";
 
 export const ProDrawer: React.FC<
   RecordFormProps &
-    DrawerProps & {
+    React.ComponentProps<typeof Drawer> & {
       onCancel: () => void | Promise<void>;
       onConfirm: (data: any) => void | Promise<void>;
     }
-> = (props) => {
+> = ({ children, ...props }) => {
   const field = useField();
-  const { FormBody, form, FormButtons } = useFieldRecordForm(props);
+  const { body, form, FormButtons } = useFieldRecordForm(props);
   const [visible, setVisible] = useState(false);
 
   return (
@@ -22,7 +22,7 @@ export const ProDrawer: React.FC<
         {...props}
         open={visible}
         onClose={() => setVisible(false)}
-        extra={
+        footer={
           <FormButtons
             onReset={() => {
               form
@@ -43,10 +43,10 @@ export const ProDrawer: React.FC<
           />
         }
       >
-        <FormBody></FormBody>
+        {body}
       </Drawer>
       <Button
-        type="link"
+        type={BUTTON_TYPE}
         {...props.buttonProps}
         disabled={!field.editable}
         onClick={() => setVisible(true)}

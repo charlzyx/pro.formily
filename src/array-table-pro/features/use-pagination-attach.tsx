@@ -51,7 +51,6 @@ export const usePagination = (
       const override: IPaginationProps = {
         ...init,
         size: "small",
-        position: ["bottomRight"],
         hideOnSinglePage: true,
         get total() {
           return array.value.length;

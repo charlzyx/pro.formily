@@ -1,4 +1,4 @@
-import { ColorsKey, colors } from "./colors";
+import { ColorsKey, colorByStatus, colors } from "./colors";
 
 export type TDictShape = {
   emap: {
@@ -80,6 +80,7 @@ export const registerDictLoader = (
     return loaderFactory().then((list) => {
       const mydict = listToDict(list);
       memo[name] = mydict;
+      console.log("🚀 ~ returnloaderFactory ~ memo[name:", name, memo[name]);
       return memo[name];
     });
   };
