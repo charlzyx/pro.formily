@@ -96,14 +96,14 @@ export default () => {
           subtitle: "专业Table",
           cover:
             "https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*3yz3QqMlShYAAAAAAAAAAAAADrJ8AQ/original",
-          link: "/array-table-pro",
+          link: "/pro-array-table",
         },
         {
           title: "ProEditable",
           subtitle: "专业对象编辑器",
           cover:
             "https://gw.alipayobjects.com/zos/antfincdn/mStei5BFC/bianzu%2525207.svg",
-          link: "/editable-pro",
+          link: "/pro-editable",
         },
       ],
     },
