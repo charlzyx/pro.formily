@@ -11,12 +11,10 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "moduleResolution": "Bundler",
+    "moduleResolution": "node",
     "paths": {
-      "@proformily/antd": ["src"]
+      "@pro.formily/antd": ["src"]
     }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src", "ui", "docs"]
 }

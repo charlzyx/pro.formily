@@ -5,9 +5,9 @@ import RsBuildConfig from "./rsbuild.config";
 import { pluginFixCss } from "./scripts/fixcss";
 
 export default defineConfig({
-  base: "/proformily/antd/",
+  base: "/pro.formily/antd/",
   root: path.join(__dirname, "docs"),
-  outDir: "./doc_build/antd",
+  outDir: "./doc_build/@arco-design/web-react",
   title: "ProFormily",
   description: "Pro Formily, 启动!",
   icon: "/rspress-icon.png",
@@ -15,12 +15,21 @@ export default defineConfig({
     light: "/rspress-light-logo.png",
     dark: "/rspress-dark-logo.png",
   },
+  mediumZoom: {
+    selector: ".rspress-doc .img",
+  },
   globalStyles: path.join(__dirname, "./docs/style.css"),
   builderConfig: {
     ...RsBuildConfig,
   },
   plugins: [pluginPreview(), pluginFixCss()],
   themeConfig: {
+    enableContentAnimation: true,
+    lastUpdated: true,
+    outlineTitle: "目录",
+    lastUpdatedText: "最近更新",
+    prevPageText: "上一节",
+    nextPageText: "下一节",
     footer: {
       message: "Powered by RsPress. © 2024 charlzyx All Rights Reserved.",
     },
@@ -28,7 +37,7 @@ export default defineConfig({
       {
         icon: "github",
         mode: "link",
-        content: "https://github.com/charlzyx/proformily",
+        content: "https://github.com/charlzyx/pro.formily",
       },
     ],
   },

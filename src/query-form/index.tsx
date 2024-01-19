@@ -3,7 +3,7 @@ import type { ObjectField } from "@formily/core";
 import { observer, useField } from "@formily/react";
 import { clone } from "@formily/shared";
 import React, { useEffect } from "react";
-import { Button } from "../adaptor";
+import { BUTTON_TYPE, Button } from "../adaptor";
 import { FormButtonGroup, FormGrid, FormLayout } from "../adaptor/adaptor";
 import { useQueryListContext } from "../query-list";
 import { useGrid } from "../shared/useGrid";
@@ -59,7 +59,7 @@ export const QueryForm = observer((props: QueryFormProps) => {
       <FormButtonGroup align="right" style={buttonGroupStyle}>
         {expanded !== undefined ? (
           <Button
-            type="link"
+            type={BUTTON_TYPE}
             icon={
               expanded ? (
                 <UpOutlined></UpOutlined>

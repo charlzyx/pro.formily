@@ -1,5 +1,5 @@
-import { ImageView } from "@proformily/antd";
 import { Divider } from "antd";
+import { ImageView } from "@pro.formily/antd";
 import React from "react";
 
 const App = () => {

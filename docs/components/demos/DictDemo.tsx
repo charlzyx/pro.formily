@@ -1,3 +1,6 @@
+import { createForm } from "@formily/core";
+import { FormProvider, createSchemaField } from "@formily/react";
+import { Dict, dict, dictEffects, registerDictLoader } from "@pro.formily/antd";
 import {
   Checkbox,
   FormGrid,
@@ -8,37 +11,30 @@ import {
   Select,
   Space,
 } from "@formily/antd";
-import { createForm } from "@formily/core";
-import { FormProvider, createSchemaField } from "@formily/react";
-import { Dict, dict, dictEffects, registerDictLoader } from "@proformily/antd";
 import React, { useMemo } from "react";
 
 const loaders = {
   bool: () => {
-    registerDictLoader("bool", (convert) => {
+    registerDictLoader("bool", () => {
       return Promise.resolve([
         { label: "是", value: 1, color: "success" },
         { label: "否", value: 0, color: "error" },
-      ]).then((list) => {
-        return convert(list);
-      });
+      ]);
     });
   },
   status: () => {
-    registerDictLoader("status", (convert) => {
+    registerDictLoader("status", () => {
       return Promise.resolve([
         { label: "已上线", value: 0, color: "success" },
         { label: "运行中", value: 1, color: "processing" },
         { label: "关闭", value: 2, color: "default" },
         { label: "已宕机", value: 3, color: "error" },
         { label: "已超载", value: 4, color: "warning" },
-      ]).then((list) => {
-        return convert(list);
-      });
+      ]);
     });
   },
   classify: () => {
-    registerDictLoader("classify", (convert) => {
+    registerDictLoader("classify", () => {
       return Promise.resolve([
         { label: "文艺", value: 0 },
         { label: "喜剧", value: 1 },
@@ -46,9 +42,7 @@ const loaders = {
         { label: "动画", value: 3 },
         { label: "悬疑", value: 4 },
         { label: "科幻", value: 5 },
-      ]).then((list) => {
-        return convert(list);
-      });
+      ]);
     });
   },
 };

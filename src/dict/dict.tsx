@@ -1,8 +1,7 @@
-import React, { Fragment } from "react";
 import { useMemo } from "react";
 import { Badge, Space, Tag } from "../adaptor/index";
-import type { TDictShape } from "../shared";
-import { isColorStatus } from "../shared";
+import { colorByStatus, isColorStatus } from "./colors";
+import type { TDictShape } from "./helper";
 
 type Input = string | number | Input[];
 
@@ -29,12 +28,10 @@ export const Dict = (props: {
     if (!Array.isArray(options)) return [];
     const ret = Array.isArray(value)
       ? value.map((v) =>
-          // eslint-disable-next-line eqeqeq
           // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
           options.find((x) => (strict ? x.value === v : x.value == v)),
         )
-      : // eslint-disable-next-line eqeqeq
-        // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
+      : // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
         [options.find((x) => (strict ? x.value === value : x.value == value))];
     return ret.filter(Boolean);
   }, [options, strict, value]);
@@ -48,11 +45,11 @@ export const Dict = (props: {
             status={
               isColorStatus(item?.color) ? (item?.color as any) : undefined
             }
-            color={isColorStatus(item?.color) ? undefined : item?.color}
+            color={colorByStatus(item?.color)}
             text={item?.label}
           />
         ) : type === "tag" ? (
-          <Tag key={item?.key} color={item?.color}>
+          <Tag key={item?.key} color={colorByStatus(item?.color)}>
             {item?.label}
           </Tag>
         ) : (
