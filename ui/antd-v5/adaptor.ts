@@ -1,4 +1,4 @@
-export * as builtins from "@formily/antd-v5/esm/__builtins__";
+export { usePrefixCls } from "@formily/antd-v5/esm/__builtins__";
 export {
   FormGrid,
   FormButtonGroup,

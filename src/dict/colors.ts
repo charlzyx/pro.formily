@@ -1,5 +1,3 @@
-import type { BadgeProps } from "../adaptor/index";
-
 export type PickArrayItem<T> = T extends (infer P)[] ? P : unknown;
 
 const statusColors = {

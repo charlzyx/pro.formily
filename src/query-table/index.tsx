@@ -1,7 +1,7 @@
 import type { ArrayField } from "@formily/core";
 import { observer, useField } from "@formily/react";
 import { useEffect } from "react";
-import { ArrayTableProProps } from "src/array-table-pro/types";
+import { ProArrayTableProps } from "src/pro-array-table/types";
 import {
   BUTTON_TYPE,
   Button,
@@ -9,11 +9,11 @@ import {
   TablePaginationConfig,
 } from "../adaptor";
 import { ArrayBase } from "../adaptor/adaptor";
-import { Addition, Column, RowExpand } from "../array-table-pro/mixin";
-import { ArrayTablePro } from "../array-table-pro/pro";
+import { Addition, Column, RowExpand } from "../pro-array-table/mixin";
+import { ProArrayTable } from "../pro-array-table/pro";
 import { useQueryListContext } from "../query-list";
 
-export const QueryTablePro = observer((overprops: ArrayTableProProps) => {
+export const QueryTablePro = observer((overprops: ProArrayTableProps) => {
   const field = useField<ArrayField>();
   const querylist = useQueryListContext();
   const page = {
@@ -31,7 +31,7 @@ export const QueryTablePro = observer((overprops: ArrayTableProProps) => {
     }
   }, [querylist.none, field.address]);
 
-  const props: ArrayTableProProps = {
+  const props: ProArrayTableProps = {
     ...overprops,
     pagination: {
       ...overprops.pagination,
@@ -60,12 +60,12 @@ export const QueryTablePro = observer((overprops: ArrayTableProProps) => {
   );
 
   return (
-    <ArrayTablePro
+    <ProArrayTable
       {...props}
       extra={extra}
       slice={false}
       loading={props.loading ?? querylist.loading}
-    ></ArrayTablePro>
+    ></ProArrayTable>
   );
 });
 

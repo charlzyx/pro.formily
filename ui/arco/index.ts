@@ -49,10 +49,7 @@ export {
   Space,
   Tag,
 } from "@arco-design/web-react";
-export type { BadgeProps } from "@arco-design/web-react";
 export const Row = Grid.Row;
-
-export type { TableProps } from "./commonfiy/table";
 
 export type TablePaginationConfig = PaginationProps;
 
@@ -63,3 +60,5 @@ export { Alert } from "./commonfiy/alert";
 export { Drawer, Modal, Popconfirm } from "./commonfiy/pops";
 export { Cascader } from "./commonfiy/cascader";
 export { Typography } from "./commonfiy/typography";
+export * from "./features/table-resizeable";
+export * from "./features/table-sortable";

@@ -1,4 +1,4 @@
-export * as builtins from "@formily/antd/esm/__builtins__";
+export { usePrefixCls } from "@formily/antd/esm/__builtins__";
 export {
   FormGrid,
   FormButtonGroup,
@@ -13,6 +13,7 @@ export {
 
 import { ArrayBase as AntdArrayBase } from "@formily/antd";
 export type { ArrayBaseMixins } from "@formily/antd";
-// 类型fix
+
+// 类型 Required
 export const ArrayBase = AntdArrayBase as Required<typeof AntdArrayBase> &
   typeof AntdArrayBase;

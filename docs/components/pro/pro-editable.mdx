@@ -1,0 +1,31 @@
+# 💡Pro Editable
+
+> ProEditable 是为了解决常见的 `Popconfirm/Modal/Drawer` 弹窗编辑子表单模板代码的问题
+
+### 为什么不是 FormDialog/FormDrawer ?
+
+~~没有人比我更懂formily 👐~~
+这两个都是方法调用, 不能用 json 描述出来所以 `FormDialog/FormDrawer` 适合用于更灵活的场景;
+此外, `FormDialog/FormDrawer` 内部是使用了 [document.body.appendChild](https://github.com/alibaba/formily/blob/formily_next/packages/antd/src/form-drawer/index.tsx#L122) 凭空创建了一个新的
+dom 节点来承载这个表单, 脱离了 root 节点, 所以需要用 Portals 打补丁来解决,
+但使用中会仍会遇到需要单独配置 ConfigProvider 等其他一些奇奇怪怪的问题.~~就很烦 🪃~~
+
+## 设计思路
+
+ProEditable 灵感来自 `Editable` 既然单独字段能编辑, 那么, 子对象字段是不是也应该能够编辑 ?
+这种场景不要太多: 比如表格行内容编辑; 此时, 这篇[标准化CRUD作用域变量规范
+](https://github.com/alibaba/formily/discussions/3207) 直指 formily 模型抽象核心的内容就尤为重要, 这里面提到的 `record` 模型是如此的重要;
+以至于在 `2.2.19` 版本中, `record` 被作为 `Field` 模型的核心属性, 直接追加到了 `BaseField` 上.
+关联文档: [RecordScope](https://react.formilyjs.org/zh-CN/api/components/record-scope)
+
+
+在这个基础之上, 那 ProEditable 就顺利成章的消费 `field.record` 的数据, 在不影响当前表单响应模型的基础上;
+使用 ProEditable 所在 `field` 上的属性与 `form` 上共享的组件与属性, 创建一个子表单, 供给弹窗消费;
+
+### 代码案例: 在普通 Object 对象跟随使用
+<code src="../demos/ProEditable.tsx"  />
+
+更常见的
+
+### 代码案例: 在列表中使用
+<code src="../demos/ProEditableWithArray.tsx"  />

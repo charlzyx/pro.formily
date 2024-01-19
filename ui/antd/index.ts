@@ -1,31 +1,31 @@
 export {
   ColumnHeightOutlined,
-  SettingOutlined,
-  SyncOutlined,
   CopyOutlined,
   DeleteOutlined,
   PlusOutlined,
+  SettingOutlined,
+  SyncOutlined,
   ToTopOutlined,
 } from "@ant-design/icons";
 export {
   Alert,
-  Cascader,
-  Divider,
   Badge,
-  Select,
-  Pagination,
-  Tag,
-  Table,
   Button,
+  Cascader,
   ConfigProvider,
-  Popover,
-  Popconfirm,
-  Row,
-  Modal,
+  Divider,
   Drawer,
   Image,
+  Modal,
+  Pagination,
+  Popconfirm,
+  Popover,
+  Row,
+  Select,
   Slider,
   Space,
+  Table,
+  Tag,
   Typography,
 } from "antd";
 import "antd/lib/alert/style/index";
@@ -48,5 +48,7 @@ import "antd/lib/tag/style/index";
 import "antd/lib/typography/style/index";
 import "./themes/index";
 
-export type { TablePaginationConfig, TableProps } from "antd";
+export type { TablePaginationConfig } from "antd";
+export * from "./features/table-resizeable";
+export * from "./features/table-sortable";
 export const BUTTON_TYPE = "link";

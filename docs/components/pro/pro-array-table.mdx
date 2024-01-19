@@ -1,0 +1,62 @@
+# 💡 Pro ArrayTable
+
+> Pro ArrayTable 是一个增强版本的 ArrayTable, 增加了以下属性与功能
+
+- ✅ schema 拓展: RowExpand / Toolbar / Footer
+- ✅ 列配置: 排序与拖动调整列宽
+- ✅ 常用功能配置简化与增强 (pagination/rowSelection/expandable)
+- ✅ `expandable.defaultExpandedAllRows` 现在支持惰性加载啦!
+- ✅ `expandable.expandedRowKeys` / `rowSelection.selectedRowKeys` 现在会根据页码调整进行智能重置!
+
+
+
+## 属性说明
+
+|属性|说明|类型|默认值|
+|----|---|---|---|
+|`resizeable`|可拖拽列宽功能开关, 在 `Columns` 也可以单独设置|`boolean`|`false`|
+|`settings`|动态列排序功能开关| `boolean` | `true`|
+|`slice`|分页性能优化开关, 默认开启| `boolean`| `true`|
+|`rowSelection`|可选列选择功能, 配置简化, 提供功能钩子, 默认关闭| `true\| TableProps['rowSelection']`|--|
+|`pagination`|分页功能, 配置简化, 提供功能钩子, 默认开启, `false` 显式关闭| `false\| TableProps['pagination']`|`{hideOnSingle:true}`|
+|`expandable`|行展开功能, 配置简化, 提供功能钩子配置, 默认关闭| `TableProps['expandable']`|--|
+|`RowExpand`|`Schame`形式的 行展开|--|--|
+|`Toolbar`|`Schame`自定义表头部分内容, 自定义组件名称必须包含 `Toolbar`|--|--|
+|`Footer`|`Schame`自定义表头部分内容, 自定义组件名称必须包含 `Footer` |--|--|
+
+
+## 代码案例
+
+<code src="../demos/ProArrayTable.tsx"  />
+
+### ProArrayTable.useTablePagination 获取分页信息
+
+```tsx | pure
+export interface ITableSelectionContext {
+  current: number;
+  pageSize: number;
+  total: number;
+  setPagination: React.Dispatch<
+    React.SetStateAction<{ current: number; pageSize: number }>
+  >;
+}
+```
+
+### ProArrayTable.useTableExpandable 获取 Expandable 展开行信息
+
+```tsx | pure
+export interface ITableExpandableContext {
+  // 分页页码变更会重置
+  expandedRowKeys: RowKey[];
+  setExpandedRowKeys: React.Dispatch<React.SetStateAction<RowKey[]>>;
+}
+```
+
+### ProArrayTable.useTableRowSelection 获取列选择信息
+
+```tsx | pure
+export interface ITableSelectionContext {
+  selectedRowKeys: RowKey[];
+  setSelectedRowKeys: React.Dispatch<React.SetStateAction<RowKey[]>>;
+}
+```

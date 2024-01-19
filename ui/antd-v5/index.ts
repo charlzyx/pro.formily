@@ -1,41 +1,35 @@
 export {
   ColumnHeightOutlined,
-  SettingOutlined,
-  SyncOutlined,
   CopyOutlined,
   DeleteOutlined,
   PlusOutlined,
+  SettingOutlined,
+  SyncOutlined,
   ToTopOutlined,
 } from "@ant-design/icons";
 export {
   Alert,
-  Divider,
   Badge,
-  Select,
-  Pagination,
-  Tag,
-  Table,
   Button,
-  ConfigProvider,
   Cascader,
-  Popover,
-  Popconfirm,
-  Row,
-  Modal,
+  ConfigProvider,
+  Divider,
   Drawer,
   Image,
+  Modal,
+  Pagination,
+  Popconfirm,
+  Popover,
+  Row,
+  Select,
   Slider,
   Space,
+  Table,
+  Tag,
   Typography,
 } from "antd";
 
-export type {
-  PopconfirmProps,
-  ModalProps,
-  DrawerProps,
-  BadgeProps,
-  TablePaginationConfig,
-  TableProps,
-  CascaderProps,
-} from "antd";
+export type { TablePaginationConfig } from "antd";
+export * from "./features/table-resizeable";
+export * from "./features/table-sortable";
 export const BUTTON_TYPE = "link";

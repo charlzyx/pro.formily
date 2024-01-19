@@ -32,15 +32,17 @@ export interface TableProps<T>
     onExpand?: ArcoTableProps<T>["onExpand"];
     onExpandedRowsChange?: ArcoTableProps<T>["onExpandedRowsChange"];
   };
-  pagination: Omit<
-    Exclude<Required<ArcoTableProps<T>>["pagination"], boolean>,
-    "onPageSizeChange"
-  > & {
-    onShowSizeChange?: Exclude<
-      Required<ArcoTableProps<T>>["pagination"],
-      boolean
-    >["onPageSizeChange"];
-  };
+  pagination:
+    | (Omit<
+        Exclude<Required<ArcoTableProps<T>>["pagination"], boolean>,
+        "onPageSizeChange"
+      > & {
+        onShowSizeChange?: Exclude<
+          Required<ArcoTableProps<T>>["pagination"],
+          boolean
+        >["onPageSizeChange"];
+      })
+    | false;
   rowSelection?: Omit<
     Required<ArcoTableProps<T>>["rowSelection"],
     "onChange"

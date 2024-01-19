@@ -32,15 +32,14 @@ const docs = (() => {
 
 // [antd, antd-v5, arco]
 const list = {
-  ui: [`"antd"`, `"antd"`, `"@arco-design/web-react"`],
-  formily: [`@formily/antd"`, `@fromily/antd-v5"`, `arco.formily"`],
-  pkg: [`@pro.formily/antd"`, `@pro.fromily/antd-v5"`, `@pro.formily/arco"`],
+  formily: [`@formily/antd"`, `@formily/antd-v5"`, `arco.formily"`],
+  pkg: [`@pro.formily/antd"`, `@pro.formily/antd-v5"`, `@pro.formily/arco"`],
   base: [
     `/pro.formily/antd/"`,
     `/pro.formily/antd-v5/"`,
     `/pro.formily/arco/"`,
   ],
-  out: [`/doc_build/antd"`, `/doc_build/antd-v5"`, `/doc_build/arco"`],
+  out: [`/doc_build/antd/"`, `/doc_build/antd-v5/"`, `/doc_build/arco/"`],
   css: [
     "antd/dist/antd.css",
     "antd/dist/reset.css",
@@ -51,6 +50,7 @@ const list = {
     "antd/lib/locale/zh_CN",
     "@arco-design/web-react/es/locale/zh-CN",
   ],
+  ui: [`"antd"`, `"antd"`, `"@arco-design/web-react"`],
 };
 const rewriter = (c: string) => {
   let neo = c;
