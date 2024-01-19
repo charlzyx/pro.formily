@@ -29,15 +29,7 @@ export {
   Typography,
 } from "antd";
 
-export type {
-  BadgeProps,
-  CascaderProps,
-  DrawerProps,
-  ModalProps,
-  PopconfirmProps,
-  TablePaginationConfig,
-  TableProps,
-} from "antd";
+export type { TablePaginationConfig } from "antd";
 export * from "./features/table-resizeable";
 export * from "./features/table-sortable";
 export const BUTTON_TYPE = "link";

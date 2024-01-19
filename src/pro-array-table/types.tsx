@@ -1,14 +1,19 @@
 import { FieldDisplayTypes, GeneralField } from "@formily/core";
 import { Schema } from "@formily/json-schema";
-import type { TableProps } from "../adaptor";
+import type { Table } from "../adaptor";
 
-type TableChangeParams = Parameters<Required<TableProps<any>>["onChange"]>;
+type TableProps<T> = React.ComponentProps<typeof Table>;
+
+export type TableChangeParams = Parameters<
+  Required<TableProps<any>>["onChange"]
+>;
 
 type RequiredTableProps = Required<TableProps<any>>;
 
 export type ColumnProps<T> = Required<TableProps<T>>["columns"][0];
 export type ColumnType<T> = Required<TableProps<T>>["columns"];
-export type RowKey = string | ((row: any) => React.Key);
+export type RowKeyFn = string | ((row: any) => React.Key);
+export type RowKey = React.Key;
 
 export type IChangeData = {
   pagination: TableChangeParams[0];

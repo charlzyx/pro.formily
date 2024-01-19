@@ -155,7 +155,6 @@ export const Linkage = observer(
       loadData([])
         .then((options) => {
           state.options = options;
-          console.log("🚀 ~ .then ~ options:", options);
           const values = value.map((x) => x);
           state.loading = true;
           return all

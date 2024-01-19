@@ -48,7 +48,7 @@ import "antd/lib/tag/style/index";
 import "antd/lib/typography/style/index";
 import "./themes/index";
 
-export type { TablePaginationConfig, TableProps } from "antd";
+export type { TablePaginationConfig } from "antd";
 export * from "./features/table-resizeable";
 export * from "./features/table-sortable";
 export const BUTTON_TYPE = "link";
