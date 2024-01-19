@@ -1,4 +1,4 @@
-import { Card, Col, Divider, Row, Space, Tag, Typography } from "antd";
+import { Card, Divider, Space, Tag, Typography } from "antd";
 // import Col from "@arco-design/web-react/es/Grid/col";
 // import Row from "@arco-design/web-react/es/Grid/row";
 
@@ -34,6 +34,46 @@ const style = {
       "0 6px 16px -8px rgba(0,0,0,0.08), 0 9px 28px 0 rgba(0,0,0,0.05), 0 12px 48px 16px rgba(0,0,0,0.03)",
   },
 };
+const justifyContentList: Required<React.CSSProperties>["justifyContent"][] = [
+  "space-around",
+  "space-between",
+  "space-evenly",
+  "flex-start",
+  "flex-end",
+];
+export const Flex = (
+  props: React.PropsWithChildren<
+    {
+      hidden?: boolean;
+      between?: boolean;
+      around?: boolean;
+      evenly?: boolean;
+      center?: boolean;
+      start?: boolean;
+      end?: boolean;
+      full?: boolean;
+    } & Pick<React.CSSProperties, "marginTop" | "marginBottom">
+  >,
+) => {
+  const justifyContent = Object.keys(props).find((key) =>
+    justifyContentList.find((prop) => new RegExp(key).test(prop)),
+  );
+
+  return props.hidden ? null : (
+    <div
+      style={{
+        display: "flex",
+        marginTop: props.marginTop,
+        marginBottom: props.marginBottom,
+        flex: props.full ? 1 : undefined,
+        alignItems: "center",
+        justifyContent,
+      }}
+    >
+      {props.children}
+    </div>
+  );
+};
 
 const { Title } = Typography;
 
@@ -52,14 +92,14 @@ export default () => {
           link: "/query-list",
         },
         {
-          title: "ArrayTablePro",
+          title: "ProArrayTable",
           subtitle: "专业Table",
           cover:
             "https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*3yz3QqMlShYAAAAAAAAAAAAADrJ8AQ/original",
           link: "/array-table-pro",
         },
         {
-          title: "EditablePro",
+          title: "ProEditable",
           subtitle: "专业对象编辑器",
           cover:
             "https://gw.alipayobjects.com/zos/antfincdn/mStei5BFC/bianzu%2525207.svg",
@@ -134,7 +174,7 @@ export default () => {
                 <Tag style={{ display: "block" }}>{components.length}</Tag>
               </Space>
             </Title>
-            <Row gutter={[24, 24]}>
+            <Flex start full>
               {components.map((component, idx) => {
                 const uri = `${`${group.prefix}${component.link}`.replace(
                   "//",
@@ -142,7 +182,7 @@ export default () => {
                 )}.html`;
 
                 return (
-                  <Col xs={24} sm={12} lg={8} xl={6} key={component.title}>
+                  <Flex key={component.title}>
                     <a
                       style={{
                         textDecoration: "none",
@@ -150,6 +190,10 @@ export default () => {
                       href={uri}
                     >
                       <Card
+                        style={{
+                          width: "300px",
+                          marginRight: "20px",
+                        }}
                         bodyStyle={{
                           backgroundRepeat: "no-repeat",
                           backgroundPosition: "bottom right",
@@ -184,10 +228,10 @@ export default () => {
                         </div>
                       </Card>
                     </a>
-                  </Col>
+                  </Flex>
                 );
               })}
-            </Row>
+            </Flex>
           </div>
         ) : null;
       })}

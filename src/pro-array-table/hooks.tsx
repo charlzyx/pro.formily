@@ -134,8 +134,10 @@ export const useArrayTableColumns = (
         dataIndex: name,
         onHeaderCell: () => {
           return {
-            // 默认开启
-            resizeable: columnProps.resizeable ?? true,
+            resizeable:
+              "resizeable" in (columnProps || {})
+                ? columnProps?.resizeable
+                : arrayField.componentProps?.resizeable,
             width: resize[key] ?? columnProps.width,
             onResize(e: any, data: ResizeCallbackData) {
               setResizes((prev) => {

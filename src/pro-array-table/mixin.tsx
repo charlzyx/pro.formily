@@ -2,8 +2,8 @@ import { ReactFC, observer } from "@formily/react";
 import React, { Fragment, useContext } from "react";
 import { Alert, BUTTON_TYPE, Button, Divider, Space } from "../adaptor";
 import { ArrayBase, ArrayBaseMixins } from "../adaptor/adaptor";
-import { ArrayPaginationContext } from "./features/pagination";
-import { ArrayRowSelectionContext } from "./features/row-selection";
+import { TablePaginationContext } from "./features/pagination";
+import { TableRowSelectionContext } from "./features/row-selection";
 import type { ColumnProps } from "./types";
 
 export const Column: ReactFC<ColumnProps<any>> = () => {
@@ -15,7 +15,7 @@ export const RowExpand: ReactFC<ColumnProps<any>> = () => {
 
 export const Addition: ArrayBaseMixins["Addition"] = observer((props) => {
   const array = ArrayBase.useArray();
-  const page = useContext(ArrayPaginationContext);
+  const page = useContext(TablePaginationContext);
   return (
     <ArrayBase.Addition
       block={false}
@@ -36,14 +36,31 @@ export const Addition: ArrayBaseMixins["Addition"] = observer((props) => {
   );
 });
 
+const justifyContentList: Required<React.CSSProperties>["justifyContent"][] = [
+  "space-around",
+  "space-between",
+  "space-evenly",
+  "flex-start",
+  "flex-end",
+];
 export const Flex = (
   props: React.PropsWithChildren<
     {
-      justifyContent?: React.CSSProperties["justifyContent"];
+      hidden?: boolean;
+      between?: boolean;
+      around?: boolean;
+      evenly?: boolean;
+      center?: boolean;
+      start?: boolean;
+      end?: boolean;
     } & Pick<React.CSSProperties, "marginTop" | "marginBottom">
   >,
 ) => {
-  return (
+  const justifyContent = Object.keys(props).find((key) =>
+    justifyContentList.find((prop) => new RegExp(key).test(prop)),
+  );
+
+  return props.hidden ? null : (
     <div
       style={{
         display: "flex",
@@ -51,7 +68,7 @@ export const Flex = (
         marginBottom: props.marginBottom,
         flex: 1,
         alignItems: "center",
-        justifyContent: props.justifyContent || "flex-end",
+        justifyContent,
       }}
     >
       {props.children}
@@ -65,7 +82,7 @@ export const RowSelectionPro = (props: {
 }) => {
   const { ds, rowKey } = props;
   const array = ArrayBase.useArray();
-  const $row = useContext(ArrayRowSelectionContext);
+  const $row = useContext(TableRowSelectionContext);
   // const [, $row] = useArrayCompPropsOf(array?.field, "rowSelection");
   return ds.length > 0 ? (
     <Alert

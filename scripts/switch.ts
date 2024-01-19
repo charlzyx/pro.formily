@@ -33,7 +33,7 @@ const docs = (() => {
 // [antd, antd-v5, arco]
 const list = {
   ui: [`"antd"`, `"antd"`, `"@arco-design/web-react"`],
-  formily: [`@formily/antd"`, `@fromily/antd-v5"`, `arco.formily"`],
+  formily: [`@formily/antd"`, `@formily/antd-v5"`, `arco.formily"`],
   pkg: [`@pro.formily/antd"`, `@pro.fromily/antd-v5"`, `@pro.formily/arco"`],
   base: [
     `/pro.formily/antd/"`,

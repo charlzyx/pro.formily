@@ -63,3 +63,5 @@ export { Alert } from "./commonfiy/alert";
 export { Drawer, Modal, Popconfirm } from "./commonfiy/pops";
 export { Cascader } from "./commonfiy/cascader";
 export { Typography } from "./commonfiy/typography";
+export * from "./features/table-resizeable";
+export * from "./features/table-sortable";

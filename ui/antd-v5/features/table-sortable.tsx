@@ -1,19 +1,19 @@
-import { builtins } from "../../adaptor/adaptor";
-// const { SortableContainer, SortableElement, usePrefixCls } = builtins;
-const { usePrefixCls } = builtins;
-import { ReactFC, useFieldSchema } from "@formily/react";
+import {
+  SortableContainer,
+  SortableElement,
+  usePrefixCls,
+} from "@formily/antd-v5/esm/__builtins__";
+import { TableProps } from "antd";
 import cls from "classnames";
 import React from "react";
-import { empty } from "../../__builtins__";
-import { hasSortable } from "../helper";
 
-// export const SortableRow = SortableElement((props: any) => <tr {...props} />);
-export const SortableRow = (props: any) => <tr {...props} />;
+export const SortableRow = SortableElement((props: any) => <tr {...props} />);
 
-// export const SortableBody = SortableContainer((props: any) => (
-export const SortableBody = (props: any) => <tbody {...props} />;
+export const SortableBody = SortableContainer((props: any) => (
+  <tbody {...props} />
+));
 
-export const RowComp: ReactFC<React.HTMLAttributes<HTMLTableRowElement>> = (
+export const RowComp: React.FC<React.HTMLAttributes<HTMLTableRowElement>> = (
   props,
 ) => {
   const prefixCls = usePrefixCls("formily-array-table-pro");
@@ -52,11 +52,11 @@ export const getWrapperComp = (opts: {
   start: number;
   prefixCls: string;
   onSortEnd: (oldIndex: number, newIndex: number) => void;
-  ref: React.MutableRefObject<HTMLDivElement | null>;
+  wrapperRef: React.MutableRefObject<HTMLDivElement | null>;
 }) => {
   const WrapperSortableBody = React.memo(
     (props: React.HTMLAttributes<HTMLTableSectionElement>) => {
-      const { list, start, onSortEnd, ref, prefixCls } = opts;
+      const { list, start, onSortEnd, wrapperRef: ref, prefixCls } = opts;
       return (
         <SortableBody
           {...props}
@@ -84,28 +84,28 @@ export const getWrapperComp = (opts: {
   return WrapperSortableBody;
 };
 
-export const useSortable = (
+export const useSortableBody = (
   dataSource: any[],
   onSortEnd: (from: number, to: number) => void,
   opts: {
-    ref: React.MutableRefObject<HTMLDivElement | null>;
+    enable: boolean;
+    wrapperRef: React.MutableRefObject<HTMLDivElement | null>;
     start: number;
     prefixCls: string;
   },
 ) => {
-  const schema = useFieldSchema();
-  const body = hasSortable(schema)
+  const body: Required<TableProps<any>>["components"]["body"] = opts.enable
     ? {
         wrapper: getWrapperComp({
           list: dataSource,
           start: opts.start,
           prefixCls: opts.prefixCls,
           onSortEnd: onSortEnd,
-          ref: opts.ref,
+          wrapperRef: opts.wrapperRef,
         }),
         row: RowComp,
       }
-    : (empty as any);
+    : {};
 
   return body;
 };

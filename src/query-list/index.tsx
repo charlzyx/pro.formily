@@ -131,10 +131,24 @@ export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
               .service?.(memo.current.data)
               .then((resp) => {
                 setLoading(false);
-                this.table!.setValue(resp.list ?? []);
-                if (this.table?.componentProps?.pagination) {
-                  this.table.componentProps.pagination.total = resp.total;
+                if (this.table) {
+                  this.table.setValue(resp.list ?? []);
+                  this.table.setState((s) => {
+                    s.componentProps = s.componentProps || {};
+
+                    s.componentProps.pagination =
+                      s.componentProps.pagination || {};
+
+                    s.componentProps.pagination.total = resp.total;
+                  });
                 }
+                // console.log(
+                //   "🚀 ~ .then ~ this.table?.componentProps:",
+                //   this.table?.componentProps,
+                // );
+                // if (this.table?.componentProps?.pagination) {
+                //   this.table.componentProps.pagination.total = resp.total;
+                // }
                 return resp;
               })
               .catch((e) => {

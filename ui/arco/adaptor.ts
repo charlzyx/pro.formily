@@ -1,4 +1,4 @@
-export * as builtins from "arco.formily/dist/esm/__builtins__";
+export { usePrefixCls } from "arco.formily/dist/esm/__builtins__";
 export {
   FormGrid,
   FormButtonGroup,

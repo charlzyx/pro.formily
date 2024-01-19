@@ -21,12 +21,12 @@ export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
 };
 
-export type ArrayTableProProps = Omit<TableProps<any>, "title"> & {
+export type ProArrayTableProps = Omit<TableProps<any>, "title"> & {
   title: string | TableProps<any>["title"];
   footer: string | TableProps<any>["footer"];
   rowSelection?:
     | (Exclude<RequiredTableProps["rowSelection"], undefined> & {
-        position?: "top" | "bottom";
+        showPro?: "top" | "bottom" | false;
       })
     | true;
   /** 列表配置齿轮, 默认 true */

@@ -9,11 +9,11 @@ export const ProDrawer: React.FC<
       onCancel: () => void | Promise<void>;
       onConfirm: (data: any) => void | Promise<void>;
     }
-> = ({ children, ...props }) => {
+> = ({ children, ...fieldProps }) => {
   const field = useField();
-  const { body, form, FormButtons } = useFieldRecordForm(props);
+  const { body, form, FormButtons } = useFieldRecordForm(fieldProps);
   const [visible, setVisible] = useState(false);
-
+  const props = field.componentProps;
   return (
     <React.Fragment>
       <Drawer

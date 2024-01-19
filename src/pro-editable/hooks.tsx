@@ -1,7 +1,6 @@
 import { createForm } from "@formily/core";
 import {
   FormProvider,
-  SchemaComponentsContext,
   SchemaOptionsContext,
   createSchemaField,
   useField,
@@ -15,7 +14,6 @@ import { useRecord } from "../shared/useRecord";
 export const useRecordIsolationForm = () => {
   const parentField = useField();
   const schema = useFieldSchema();
-  const components = useContext(SchemaComponentsContext);
   const options = useContext(SchemaOptionsContext);
   const record = useRecord();
 
@@ -24,15 +22,7 @@ export const useRecordIsolationForm = () => {
     initialValues: toJS(record ?? {}),
   });
 
-  const SchemaField = createSchemaField({
-    components: {
-      ...options.components,
-      ...components,
-    },
-    ...options,
-  });
-
-  return { schema, form, SchemaField };
+  return { schema, form, options };
 };
 
 export type RecordFormProps = React.PropsWithChildren<{
@@ -52,7 +42,8 @@ const buttonGroupStyle: React.CSSProperties = {
 
 export const useFieldRecordForm = (props: RecordFormProps) => {
   const { cancelText, okText, grid, layout } = props;
-  const { form, SchemaField, schema } = useRecordIsolationForm();
+  const { form, options, schema } = useRecordIsolationForm();
+
   const gridProps = useMemo(() => {
     return {
       ...grid,
@@ -76,6 +67,8 @@ export const useFieldRecordForm = (props: RecordFormProps) => {
       </FormButtonGroup>
     </FormGrid.GridColumn>
   );
+
+  const SchemaField = createSchemaField(options);
 
   const body = (
     <FormProvider form={form}>

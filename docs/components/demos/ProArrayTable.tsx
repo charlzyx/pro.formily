@@ -20,50 +20,39 @@ import moment from "moment";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
-import {
-  ArrayTablePro,
-  // useArrayCompPropsOf,
-  // useFormArrayProps,
-} from "@pro.formily/antd";
+import { ProArrayTable } from "@pro.formily/antd";
 import { useEffect } from "react";
 
-// const CustomeToolbar = () => {
-//   const array = ArrayBase.useArray!();
-//   const [, $row] = useArrayCompPropsOf(array?.field, "rowSelection");
-//   return (
-//     <Space>
-//       <Button
-//         type="primary"
-//         onClick={() => {
-//           // ok
-//           if (!array) return;
-//           console.log(array.field.componentProps.rowSelection.selectedRowKeys);
-//           if (!$row) return;
-//           // but quick
-//           console.log($row!.selectedRowKeys);
-//         }}
-//       >
-//         自定义 toolbar , 点我试试
-//       </Button>
-//     </Space>
-//   );
-// };
-// const CustomeFooter = () => {
-//   const array = ArrayBase.useArray!();
-//   const [, $page] = useArrayCompPropsOf(array?.field, "pagination");
-//   console.log("🚀 ~ CustomeFooter ~ $page:", $page);
-//   const totalPage =
-//     $page === false
-//       ? 0
-//       : (($page?.total || 0)! / ($page?.pageSize || 1)).toFixed(0);
-//   return (
-//     <Space>
-//       自定义底部
-//       {$page === false ? 0 : $page?.current}/{totalPage}, 共计
-//       {array?.field?.value?.length}条数据
-//     </Space>
-//   );
-// };
+const CustomeToolbar = () => {
+  const row = ProArrayTable.useTableRowSelection();
+  return (
+    <Space>
+      <Button
+        type="primary"
+        onClick={() => {
+          if (!row) return;
+          console.log(row.selectedRowKeys);
+        }}
+      >
+        自定义 toolbar , 点我试试
+      </Button>
+    </Space>
+  );
+};
+const CustomeFooter = () => {
+  const array = ArrayBase.useArray!();
+  const page = ProArrayTable.useTablePagination();
+  const totalPage = page
+    ? ((page.total || 0)! / (page.pageSize || 1)).toFixed(0)
+    : 0;
+  return (
+    <Space>
+      自定义底部
+      {!page ? 0 : page?.current}/{totalPage}, 共计
+      {array?.field?.value?.length}条数据
+    </Space>
+  );
+};
 
 const RowSummary = () => {
   const row = ArrayBase.useRecord!();
@@ -87,11 +76,11 @@ const SchemaField = createSchemaField({
     FormItem,
     Editable,
     Input,
-    ArrayTablePro: ArrayTablePro,
+    ProArrayTable,
     // 组件名称必须包含 Toolbar
-    // CustomeToolbar,
+    CustomeToolbar,
     // 组件名称必须包含 Footer
-    // CustomeFooter,
+    CustomeFooter,
     RowSummary,
   },
 });
@@ -113,29 +102,29 @@ const row: ISchema = {
     properties: {
       _sort: {
         type: "void",
-        "x-component": "ArrayTablePro.Column",
+        "x-component": "ProArrayTable.Column",
         "x-component-props": { width: 60, title: "Sort", align: "center" },
         properties: {
           sort: {
             type: "void",
-            "x-component": "ArrayTablePro.SortHandle",
+            "x-component": "ProArrayTable.SortHandle",
           },
         },
       },
       _index: {
         type: "void",
-        "x-component": "ArrayTablePro.Column",
+        "x-component": "ProArrayTable.Column",
         "x-component-props": { width: 60, title: "Index", align: "center" },
         properties: {
           index: {
             type: "void",
-            "x-component": "ArrayTablePro.Index",
+            "x-component": "ProArrayTable.Index",
           },
         },
       },
       _a1: {
         type: "void",
-        "x-component": "ArrayTablePro.Column",
+        "x-component": "ProArrayTable.Column",
         "x-component-props": { width: 160, title: "A1" },
         properties: {
           a1: {
@@ -147,7 +136,7 @@ const row: ISchema = {
       },
       _a2: {
         type: "void",
-        "x-component": "ArrayTablePro.Column",
+        "x-component": "ProArrayTable.Column",
         "x-component-props": { width: 160, title: "A2" },
         properties: {
           a2: {
@@ -159,7 +148,7 @@ const row: ISchema = {
       },
       _a3: {
         type: "void",
-        "x-component": "ArrayTablePro.Column",
+        "x-component": "ProArrayTable.Column",
         "x-component-props": { width: 160, title: "A3" },
         properties: {
           a3: {
@@ -171,7 +160,7 @@ const row: ISchema = {
       },
       _action: {
         type: "void",
-        "x-component": "ArrayTablePro.Column",
+        "x-component": "ProArrayTable.Column",
         "x-component-props": {
           title: "Action",
           width: 140,
@@ -185,15 +174,15 @@ const row: ISchema = {
             properties: {
               remove: {
                 type: "void",
-                "x-component": "ArrayTablePro.Remove",
+                "x-component": "ProArrayTable.Remove",
               },
               moveDown: {
                 type: "void",
-                "x-component": "ArrayTablePro.MoveDown",
+                "x-component": "ProArrayTable.MoveDown",
               },
               moveUp: {
                 type: "void",
-                "x-component": "ArrayTablePro.MoveUp",
+                "x-component": "ProArrayTable.MoveUp",
               },
             },
           },
@@ -213,7 +202,7 @@ delete (subRow as any).items.properties._action;
   ...(row.items as any).properties,
   _expand: {
     type: "void",
-    "x-component": "ArrayTablePro.RowExpand",
+    "x-component": "ProArrayTable.RowExpand",
     properties: {
       summary: {
         type: "void",
@@ -221,7 +210,7 @@ delete (subRow as any).items.properties._action;
       },
       subitems: {
         type: "array",
-        "x-component": "ArrayTablePro",
+        "x-component": "ProArrayTable",
         "x-read-pretty": true,
         "x-component-props": {
           showHeader: false,
@@ -240,9 +229,10 @@ const schema: ISchema = {
     array: {
       type: "array",
       title: "Array Table Pro Max",
-      "x-component": "ArrayTablePro",
+      "x-component": "ProArrayTable",
       "x-component-props": {
         scroll: { x: "100%" },
+        resizeable: true,
         rowSelection: true,
         expandable: {
           rowExpandable: (record: any) => Array.isArray(record.subitems),
@@ -256,7 +246,7 @@ const schema: ISchema = {
         },
         add: {
           type: "void",
-          "x-component": "ArrayTablePro.Addition",
+          "x-component": "ProArrayTable.Addition",
           title: "添加条目",
         },
         footer: {
@@ -331,7 +321,8 @@ export default () => {
           <Button
             onClick={() => {
               form.setInitialValues({
-                array: range(10 * 10000),
+                // array: range(10 * 10000),
+                array: range(10 * 10),
               });
             }}
           >

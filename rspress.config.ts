@@ -24,6 +24,12 @@ export default defineConfig({
   },
   plugins: [pluginPreview(), pluginFixCss()],
   themeConfig: {
+    enableContentAnimation: true,
+    lastUpdated: true,
+    outlineTitle: "目录",
+    lastUpdatedText: "最近更新",
+    prevPageText: "上一节",
+    nextPageText: "下一节",
     footer: {
       message: "Powered by RsPress. © 2024 charlzyx All Rights Reserved.",
     },

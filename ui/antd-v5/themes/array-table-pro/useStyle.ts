@@ -1,6 +1,6 @@
-import { builtins } from "../../adaptor";
+import { genStyleHook } from "@formily/antd-v5/esm/__builtins__";
 
-export default builtins.genStyleHook("array-table", (token) => {
+export default genStyleHook("array-table", (token) => {
   const {
     componentCls,
     antCls,

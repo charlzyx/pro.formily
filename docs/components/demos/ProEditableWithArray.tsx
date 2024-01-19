@@ -1,17 +1,17 @@
+import { faker } from "@faker-js/faker";
+import { Editable, FormGrid, FormItem, FormLayout, Input } from "@formily/antd";
+import { createForm } from "@formily/core";
+import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { ConfigProvider } from "antd";
 import "antd/dist/antd.css";
 // import "antd/dist/antd.css";
 import zhCN from "antd/lib/locale/zh_CN";
-import { faker } from "@faker-js/faker";
-import { createForm } from "@formily/core";
-import { FormProvider, ISchema, createSchemaField } from "@formily/react";
-import { Editable, FormGrid, FormItem, FormLayout, Input } from "@formily/antd";
 import moment from "moment";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
 import {
-  EditablePro,
+  ProEditable,
   QueryForm,
   QueryList,
   QueryTable,
@@ -102,7 +102,7 @@ export const service = ({
 const form = createForm({});
 
 const editable = (
-  comp: "EditablePro" | "EditablePro.Modal" | "EditablePro.Drawer",
+  comp: "ProEditable" | "ProEditable.Modal" | "ProEditable.Drawer",
 ) => ({
   type: "void",
   title: comp,
@@ -169,9 +169,9 @@ const row: ISchema = {
         "x-component": "QueryTable.Column",
         "x-component-props": { title: "编辑", align: "center" },
         properties: {
-          popconfirm: editable("EditablePro"),
-          modal: editable("EditablePro.Modal"),
-          drawer: editable("EditablePro.Drawer"),
+          popconfirm: editable("ProEditable"),
+          modal: editable("ProEditable.Modal"),
+          drawer: editable("ProEditable.Drawer"),
         },
       },
     },
@@ -205,7 +205,7 @@ const SchemaField = createSchemaField({
     Editable,
     Input,
     FormLayout,
-    EditablePro,
+    ProEditable: ProEditable,
     QueryList,
     QueryForm,
     QueryTable,

@@ -1,18 +1,18 @@
+import { Editable, FormGrid, FormItem, FormLayout, Input } from "@formily/antd";
+import { createForm } from "@formily/core";
+import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { ConfigProvider } from "antd";
 import "antd/dist/antd.css";
 // import "antd/dist/antd.css";
 // import zhCN from "antd/lib/locale/zh_CN";
 import zhCN from "antd/lib/locale/zh_CN";
-import { createForm } from "@formily/core";
-import { FormProvider, ISchema, createSchemaField } from "@formily/react";
-import { Editable, FormGrid, FormItem, FormLayout, Input } from "@formily/antd";
 
 import moment from "moment";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
 import {
-  EditablePro,
+  ProEditable,
   QueryForm,
   QueryList,
   QueryTable,
@@ -22,7 +22,7 @@ import { useMemo } from "react";
 const form = createForm({});
 
 const editable = (
-  comp: "EditablePro" | "EditablePro.Modal" | "EditablePro.Drawer",
+  comp: "ProEditable" | "ProEditable.Modal" | "ProEditable.Drawer",
 ) => ({
   type: "void",
   title: comp,
@@ -56,10 +56,10 @@ const schema: ISchema = {
     obj: {
       type: "object",
       properties: {
-        ...editable("EditablePro").properties,
-        _editable1: editable("EditablePro"),
-        _editable2: editable("EditablePro.Modal"),
-        _editable3: editable("EditablePro.Drawer"),
+        ...editable("ProEditable").properties,
+        _editable1: editable("ProEditable"),
+        _editable2: editable("ProEditable.Modal"),
+        _editable3: editable("ProEditable.Drawer"),
       },
     },
   },
@@ -71,7 +71,7 @@ const SchemaField = createSchemaField({
     Editable,
     Input,
     FormLayout,
-    EditablePro,
+    ProEditable: ProEditable,
     QueryList,
     QueryForm,
     QueryTable,

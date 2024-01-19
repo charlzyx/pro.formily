@@ -1,3 +1,4 @@
+import { TableProps } from "antd";
 import React from "react";
 import type { ResizeCallbackData } from "react-resizable";
 import { Resizable } from "react-resizable";
@@ -59,14 +60,9 @@ export class ResizableTitle extends React.Component<
 
   render() {
     const { width, resizeable, onResize, ...others } = this.props;
+
     return !width || !resizeable ? (
-      <th
-        {...others}
-        style={{
-          ...others.style,
-          userSelect: this.state.resizing ? "none" : "text",
-        }}
-      ></th>
+      <th {...others}></th>
     ) : (
       <Resizable
         width={this.state.width}
@@ -96,3 +92,13 @@ export class ResizableTitle extends React.Component<
     );
   }
 }
+export const useResizeHeader = (opts: {
+  enable?: boolean;
+}) => {
+  console.log("🚀 ~ opts.enable:", opts.enable);
+  const header: Required<TableProps<any>>["components"]["header"] = opts.enable
+    ? { cell: ResizableTitle }
+    : {};
+
+  return header;
+};

@@ -3,7 +3,7 @@ import { ProModal } from "./Modal";
 import { ProPopconfirm } from "./Popconfirm";
 export * from "./hooks";
 
-export const EditablePro = Object.assign(ProPopconfirm, {
+export const ProEditable = Object.assign(ProPopconfirm, {
   Modal: ProModal,
   Drawer: ProDrawer,
 });

@@ -28,25 +28,11 @@ import {
   Radio,
 } from "../../adaptor/adaptor";
 import { useArrayTableColumns } from "../hooks";
-import { ArrayTablePro } from "../pro";
+import { ProArrayTable } from "../pro";
 
 const schema: ISchema = {
   type: "object",
   properties: {
-    size: {
-      type: "string",
-      "x-component": "Radio.Group",
-      "x-component-props": {
-        optionType: "button",
-        buttonStyle: "solid",
-        size: "small",
-      },
-      enum: [
-        { label: "紧凑", value: "small" },
-        { label: "中等", value: "middle" },
-        { label: "默认", value: "large" },
-      ],
-    },
     columns: {
       type: "array",
       "x-component": "ArrayTablePro",
@@ -67,10 +53,6 @@ const schema: ISchema = {
               width: 40,
             },
             properties: {
-              order: {
-                type: "number",
-                "x-value": "{{$self.index}}",
-              },
               sort: {
                 type: "void",
                 "x-component": "ArrayTablePro.SortHandle",
@@ -122,7 +104,7 @@ export const ProSettings: React.FC<{
           Input,
           NumberPicker,
           Radio,
-          ArrayTablePro: ArrayTablePro,
+          ArrayTablePro: ProArrayTable,
           PreviewText,
           Checkbox,
         },
@@ -137,7 +119,13 @@ export const ProSettings: React.FC<{
       },
       effects() {
         onFieldInputValueChange("columns", (field) => {
-          columns.onChange(toJS(form.values.columns));
+          const neo = toJS(field.value).map((item: any, idx: number) => {
+            return {
+              ...item,
+              order: idx + 1,
+            };
+          });
+          columns.onChange(neo);
         });
       },
     });
@@ -150,13 +138,7 @@ export const ProSettings: React.FC<{
       </FormProvider>
     );
   }, []);
-  const title = useMemo(() => {
-    return (
-      <Row justify="space-between">
-        <Button onClick={() => {}}>重置</Button>
-      </Row>
-    );
-  }, []);
+
   return (
     <ConfigProvider
       // @ts-ignore for arco
@@ -169,7 +151,7 @@ export const ProSettings: React.FC<{
           type={BUTTON_TYPE}
           icon={<ColumnHeightOutlined></ColumnHeightOutlined>}
         ></Button>
-        <Popover content={content} title={title} trigger="click">
+        <Popover content={content} title={"列配置"} trigger="click">
           <Button icon={<SettingOutlined />} type={BUTTON_TYPE}></Button>
         </Popover>
       </Space>
