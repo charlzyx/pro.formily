@@ -1,6 +1,15 @@
-# Linkage
+# 🎹 Linkage - 级联查询
 
-## 高级级联选择
+> 主要为了解决一个很蛋疼的问题, 比如省市区, 返回值如果只有 `code` 的话, 加载不出来 `label`
 
+|属性|说明|类型|默认值|
+|---|---|---|---|
+|`labelInValue`| 增加类比 `<Select />` 的 `labelInValue` 属性和功能支持| `boolean` | `false`|
+|`all`| 懒加载可以加载整棵树的数据 | `boolean` | `false`|
+|`loadData`| 结合 all 属性, 你现在可以加载一整棵树了 | `(opts:{value}[]) => Promise<{ label, value, children?}[]>` | -- |
+
+- 增强: 初始值只有 `value` 的时候, 自动调用接口补全 `label` 展示, 请刷新注意下面两个反显的示意
+
+## 代码案例
 <code src="../demos/Linkage.tsx"  />
 

@@ -1,5 +1,59 @@
-# Query List
+# 💎 Query List
 
-## use QueryList Table like Pro.
+> QueryList 是为了解决常见的 CRUD 查询列表的样板代码的问题。
+
+思路基本上就是照着官网指导 [formilyjs.org/查询列表](https://formilyjs.org/zh-CN/guide/scenes/query-list#%E6%9F%A5%E8%AF%A2%E5%88%97%E8%A1%A8),
+在交互形式和配置项上则更多是参考 [ProComponents/ProTable](https://procomponents.ant.design/components/table);
+
+```tsx | pure
+<QueryList service={service}>
+  <QueryForm />
+  <QueryTable />
+</QueryList>
+```
+
+
+## QueryList#service - 查询服务
+主要请求函数, 返回数据列表与总数, 入参包括查询表单, 分页、筛选、排序; 入参与 [AntD#Table/onChange](https://ant-design.antgroup.com/components/table-cn/#API) 保持一致, 追加了 params 即查询表单的参数;
+
+```ts | pure
+type Service = (data:
+{
+  /** 查询表单参数 **/
+  params: {}
+  /** 分页参数, 参考 AntD **/
+  pagination: {
+    current: number,
+    pageSize: number
+  },
+  /** 过滤参数, 参考 AntD **/
+  filters: [],
+  /** 排序参数, 参考 AntD **/
+  sorter: {},
+  /** 额外信息, 参考 AntD **/
+  extra: {
+    action: 'paginate' | 'sort' | 'filter',
+    currentDataSouce: Record[]
+  }
+}) => Promise<{ list: Record[], total: number }>
+```
+
+## QueryForm 查询表单
+
+配置项主要是 layout & grid 布局属性
+
+```tsx | pure
+type QueryFormProps = React.PropsWithChildren<{
+  resetText?: string;
+  submitText?: string;
+  grid?: React.ComponentProps<typeof FormGrid>;
+  layout?: React.ComponentProps<typeof FormLayout>;
+}>;
+```
+
+## QueryTable 查询表格
+
+QueryTable是基于 ProArrayTable 的封装, 只是处理与 QueryList 相关联的分页与查询逻辑;
+所以几个功能钩子 `usePagination/useRowSelection/useExpandable` 是可以直接用的; 属性也完全一致;
 
 <code src="../demos/QueryList.tsx"  />

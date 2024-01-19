@@ -321,8 +321,8 @@ export default () => {
           <Button
             onClick={() => {
               form.setInitialValues({
-                // array: range(10 * 10000),
-                array: range(10 * 10),
+                array: range(10 * 10000),
+                // array: range(10 * 10),
               });
             }}
           >

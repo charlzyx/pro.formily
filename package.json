@@ -49,8 +49,9 @@
   "devDependencies": {
     "@biomejs/biome": "^1.5.0",
     "@faker-js/faker": "^8.3.1",
-    "@rsbuild/plugin-react": "^0.2.18",
-    "@rspress/plugin-preview": "^1.9.3",
+    "@rsbuild/plugin-react": "latest",
+    "@rsbuild/core": "latest",
+    "@rspress/plugin-preview": "latest",
     "@types/bun": "^1.0.2",
     "@types/node": "^16.18.70",
     "@types/react": "^18.2.47",
@@ -63,7 +64,7 @@
     "less-plugin-npm-import": "^2.1.0",
     "qs": "^6.11.2",
     "rimraf": "^5.0.5",
-    "rspress": "^1.9.3"
+    "rspress": "latest"
   },
   "files": [
     "dist"

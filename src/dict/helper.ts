@@ -12,7 +12,7 @@ export type TDictShape = {
   options: {
     key?: string | number;
     label: string;
-    value: number | string;
+    value: string | number;
     color?: ColorsKey;
   }[];
 };
@@ -45,32 +45,19 @@ export const listToDict = (list: TDictItem[] = []): TDictShape => {
 };
 import type { Form } from "@formily/core";
 import { onFieldMount, onFieldReact } from "@formily/core";
-import { model } from "@formily/reactive";
+import { observable } from "@formily/reactive";
 import type React from "react";
 import { Dict } from "./index";
 
 export type TDictLoaderFactory = () => Promise<TDictShape["options"]>;
 
-export const memo: Record<string, TDictShape> = model({});
+export const memo: Record<string, TDictShape> = observable({});
 
-export const dict = memo;
+export const dict = memo as Record<string, TDictShape | undefined>;
 
 const loaders: Record<string, () => Promise<TDictShape>> = {};
 
 const pendings: Record<string, Promise<TDictShape> | undefined> = {};
-
-/**
- *
-@example
-const boolLoader = (conver) => () => {
-  return Promise.resolve([
-    { name: '是', code: 1, color: 'success' },
-    { name: '否', code: 0, color: 'error' },
-  ]).then(data => convert(data, 'name', 'code'));
-};
-registerDictLoader('bool', boolLoader);
-
- */
 
 export const registerDictLoader = (
   name: string,
@@ -83,6 +70,7 @@ export const registerDictLoader = (
       return memo[name];
     });
   };
+  return loaders[name];
 };
 
 export const dictEffects = (form: Form) => {
