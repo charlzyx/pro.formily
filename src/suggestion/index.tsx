@@ -88,13 +88,14 @@ export const Suggestion: React.FC<{
     <Select
       showSearch
       loading={loading}
-      value={value}
+      value={value as any}
       labelInValue={props.labelInValue}
       mode={props.multiple ? "multiple" : undefined}
       placeholder={props.placeholder}
       style={props.style}
       disabled={props.disabled}
       defaultActiveFirstOption={false}
+      // @ts-ignore
       showArrow={false}
       filterOption={false}
       onSearch={handleSearch}

@@ -12,7 +12,7 @@ export const LongText: React.FC<
   return (
     <Paragraph
       copyable={{
-        tooltips: [props.value],
+        tooltips: [props.value, "复制成功"],
       }}
       ellipsis
       {...props}

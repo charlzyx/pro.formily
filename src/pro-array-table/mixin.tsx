@@ -18,6 +18,7 @@ export const Addition: ArrayBaseMixins["Addition"] = observer((props) => {
   const page = useContext(TablePaginationContext);
   return (
     <ArrayBase.Addition
+      // @ts-ignore
       block={false}
       type={BUTTON_TYPE}
       {...props}

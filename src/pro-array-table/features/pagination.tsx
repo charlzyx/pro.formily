@@ -75,7 +75,6 @@ export const usePagination = (
         },
       } as IPaginationProps)
     : null;
-  console.log("🚀 ~ usePagination props:", props);
 
   return [ctx, merged] as const;
 };

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { ProArrayTableProps } from "../types";
+import { ProArrayTableProps, RowKey } from "../types";
 
 export type IRowSelectionProps = ProArrayTableProps["rowSelection"];
 
@@ -9,8 +9,8 @@ export type IRowSelectionOptions = Exclude<
 >;
 
 export interface ITableSelectionContext {
-  selectedRowKeys: React.Key[];
-  setSelectedRowKeys: React.Dispatch<React.SetStateAction<React.Key[]>>;
+  selectedRowKeys: RowKey[];
+  setSelectedRowKeys: React.Dispatch<React.SetStateAction<RowKey[]>>;
 }
 
 export const TableRowSelectionContext = createContext<ITableSelectionContext>({
@@ -23,6 +23,7 @@ export const useRowSelection = (
   pageNo?: number,
 ) => {
   const [keys, setKeys] = useState([
+    // @ts-ignore for arco
     ...(propRowSelection?.defaultSelectedRowKeys ?? []),
     ...(propRowSelection?.selectedRowKeys ?? []),
   ]);
