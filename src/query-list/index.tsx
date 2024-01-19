@@ -11,9 +11,7 @@ import React, {
   useState,
 } from "react";
 import { noop } from "../__builtins__";
-import type { TableProps } from "../adaptor";
-
-type TableChangeParams = Parameters<Required<TableProps<any>>["onChange"]>;
+import { TableChangeParams } from "../pro-array-table/types";
 
 export type IQueryListParams<Params = any> = {
   pagination?: TableChangeParams[0];
@@ -142,13 +140,6 @@ export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
                     s.componentProps.pagination.total = resp.total;
                   });
                 }
-                // console.log(
-                //   "🚀 ~ .then ~ this.table?.componentProps:",
-                //   this.table?.componentProps,
-                // );
-                // if (this.table?.componentProps?.pagination) {
-                //   this.table.componentProps.pagination.total = resp.total;
-                // }
                 return resp;
               })
               .catch((e) => {

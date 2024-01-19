@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useRef, useState } from "react";
 import { useExpandRender } from "../hooks";
-import { ProArrayTableProps, RowKey } from "../types";
+import { ProArrayTableProps, RowKey, RowKeyFn } from "../types";
 
 export type IExpandableProps = Required<ProArrayTableProps>["expandable"] & {};
 
@@ -9,8 +9,8 @@ function expandedSchameRowRender(record: any, index: number) {
 }
 
 export interface ITableExpandableContext {
-  expandedRowKeys: React.Key[];
-  setExpandedRowKeys: React.Dispatch<React.SetStateAction<React.Key[]>>;
+  expandedRowKeys: RowKey[];
+  setExpandedRowKeys: React.Dispatch<React.SetStateAction<RowKey[]>>;
 }
 
 export const TableExpandableContext = createContext<ITableExpandableContext>({
@@ -21,13 +21,13 @@ export const TableExpandableContext = createContext<ITableExpandableContext>({
 export const useExpandable = (
   props: IExpandableProps | undefined,
   dataSlice: any[],
-  rowKeyRef: React.MutableRefObject<RowKey>,
+  rowKeyRef: React.MutableRefObject<RowKeyFn>,
   pageNo?: number,
 ) => {
   const [keys, setKeys] = useState([
     ...(props?.expandedRowKeys ?? []),
     ...(props?.defaultExpandedRowKeys ?? []),
-  ]);
+  ] as RowKey[]);
   const inited = useRef(false);
 
   const expandAll = () => {

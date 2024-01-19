@@ -95,7 +95,6 @@ export class ResizableTitle extends React.Component<
 export const useResizeHeader = (opts: {
   enable?: boolean;
 }) => {
-  console.log("🚀 ~ opts.enable:", opts.enable);
   const header: Required<TableProps<any>>["components"]["header"] = opts.enable
     ? { cell: ResizableTitle }
     : {};
