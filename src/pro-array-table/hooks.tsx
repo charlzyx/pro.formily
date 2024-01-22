@@ -11,6 +11,7 @@ import {
   isExpandComponent,
   isFooterComponent,
   isOperationsComponent,
+  isShadowComponent,
   isToolbarComponent,
 } from "./helper";
 import { ColumnProps, ObservableColumnSource } from "./types";
@@ -22,8 +23,7 @@ const parseSources = (
   if (
     isColumnComponent(schema) ||
     isOperationsComponent(schema) ||
-    isAdditionComponent(schema) ||
-    isToolbarComponent(schema)
+    isAdditionComponent(schema)
   ) {
     if (!schema["x-component-props"]?.dataIndex && !schema.name) return [];
     const name = schema["x-component-props"]?.dataIndex || schema.name;
@@ -226,6 +226,18 @@ export const useAddition = () => {
     }
     return addition;
   }, null);
+};
+
+export const useShadowComponents = () => {
+  const schema = useFieldSchema();
+  return schema.reduceProperties((buf, schema, key) => {
+    if (isShadowComponent(schema)) {
+      buf.push(
+        <RecursionField onlyRenderSelf key={key} schema={schema} name={key} />,
+      );
+    }
+    return buf;
+  }, [] as React.ReactElement[]);
 };
 
 export const useToolbar = () => {

@@ -9,3 +9,4 @@ export * from "./suggestion";
 export * from "./pro-editable";
 export * from "./shared";
 export * from "./linkage";
+export * from "./shadow-form";

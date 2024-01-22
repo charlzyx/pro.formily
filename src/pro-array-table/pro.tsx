@@ -18,6 +18,12 @@ import {
 } from "../adaptor";
 import { ArrayBase, usePrefixCls } from "../adaptor/adaptor";
 import useStyle from "../adaptor/themes/pro-array-table/useStyle";
+import {
+  ArrayTableDelegateContext,
+  getDelegateInfo,
+  isDelegateTarget,
+  useDelegate,
+} from "./features/delegate";
 import { TableExpandableContext, useExpandable } from "./features/expandable";
 import {
   IPaginationOptions,
@@ -35,9 +41,19 @@ import {
   useArrayTableColumns,
   useArrayTableSources,
   useFooter,
+  useShadowComponents,
   useToolbar,
 } from "./hooks";
-import { Addition, Column, Flex, RowExpand, RowSelectionPro } from "./mixin";
+import {
+  Addition,
+  Column,
+  DelegateAction,
+  Flex,
+  ProAddition,
+  RowExpand,
+  RowSelectionPro,
+  ShadowModal,
+} from "./mixin";
 import { IChangeData, ProArrayTableProps } from "./types";
 
 const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer((props) => {
@@ -47,6 +63,7 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer((props) => {
   const prefixCls = usePrefixCls("formily-array-table-pro");
 
   const [wrapSSR, hasId] = useStyle(prefixCls);
+  const delegateCtx = useDelegate();
   /**
    * 优化笔记：
    * 本来以为这个 slice 没什么用，直到我膝盖中了一箭
@@ -54,6 +71,7 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer((props) => {
    */
   const dataSource = Array.isArray(field.value) ? field.value.slice() : [];
   const sources = useArrayTableSources();
+
   const [columns, proColumns] = useArrayTableColumns(
     field,
     sources,
@@ -104,6 +122,7 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer((props) => {
   const addition = useAddition();
   const toolbar = useToolbar();
   const footer = useFooter();
+  const shaowPops = useShadowComponents();
 
   const rowKey = (record: any) => {
     return props.rowKey
@@ -222,63 +241,87 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer((props) => {
     start: startIndex,
   });
 
+  const handleDelegate = (e: React.SyntheticEvent) => {
+    let target = e.target as HTMLElement;
+    while (
+      target &&
+      target !== wrapperRef.current &&
+      !isDelegateTarget(target)
+    ) {
+      target = target.parentElement as any;
+    }
+    if (isDelegateTarget(target)) {
+      const info = getDelegateInfo(target);
+      if (!info) return;
+      delegateCtx.setAct({ index: info.index, act: info.act! });
+    }
+  };
+
   return wrapSSR(
-    <TablePaginationContext.Provider value={pageCtx!}>
-      <TableExpandableContext.Provider value={expandableCtx!}>
-        <TableRowSelectionContext.Provider value={rowSelectionCtx!}>
-          <ArrayBase>
-            {_header}
-            <div ref={wrapperRef} className={`${prefixCls} ${hasId}`}>
-              <Table
-                size={"small"}
-                {...props}
-                rowKey={rowKey}
-                title={undefined}
-                footer={undefined}
-                rowSelection={rowSelection!}
-                expandable={expandable!}
-                // 这里不处理 page 是因为 pagination 被我们重写了
-                onChange={(_page, filters, sorter, extra) => {
-                  if (!props.onTableChange) return;
-                  changeData.current.filters = filters;
-                  changeData.current.sorter = sorter;
-                  changeData.current.extra = extra;
-                  props.onTableChange(
-                    changeData.current.pagination,
-                    filters,
-                    sorter,
-                    extra,
-                  );
-                }}
-                pagination={false as any}
-                columns={columns}
-                dataSource={dataSlice}
-                components={{
-                  header: {
-                    ...props.components?.header,
-                    ...header,
-                  },
-                  body: {
-                    ...props.components?.body,
-                    ...body,
-                  },
-                }}
-              />
-            </div>
-            {_footer}
-            {sources.map((column, key) => {
-              if (!isColumnComponent(column.schema)) return;
-              return React.createElement(RecursionField, {
-                name: column.name,
-                schema: column.schema,
-                onlyRenderSelf: true,
-                key,
-              });
-            })}
-          </ArrayBase>
-        </TableRowSelectionContext.Provider>
-      </TableExpandableContext.Provider>
-    </TablePaginationContext.Provider>,
+    <div
+      ref={wrapperRef}
+      className={`${prefixCls} ${hasId}`}
+      onClick={handleDelegate}
+    >
+      <ArrayTableDelegateContext.Provider value={delegateCtx}>
+        <TablePaginationContext.Provider value={pageCtx!}>
+          <TableExpandableContext.Provider value={expandableCtx!}>
+            <TableRowSelectionContext.Provider value={rowSelectionCtx!}>
+              <ArrayBase>
+                {_header}
+
+                <Table
+                  size={"small"}
+                  {...props}
+                  rowKey={rowKey}
+                  title={undefined}
+                  footer={undefined}
+                  rowSelection={rowSelection!}
+                  expandable={expandable!}
+                  // 这里不处理 page 是因为 pagination 被我们重写了
+                  onChange={(_page, filters, sorter, extra) => {
+                    if (!props.onTableChange) return;
+                    changeData.current.filters = filters;
+                    changeData.current.sorter = sorter;
+                    changeData.current.extra = extra;
+                    props.onTableChange(
+                      changeData.current.pagination,
+                      filters,
+                      sorter,
+                      extra,
+                    );
+                  }}
+                  pagination={false as any}
+                  columns={columns}
+                  dataSource={dataSlice}
+                  components={{
+                    header: {
+                      ...props.components?.header,
+                      ...header,
+                    },
+                    body: {
+                      ...props.components?.body,
+                      ...body,
+                    },
+                  }}
+                />
+                {_footer}
+                {sources.map((column, key) => {
+                  if (!isColumnComponent(column.schema)) return;
+                  return React.createElement(RecursionField, {
+                    name: column.name,
+                    schema: column.schema,
+                    onlyRenderSelf: true,
+                    key,
+                  });
+                })}
+                {shaowPops}
+              </ArrayBase>
+            </TableRowSelectionContext.Provider>
+          </TableExpandableContext.Provider>
+        </TablePaginationContext.Provider>
+      </ArrayTableDelegateContext.Provider>
+    </div>,
   );
 });
 
@@ -299,7 +342,10 @@ export const ProArrayTable = Object.assign(
   {
     Column,
     Addition,
+    ProAddition,
     RowExpand,
+    ShadowModal,
+    DelegateAction,
     useTableExpandable,
     useTableRowSelection,
     useTablePagination,

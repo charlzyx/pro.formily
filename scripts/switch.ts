@@ -67,6 +67,7 @@ const rewriter = (c: string) => {
 
 docs
   .filter((x) => /\.(mdx|md|tsx|ts|js|js)$/.test(x))
+  .filter((x) => !/install\.mdx/.test(x))
   .forEach((item) => {
     rewite(item, rewriter);
   });

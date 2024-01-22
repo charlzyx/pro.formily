@@ -12,6 +12,10 @@ export const isAdditionComponent = (schema: Schema) => {
   return schema["x-component"]?.indexOf("Addition") > -1;
 };
 
+export const isShadowComponent = (schema: Schema) => {
+  return schema["x-component"]?.indexOf("Shadow") > -1;
+};
+
 export const isToolbarComponent = (schema: Schema) => {
   return schema["x-component"]?.indexOf("Toolbar") > -1;
 };
