@@ -1,9 +1,10 @@
-# 👊 `Pro ArrayTable
+# 👊 Pro ArrayTable
 
 > Pro ArrayTable 是一个增强版本的 ArrayTable, 增加了以下属性与功能
 
 - ✅ schema 拓展: RowExpand / Toolbar / Footer
 - ✅ 列配置: 排序与拖动调整列宽
+- ✅ 可编辑弹窗, 使用事件委托优化
 - ✅ 常用功能配置简化与增强 (pagination/rowSelection/expandable)
 - ✅ `expandable.defaultExpandedAllRows` 现在支持惰性加载啦!
 - ✅ `expandable.expandedRowKeys` / `rowSelection.selectedRowKeys` 现在会根据页码调整进行智能重置!
@@ -60,3 +61,87 @@ export interface ITableSelectionContext {
   setSelectedRowKeys: React.Dispatch<React.SetStateAction<RowKey[]>>;
 }
 ```
+
+### ProArrayTable.DelegateAction 代理动作触发器
+
+```tsx | pure
+{
+  /** 动作标志, 与 ShadowModal 对应  */
+  act: string;
+  /** 当前列所属 index, 默认使用 ArrayBase.useIndex() 获取当前数据对应位置 */
+  index?: number;
+  /** 数据初始化加载器, 默认使用 field.record 当前模型所对应 record */
+  initLoader?: object | Promise<object>;
+  /**
+   * 具体元素, 但必须有标签包装, 因为会被追加 data-属性字段标志给事件委托来识别
+   * 不填写的情况下, 使用 Button 标签包装 field.title
+   */
+  children?: React.ReactElement;
+}
+```
+
+### ShadowModal/ShadowModal 通用属性
+```tsx | pure
+{
+  /** 动作标志, 与 ShadowModal 对应  */
+  act: string;
+  /** 子表单Schema */
+  schema: ISchema,
+  /** createForm 创建的表单实例, 有自定义 effects 等可以通过自定义一个 form 这个传入 */
+  form?: ReturnType<typeof createForm>,
+  /** createSchemaField 函数配置 */
+  schemaFieldOptions?: Parameters<typeof createSchemaField>[0],
+  /** 取消事件 */
+  onCancel?: (
+    ctx: ReturnType<typeof useProArrayTableContext>,
+  ) => void | Promise<void>;
+  /** 子表单提交事件, 可以做点什么 */
+  onOk?: (
+    data: any,
+    ctx: ReturnType<typeof useProArrayTableContext>,
+  ) => void | Promise<void>;
+}
+```
+### ProArrayTable.ShadowModal 表格共享弹窗, 结合 ShadowForm/DelegateAction 使用
+
+除了 `onOk,onCancel` antd/Modal 其他属性
+
+### ProArrayTable.ShadowDrawer 表格共享抽屉, 结合 ShaodwForm/DelegateAction 使用
+
+除了 `onOk,onCancel` antd/Drawer 其他属性
+
+### ProArrayTable.ProAddition 弹窗/抽屉形式的可编辑内容新增组件
+
+高级自增组件, 提供了弹窗/抽屉形式的空调编辑内容, 这个本质上是一个内置了一个 ShadowForm的 Modal/Drawer
+
+```tsx | pure
+{
+  /** 子表单Schema */
+  schema: ISchema,
+  /** createForm 创建的表单实例, 有自定义 effects 等可以通过自定义一个 form 这个传入 */
+  form?: ReturnType<typeof createForm>,
+  /** createSchemaField 函数配置 */
+  schemaFieldOptions?: Parameters<typeof createSchemaField>[0],
+  /** 弹窗形式: Modal 或 Drawer, 默认 modal  */
+  popType: "modal" | "drawer"
+  /** 其他 Modal / Drawer 原始属性 */
+  ...others: React.ComponentProps<typeof Modal | typeof Drawer>
+}
+```
+
+### ProArrayTable.Column 列配置组件
+
+追加了可拖拽列宽配置开关, 优先级 > Table 上的 resizeable 属性
+
+```tsx | pure
+{
+  // 是否可拖拽调整列宽
+  resizeable?: boolean
+  // ... 其他参考 @formily/antd ArrayBase.Column  配置
+}
+```
+
+### ProArrayTable.Addition 自增组件
+
+与 `@formily/antd` 中的 `ArrayTable.Addition` 表现一致
+

@@ -1,10 +1,24 @@
 import { FormProvider, ReactFC, observer, useField } from "@formily/react";
 import { toJS } from "@formily/reactive";
 import React, { Fragment, useContext, useEffect, useRef } from "react";
-import { useRecord } from "..";
-import { Alert, BUTTON_TYPE, Button, Divider, Modal, Space } from "../adaptor";
+import { omit, pick } from "../__builtins__";
+import {
+  Alert,
+  BUTTON_TYPE,
+  Button,
+  Divider,
+  Drawer,
+  Modal,
+  Space,
+} from "../adaptor";
 import { ArrayBase, ArrayBaseMixins } from "../adaptor/adaptor";
-import { ShadowForm, ShadowFormContext } from "../shadow-form/shadow-form";
+import {
+  IShadowFormOptions,
+  ShadowFormContext,
+  ShadowFormProvider,
+  useShadowForm,
+} from "../shadow-form/shadow-form";
+import { useRecord } from "../shared";
 import {
   ArrayTableDelegateContext,
   DATE_DELEGATE_ACT_KEY,
@@ -92,9 +106,7 @@ export const RowSelectionPro = (props: {
   rowKey: (record: any) => string | number;
 }) => {
   const { ds, rowKey } = props;
-  const array = ArrayBase.useArray();
   const $row = useContext(TableRowSelectionContext);
-  // const [, $row] = useArrayCompPropsOf(array?.field, "rowSelection");
   return ds.length > 0 ? (
     <Alert
       style={{ padding: "3px 4px" }}
@@ -172,18 +184,22 @@ export const useProArrayTableContext = () => {
   return { array, pagination, rowSelection, expanedable };
 };
 
+export interface CommonShadowPopup extends IShadowFormOptions {
+  onCancel?: (
+    ctx: ReturnType<typeof useProArrayTableContext>,
+  ) => void | Promise<void>;
+  onOk?: (
+    data: any,
+    ctx: ReturnType<typeof useProArrayTableContext>,
+  ) => void | Promise<void>;
+}
 export const ShadowModal: React.FC<
-  Omit<React.ComponentProps<typeof Modal>, "children" | "onCancel" | "onOk"> & {
-    onCancel?: (
-      ctx: ReturnType<typeof useProArrayTableContext>,
-    ) => void | Promise<void>;
-    onOk?: (
-      data: any,
-      ctx: ReturnType<typeof useProArrayTableContext>,
-    ) => void | Promise<void>;
-  }
+  Omit<React.ComponentProps<typeof Modal>, "children" | "onCancel" | "onOk"> &
+    CommonShadowPopup
 > = (props) => {
-  const { SchemaField, form, act, schema } = useContext(ShadowFormContext);
+  const { SchemaField, form, act, schema } = useShadowForm(
+    pick(props, "act", "schema", "schemaFieldOptions", "form"),
+  );
   const delegate = useContext(ArrayTableDelegateContext);
   const visible = delegate.act === act && delegate.index > -1;
   const pending = useRef(false);
@@ -213,7 +229,7 @@ export const ShadowModal: React.FC<
 
   return (
     <Modal
-      {...props}
+      {...omit(props, "act", "schema", "schemaFieldOptions", "form")}
       open={visible}
       onCancel={() => {
         if (pending.current) return;
@@ -238,10 +254,18 @@ export const ShadowModal: React.FC<
     </Modal>
   );
 };
+
 export const DelegateAction: React.FC<{
+  /** 动作标志, 与 ShadowModal 对应  */
   act: string;
+  /** 当前列所属 index, 默认使用 ArrayBase.useIndex() 获取当前数据对应位置 */
   index?: number;
+  /** 数据初始化加载器, 默认使用 field.record 当前模型所对应 record */
   initLoader?: Required<IArrayTableDelegateContext>["initLoader"]["current"];
+  /**
+   * 具体元素, 但必须有标签包装, 因为会被追加 data-属性字段标志给事件委托来识别
+   * 不填写的情况下, 使用 Button 标签包装 field.title
+   */
   children?: React.ReactElement;
 }> = (props) => {
   const index = "index" in (props ?? {}) ? props.index : ArrayBase.useIndex();
@@ -276,24 +300,17 @@ export const DelegateAction: React.FC<{
 };
 
 export const ProAddition = ({
-  schema,
-  form,
-  schemaFieldOptions,
   popType = "modal",
   ...props
-}: Omit<React.ComponentProps<typeof ShadowForm>, "act"> & {
+}: Omit<CommonShadowPopup, "act"> & {
   popType: "modal" | "drawer";
-}) => {
+} & Omit<
+    React.ComponentProps<typeof Modal>,
+    "onOk" | "onCancel" | "children"
+  >) => {
   return (
     <React.Fragment>
-      <ShadowForm
-        act="_pro_addtion"
-        schema={schema}
-        form={form}
-        schemaFieldOptions={schemaFieldOptions}
-      >
-        <ShadowModal {...(props as any)}></ShadowModal>
-      </ShadowForm>
+      <ShadowModal act="_pro_addition" {...props}></ShadowModal>
       <DelegateAction index={Infinity} act={"_pro_addtion"}></DelegateAction>
     </React.Fragment>
   );

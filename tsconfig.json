@@ -11,7 +11,7 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "declaration": true,
-    "moduleResolution": "node",
+    "moduleResolution": "Bundler",
     "paths": {
       "@pro.formily/antd": ["src"]
     }
