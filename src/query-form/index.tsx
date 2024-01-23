@@ -23,7 +23,7 @@ const buttonGroupStyle: React.CSSProperties = {
 };
 
 export const QueryForm = observer((props: QueryFormProps) => {
-  const { resetText, submitText } = props;
+  const { resetText, submitText, layout } = props;
   const field = useField<ObjectField>();
   const { grid, expanded, toggle } = useGrid(props.grid!);
   const querylist = useQueryListContext();
@@ -86,14 +86,16 @@ export const QueryForm = observer((props: QueryFormProps) => {
   };
 
   return props.children ? (
-    <FormGrid grid={grid}>
-      {props.children}
-      <FormGrid.GridColumn
-        gridSpan={-1}
-        style={{ display: "flex", justifyContent: "space-between" }}
-      >
-        {renderActions()}
-      </FormGrid.GridColumn>
-    </FormGrid>
+    <FormLayout {...layout}>
+      <FormGrid grid={grid}>
+        {props.children}
+        <FormGrid.GridColumn
+          gridSpan={-1}
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
+          {renderActions()}
+        </FormGrid.GridColumn>
+      </FormGrid>
+    </FormLayout>
   ) : null;
 });

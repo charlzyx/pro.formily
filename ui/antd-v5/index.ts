@@ -6,6 +6,8 @@ export {
   SettingOutlined,
   SyncOutlined,
   ToTopOutlined,
+  DownOutlined,
+  UpOutlined,
 } from "@ant-design/icons";
 export {
   Alert,

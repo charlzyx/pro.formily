@@ -6,29 +6,64 @@
 - ✅ 列配置: 排序与拖动调整列宽
 - ✅ 可编辑弹窗, 使用事件委托优化
 - ✅ 常用功能配置简化与增强 (pagination/rowSelection/expandable)
-- ✅ `expandable.defaultExpandedAllRows` 现在支持惰性加载啦!
-- ✅ `expandable.expandedRowKeys` / `rowSelection.selectedRowKeys` 现在会根据页码调整进行智能重置!
+- ✅ expandable.defaultExpandedAllRows 现在支持惰性加载啦!
+- ✅ onSortEnd 支持 `(from, end, arrayField) => Promise` 回调!
+- ✅ expandable.expandedRowKeys / rowSelection.selectedRowKeys 现在会根据页码调整进行智能重置!
 
+## 设计思路
+ ProArrayTable 的目的就是简化常用表格操作, 增强 Schema 能力, 同时, 对异步操作友好;
+
+ArrayTable 本身是对本地数据的一个编辑方案, 缺少一些异步的支持, 比如 onSort/onMoveUp/onMoveDown/onRemove 等操作都没有拦截,
+缺少类似 [immber Patches](https://immerjs.github.io/immer/zh-CN/patches) 处理, 不好回退, 这在处理远程数据的时候就非常难受了;
+同时, 一些额外的功能, 列选择/列展开无法使用 Schema 语法, 限制了JSON Schema 表现力.
+
+**弹出层编辑方案设计**
+
+在过往使用 formily 的过程中, 表格中的弹窗编辑一个是个痛点, 基本上都是在使用 FormDialog 做的处理, 除了再 ShadowForm 中提到的 FormDialog/FormDrwaer 自身的问题,
+在实际使用中, 一直把 Formdialog 渲染在 eolumn 的render 中, 这导致了大量的 Modal 被反复创建销毁。
+
+为什么不用事件委托？
+
+1. 需要在表单外部处理委托代码（但其实没有深入尝试, 欢迎讨论）
+2. 另一个主要原因是 formdialog 中的表单实例生命周期难以理解（现在想起来可能是因为 initialvalues 迷惑行为加上理解问题导致）
+
+但总之, 我想到了更好的办法。
+
+还是事件委托, 但 builtin, 使用一个内置的 DelegateContex 来管理表单中的 click 事件, 添加 data-属性作为可代理标志, 并添加行信息来区分来源。
+
+单看事件委托, 属实平平无奇, 但与 ShadowForm 结合着用才能显现出巨大的抛瓦
 
 
 ## 属性说明
 
 |属性|说明|类型|默认值|
 |----|---|---|---|
-|`resizeable`|可拖拽列宽功能开关, 在 `Columns` 也可以单独设置|`boolean`|`false`|
-|`settings`|动态列排序功能开关| `boolean` | `true`|
-|`slice`|分页性能优化开关, 默认开启| `boolean`| `true`|
-|`rowSelection`|可选列选择功能, 配置简化, 提供功能钩子, 默认关闭| `true\| TableProps['rowSelection']`|--|
-|`pagination`|分页功能, 配置简化, 提供功能钩子, 默认开启, `false` 显式关闭| `false\| TableProps['pagination']`|`{hideOnSingle:true}`|
-|`expandable`|行展开功能, 配置简化, 提供功能钩子配置, 默认关闭| `TableProps['expandable']`|--|
-|`RowExpand`|`Schame`形式的 行展开|--|--|
-|`Toolbar`|`Schame`自定义表头部分内容, 自定义组件名称必须包含 `Toolbar`|--|--|
-|`Footer`|`Schame`自定义表头部分内容, 自定义组件名称必须包含 `Footer` |--|--|
+|resizeable|可拖拽列宽功能开关, 在 Columns 也可以单独设置|boolean|false|
+|onSortEnd| 拖动排序回调, reject 则拒绝执行排序 `(from: number, to: number, arrayField: ArrayField) => void |Promise\<void\>`|--|
+|settings|动态列排序功能开关| boolean |true|
+|slice|分页性能优化开关, 默认开启| boolean| true|
+|rowSelection|可选列选择功能, 配置简化, 提供功能钩子, 默认关闭|true\| TableProps['rowSelection']|--|
+|pagination|分页功能, 配置简化, 提供功能钩子, 默认开启, false 显式关闭| false\| TableProps['pagination']|`{hideOnSingle:true}`|
+|expandable|行展开功能, 配置简化, 提供功能钩子配置, 默认关闭| TableProps['expandable']|--|
+|RowExpand|Schame 形式的 行展开|--|--|
+|Toolbar|Schame  形式的自定义表头部分内容, 自定义组件名称必须包含 Toolbar|--|--|
+|Footer|Schame  形式的自定义表头部分内容, 自定义组件名称必须包含 Footer |--|--|
 
 
-## 代码案例
+## 代码案例: 基本使用
 
 <code src="../demos/ProArrayTable.tsx"  />
+
+## 代码案例:可编辑弹窗
+
+<code src="../demos/ProArrayTableWithShadow.tsx"  />
+
+### ArrayBase 仍然适用的API
+
+- ArrayBase.useArray
+- ArrayBase.useIndex
+- ArrayBase.useRecord
+
 
 ### ProArrayTable.useTablePagination 获取分页信息
 
@@ -62,7 +97,21 @@ export interface ITableSelectionContext {
 }
 ```
 
+### ProArrayTable.useProArrayTableContext 获取数组所有上下文信息
+
+```tsx | pure
+export const useProArrayTableContext = () => {
+  const array = ArrayBase.useArray();
+  const pagination = useContext(TablePaginationContext);
+  const rowSelection = useContext(TableRowSelectionContext);
+  const expanedable = useContext(TableExpandableContext);
+  return { array, pagination, rowSelection, expanedable };
+};
+```
+
 ### ProArrayTable.DelegateAction 代理动作触发器
+
+代理动作触发器, 给子组件打标记, Table Wrapper 的 click 事件绑定进行分发处理, 通过 `act` 与 ShadowForm 弹窗系列关联
 
 ```tsx | pure
 {
@@ -80,35 +129,31 @@ export interface ITableSelectionContext {
 }
 ```
 
-### ShadowModal/ShadowModal 通用属性
+### ShadowModal/ShadowDrawer 通用属性
+
+鉴于这套组件在 ProArrayTable 中使用频率颇高, 融合了 IShadowFormOptions ,弹窗 属性组合成一个组件, 并在回调种注入当前数组的 Context
+
 ```tsx | pure
 {
-  /** 动作标志, 与 ShadowModal 对应  */
-  act: string;
-  /** 子表单Schema */
-  schema: ISchema,
-  /** createForm 创建的表单实例, 有自定义 effects 等可以通过自定义一个 form 这个传入 */
-  form?: ReturnType<typeof createForm>,
-  /** createSchemaField 函数配置 */
-  schemaFieldOptions?: Parameters<typeof createSchemaField>[0],
+  /** 动作标志, 与 ShadowModal 对应, 不填写的话,取当前 schema 的 name  */
+  act?: string;
   /** 取消事件 */
   onCancel?: (
-    ctx: ReturnType<typeof useProArrayTableContext>,
+    ctx: ReturnType<typeof ProArrayTable.useProArrayTableContext>,
   ) => void | Promise<void>;
   /** 子表单提交事件, 可以做点什么 */
   onOk?: (
     data: any,
-    ctx: ReturnType<typeof useProArrayTableContext>,
+    ctx: ReturnType<typeof ProArrayTable.useProArrayTableContext>,
   ) => void | Promise<void>;
-}
+} & IShadowFormOptions
 ```
-### ProArrayTable.ShadowModal 表格共享弹窗, 结合 ShadowForm/DelegateAction 使用
 
+### ProArrayTable.ShadowModal 表格共享弹窗, 结合 ShadowForm#DelegateAction 使用
 除了 `onOk,onCancel` antd/Modal 其他属性
 
-### ProArrayTable.ShadowDrawer 表格共享抽屉, 结合 ShaodwForm/DelegateAction 使用
-
-除了 `onOk,onCancel` antd/Drawer 其他属性
+### ProArrayTable.ShadowDrawer 表格共享抽屉, 结合 ShaodwForm#DelegateAction 使用
+> Welcome PR.
 
 ### ProArrayTable.ProAddition 弹窗/抽屉形式的可编辑内容新增组件
 
@@ -129,9 +174,12 @@ export interface ITableSelectionContext {
 }
 ```
 
-### ProArrayTable.Column 列配置组件
+### ProArrayTable.Column 表格列
 
-追加了可拖拽列宽配置开关, 优先级 > Table 上的 resizeable 属性
+> 追加了可拖拽列宽配置开关, 优先级 > Table 上的 resizeable 属性
+
+其他与 `@formily/antd` 中的 `ArrayTable.Column` 表现一致
+
 
 ```tsx | pure
 {
@@ -141,7 +189,33 @@ export interface ITableSelectionContext {
 }
 ```
 
-### ProArrayTable.Addition 自增组件
+## ArrayBase 基础事件添加 Promise 支持, 影响组件列表如下
+```tsx | pure
+export interface IProArrayTableBaseMixins {
+  onSortEnd?: (
+    form: number,
+    to: number,
+    arrayField: ArrayField,
+  ) => void | Promise<void>;
+  onAdd?: (
+    toIndex: number,
+    value: any,
+    arrayField: ArrayField,
+  ) => void | Promise<void>;
+  onCopy?: (
+    distIndex: number,
+    value: any,
+    arrayField: ArrayField,
+  ) => void | Promise<void>;
+  onRemove?: (index: number, arrayField: ArrayField) => void | Promise<void>;
+  onMoveUp?: (index: number, arrayField: ArrayField) => void | Promise<void>;
+  onMoveDown?: (index: number, arrayField: ArrayField) => void | Promise<void>;
+}
+```
 
-与 `@formily/antd` 中的 `ArrayTable.Addition` 表现一致
-
+- ProArrayTable.SortHandle
+- ProArrayTable.Remove
+- ProArrayTable.Copy
+- ProArrayTable.MoveDown
+- ProArrayTable.MoveUp
+- ProArrayTable.Index

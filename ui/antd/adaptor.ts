@@ -12,7 +12,7 @@ export {
 } from "@formily/antd";
 
 import { ArrayBase as AntdArrayBase } from "@formily/antd";
-export type { ArrayBaseMixins } from "@formily/antd";
+export type { ArrayBaseMixins, IArrayBaseContext } from "@formily/antd";
 
 // 类型 Required
 export const ArrayBase = AntdArrayBase as Required<typeof AntdArrayBase> &

@@ -12,7 +12,8 @@ export {
 } from "@formily/antd-v5";
 
 import { ArrayBase as AntdArrayBase } from "@formily/antd-v5";
-export type { ArrayBaseMixins } from "@formily/antd-v5";
+export type { ArrayBaseMixins, IArrayBaseContext } from "@formily/antd-v5";
+
 // 类型fix
 export const ArrayBase = AntdArrayBase;
 export type { ColumnsType, ColumnProps, TableProps } from "antd/es/table";

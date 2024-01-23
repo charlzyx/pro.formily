@@ -35,7 +35,7 @@ const schema: ISchema = {
   properties: {
     columns: {
       type: "array",
-      "x-component": "ArrayTablePro",
+      "x-component": "ProArrayTable",
       "x-component-props": {
         bordered: false,
         settings: false,
@@ -48,21 +48,21 @@ const schema: ISchema = {
         properties: {
           _sort: {
             type: "void",
-            "x-component": "ArrayTablePro.Column",
+            "x-component": "ProArrayTable.Column",
             "x-component-props": {
               width: 40,
             },
             properties: {
               sort: {
                 type: "void",
-                "x-component": "ArrayTablePro.SortHandle",
+                "x-component": "ProArrayTable.SortHandle",
               },
             },
           },
           // TODO: pin left | right
           _show: {
             type: "void",
-            "x-component": "ArrayTablePro.Column",
+            "x-component": "ProArrayTable.Column",
             "x-component-props": {
               width: 40,
             },
@@ -75,7 +75,7 @@ const schema: ISchema = {
           },
           _title: {
             type: "void",
-            "x-component": "ArrayTablePro.Column",
+            "x-component": "ProArrayTable.Column",
             "x-component-props": {
               width: 60,
             },
@@ -104,7 +104,7 @@ export const ProSettings: React.FC<{
           Input,
           NumberPicker,
           Radio,
-          ArrayTablePro: ProArrayTable,
+          ProArrayTable,
           PreviewText,
           Checkbox,
         },

@@ -16,7 +16,8 @@ import {
   TableProps as ArcoTableProps,
 } from "@arco-design/web-react";
 import { ArrayBase as AntdArrayBase } from "arco.formily";
-export type { ArrayBaseMixins } from "arco.formily";
+export type { ArrayBaseMixins, IArrayBaseContext } from "arco.formily";
+
 // 类型fix
 export const ArrayBase = AntdArrayBase as Required<typeof AntdArrayBase> &
   typeof AntdArrayBase;

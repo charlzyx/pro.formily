@@ -2,9 +2,12 @@ import { ArrayField, isArrayField } from "@formily/core";
 import { Schema } from "@formily/json-schema";
 import { RecursionField, useField, useFieldSchema } from "@formily/react";
 import { isArr } from "@formily/shared";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import type { ResizeCallbackData } from "react-resizable";
 import { ArrayBase } from "../adaptor/adaptor";
+import { TableExpandableContext } from "./features/expandable";
+import { TablePaginationContext } from "./features/pagination";
+import { TableRowSelectionContext } from "./features/row-selection";
 import {
   isAdditionComponent,
   isColumnComponent,
@@ -192,6 +195,14 @@ export const useArrayTableSources = () => {
   const schema = useFieldSchema();
   const sources = parseArrayItems(arrayField, schema.items);
   return sources;
+};
+
+export const useProArrayTableContext = () => {
+  const array = ArrayBase.useArray();
+  const pagination = useContext(TablePaginationContext);
+  const rowSelection = useContext(TableRowSelectionContext);
+  const expanedable = useContext(TableExpandableContext);
+  return { array, pagination, rowSelection, expanedable };
 };
 
 export const useExpandRender = (index: number) => {

@@ -1,23 +1,10 @@
-import { FormProvider, ReactFC, observer, useField } from "@formily/react";
+import { FormProvider, useField } from "@formily/react";
 import { toJS } from "@formily/reactive";
-import React, { Fragment, useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { omit, pick } from "../__builtins__";
-import {
-  Alert,
-  BUTTON_TYPE,
-  Button,
-  Divider,
-  Drawer,
-  Modal,
-  Space,
-} from "../adaptor";
-import { ArrayBase, ArrayBaseMixins } from "../adaptor/adaptor";
-import {
-  IShadowFormOptions,
-  ShadowFormContext,
-  ShadowFormProvider,
-  useShadowForm,
-} from "../shadow-form/shadow-form";
+import { Alert, BUTTON_TYPE, Button, Divider, Modal, Space } from "../adaptor";
+import { ArrayBase } from "../adaptor/adaptor";
+import { IShadowFormOptions, useShadowForm } from "../shadow-form/shadow-form";
 import { useRecord } from "../shared";
 import {
   ArrayTableDelegateContext,
@@ -25,41 +12,8 @@ import {
   DATE_DELEGATE_INDEX_KEY,
   IArrayTableDelegateContext,
 } from "./features/delegate";
-import { TableExpandableContext } from "./features/expandable";
-import { TablePaginationContext } from "./features/pagination";
 import { TableRowSelectionContext } from "./features/row-selection";
-import type { ColumnProps } from "./types";
-
-export const Column: ReactFC<ColumnProps<any>> = () => {
-  return <Fragment />;
-};
-export const RowExpand: ReactFC<ColumnProps<any>> = () => {
-  return <Fragment />;
-};
-
-export const Addition: ArrayBaseMixins["Addition"] = observer((props) => {
-  const array = ArrayBase.useArray();
-  const page = useContext(TablePaginationContext);
-  return (
-    <ArrayBase.Addition
-      // @ts-ignore
-      block={false}
-      type={BUTTON_TYPE}
-      {...props}
-      onClick={(e) => {
-        // 如果添加数据后将超过当前页，则自动切换到下一页
-        if (!page) return;
-        const total = array?.field?.value.length || 0;
-        if (total >= page!.current! * page.pageSize!) {
-          page.setPagination((memo) => {
-            return { ...memo, current: memo.current + 1 };
-          });
-        }
-        props.onClick?.(e);
-      }}
-    />
-  );
-});
+import { useProArrayTableContext } from "./hooks";
 
 const justifyContentList: Required<React.CSSProperties>["justifyContent"][] = [
   "space-around",
@@ -176,15 +130,8 @@ export const RowSelectionPro = (props: {
   ) : null;
 };
 
-export const useProArrayTableContext = () => {
-  const array = ArrayBase.useArray();
-  const pagination = useContext(TablePaginationContext);
-  const rowSelection = useContext(TableRowSelectionContext);
-  const expanedable = useContext(TableExpandableContext);
-  return { array, pagination, rowSelection, expanedable };
-};
-
 export interface CommonShadowPopup extends IShadowFormOptions {
+  act?: string;
   onCancel?: (
     ctx: ReturnType<typeof useProArrayTableContext>,
   ) => void | Promise<void>;
@@ -193,13 +140,16 @@ export interface CommonShadowPopup extends IShadowFormOptions {
     ctx: ReturnType<typeof useProArrayTableContext>,
   ) => void | Promise<void>;
 }
-export const ShadowModal: React.FC<
+
+export const ArrayTableShowModal: React.FC<
   Omit<React.ComponentProps<typeof Modal>, "children" | "onCancel" | "onOk"> &
     CommonShadowPopup
 > = (props) => {
-  const { SchemaField, form, act, schema } = useShadowForm(
-    pick(props, "act", "schema", "schemaFieldOptions", "form"),
+  const { SchemaField, form, schema } = useShadowForm(
+    pick(props, "schema", "schemaFieldOptions", "form"),
   );
+  const act = props.act ?? schema.name;
+  const field = useField();
   const delegate = useContext(ArrayTableDelegateContext);
   const visible = delegate.act === act && delegate.index > -1;
   const pending = useRef(false);
@@ -207,7 +157,6 @@ export const ShadowModal: React.FC<
 
   useEffect(() => {
     if (visible) {
-      // 需要等等的  trigger 里面 initLoader.current set 的 nextick 吗?
       Promise.resolve(delegate.initLoader?.current?.()).then((init) => {
         form.setInitialValues(toJS(init || {}));
       });
@@ -220,7 +169,7 @@ export const ShadowModal: React.FC<
     return new Promise((resolve) => {
       // 优化关闭展示
       setTimeout(() => {
-        return resolve(form.reset("*", { forceClear: true, validate: true }));
+        return resolve(form.reset());
       }, 200);
     }).finally(() => {
       pending.current = false;
@@ -231,6 +180,7 @@ export const ShadowModal: React.FC<
     <Modal
       {...omit(props, "act", "schema", "schemaFieldOptions", "form")}
       open={visible}
+      title={field.title}
       onCancel={() => {
         if (pending.current) return;
         return form
@@ -310,8 +260,8 @@ export const ProAddition = ({
   >) => {
   return (
     <React.Fragment>
-      <ShadowModal act="_pro_addition" {...props}></ShadowModal>
-      <DelegateAction index={Infinity} act={"_pro_addtion"}></DelegateAction>
+      <ArrayTableShowModal act="_pro_addition" {...props}></ArrayTableShowModal>
+      <DelegateAction index={Infinity} act={"_pro_addition"}></DelegateAction>
     </React.Fragment>
   );
 };

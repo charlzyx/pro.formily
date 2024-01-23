@@ -1,26 +1,29 @@
-import { ConfigProvider, Divider } from "antd";
+import { ConfigProvider } from "antd";
 import "antd/dist/antd.css";
-// import "antd/dist/antd.css";
-import zhCN from "antd/lib/locale/zh_CN";
+
 import { faker } from "@faker-js/faker";
-import { createForm } from "@formily/core";
-import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import {
   DatePicker,
   Editable,
-  FormButtonGroup,
   FormGrid,
   FormItem,
   FormLayout,
   Input,
   Select,
-  Submit,
 } from "@formily/antd";
+import { createForm } from "@formily/core";
+import { FormProvider, ISchema, createSchemaField } from "@formily/react";
+import zhCN from "antd/lib/locale/zh_CN";
 import moment from "moment";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
-import { QueryForm, QueryList, QueryTable } from "@pro.formily/antd";
+import {
+  ProArrayTable,
+  QueryForm,
+  QueryList,
+  QueryTable,
+} from "@pro.formily/antd";
 
 const log = (label: string, x: any) => {
   console.log("LABEL:", label);
@@ -172,7 +175,7 @@ const row: ISchema = {
     properties: {
       _id: {
         type: "void",
-        "x-component": "QueryTable.Column",
+        "x-component": "ProArrayTable.Column",
         "x-component-props": { width: 60, title: "ID", align: "center" },
         properties: {
           id: {
@@ -184,7 +187,7 @@ const row: ISchema = {
       },
       _status: {
         type: "void",
-        "x-component": "QueryTable.Column",
+        "x-component": "ProArrayTable.Column",
         "x-component-props": { width: 60, title: "STATUS", align: "center" },
         properties: {
           id: {
@@ -196,7 +199,7 @@ const row: ISchema = {
       },
       _domain: {
         type: "void",
-        "x-component": "QueryTable.Column",
+        "x-component": "ProArrayTable.Column",
         "x-component-props": { title: "DOMAIN", align: "center" },
         properties: {
           domain: {

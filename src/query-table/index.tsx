@@ -1,19 +1,17 @@
 import type { ArrayField } from "@formily/core";
 import { observer, useField } from "@formily/react";
 import { useEffect } from "react";
-import { ProArrayTableProps } from "src/pro-array-table/types";
 import {
   BUTTON_TYPE,
   Button,
   SyncOutlined,
   TablePaginationConfig,
 } from "../adaptor";
-import { ArrayBase } from "../adaptor/adaptor";
-import { Addition, Column, RowExpand } from "../pro-array-table/mixin";
+import { ProArrayTableProps } from "../pro-array-table";
 import { ProArrayTable } from "../pro-array-table/pro";
 import { useQueryListContext } from "../query-list";
 
-export const QueryTablePro = observer((overprops: ProArrayTableProps) => {
+export const QueryTable = observer((overprops: ProArrayTableProps) => {
   const field = useField<ArrayField>();
   const querylist = useQueryListContext();
   const page = {
@@ -67,12 +65,6 @@ export const QueryTablePro = observer((overprops: ProArrayTableProps) => {
       loading={props.loading ?? querylist.loading}
     ></ProArrayTable>
   );
-});
-
-export const QueryTable = Object.assign(ArrayBase.mixin(QueryTablePro), {
-  Column,
-  Addition,
-  RowExpand,
 });
 
 QueryTable.displayName = "QueryTable";

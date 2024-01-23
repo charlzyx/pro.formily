@@ -14,7 +14,7 @@ import {
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { Button, ConfigProvider, Divider, Space } from "antd";
 import "antd/dist/antd.css";
-// import "antd/dist/antd.css";
+
 import zhCN from "antd/lib/locale/zh_CN";
 import moment from "moment";
 import "moment/locale/zh-cn";

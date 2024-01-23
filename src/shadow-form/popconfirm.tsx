@@ -1,26 +1,26 @@
 import { Field } from "@formily/core";
 import { FormProvider, useField } from "@formily/react";
 import { toJS } from "@formily/reactive";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BUTTON_TYPE, Button, Popconfirm } from "../adaptor";
-import { ShadowFormContext } from "../shadow-form/shadow-form";
+import { ShadowFormWrappedProps } from "./shadow-form";
 
 export const ShadowPopconfirm: React.FC<
-  React.ComponentProps<typeof Popconfirm> & {
-    initLoader?: React.MutableRefObject<() => object | Promise<object>>;
-  }
-> = ({ initLoader, ...props }) => {
+  ShadowFormWrappedProps &
+    React.ComponentProps<typeof Popconfirm> & {
+      initLoader?: React.MutableRefObject<() => object | Promise<object>>;
+    }
+> = ({ form, SchemaField, schema, initLoader, ...props }) => {
   const field = useField<Field>();
   const [visible, setVisible] = useState(false);
   const pending = useRef(false);
-  const { SchemaField, form, schema } = useContext(ShadowFormContext);
 
   const reset = () => {
     pending.current = true;
     return new Promise((resolve) => {
       // 优化关闭展示
       setTimeout(() => {
-        return resolve(form.reset("*", { forceClear: true, validate: true }));
+        return resolve(form.reset());
       }, 200);
     }).finally(() => {
       pending.current = false;
@@ -70,8 +70,15 @@ export const ShadowPopconfirm: React.FC<
           <SchemaField schema={schema}></SchemaField>
         </FormProvider>
       }
+      icon={null}
     >
-      {props.children ? props.children : field.title}
+      {props.children ? (
+        props.children
+      ) : (
+        <Button type={BUTTON_TYPE} size="small">
+          {field.title}
+        </Button>
+      )}
     </Popconfirm>
   );
 };

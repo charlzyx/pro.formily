@@ -1,16 +1,92 @@
 # 👻 ShaowForm 影子表单
 
-> 脱离于当前 Form 响应式上下文的子表单
+什么是影子表单？影子表单是脱离于当前 Form 响应式上下文的子表单
 
-这很有用, 解决表格中的弹窗编辑与增加, 以及对象弹窗编辑的 Pro!Editable
+> 想攻击我？先试着和影子玩🥊吧
 
-### 代码案例: Confirm
-<code src="../demos/ShadowForm.tsx"  />
+### 有什么用？
 
+当你想对部分对象字段进行修改的时候,但又不想对当前表单响应式模型产生影响,可以考虑使用影子表单。如果只是针对单个字段修改的话,你可能在找Editable
 
-### 代码案例: 在列表中使用
-<code src="../demos/ShadowFormWithArray.tsx"  />
+一个常见的例子：表格里面的行数据编辑,或者大数据对象的部分属性编辑,常见的几种方案
+
+1. 使用路径系统将当前行所有数据转换为 editable
+2. 使用 Editable 组件对可编辑组件进行包裹
+3. 使用 FormDialog/FormDrawer 进行弹窗编辑
+
+各有优劣,方案1,2 只能处理编辑内容与展示内容一致的情况,比如根据行id获取更多详情来编辑就处理不了。内容变更范围不好析出,假如变更内容是需要异步保存到服务器,请求出错本地变更数据回滚就会很麻烦,特别是 initialValues 可能并不像你想的那样工作。我的issues
+方案3实际体验相对较差,体现在
+
+a. 这两个是api调用,不能使用 schema 描述出来
+
+b. 创建的弹窗脱离了当前 root 树, ConfigProvider 之类的全局contex 需要到单独再配置一份,很麻烦。
+
+### 根据我练习时长两年半的 CRUD 经验, 我期望：
+
+1. 能使用 Schema （没戳！我就是 schema 语法铁粉）描述
+2. 不污染当前数据与响应模型,不然怎么叫 shadow
+3. 用起来不要太麻烦,既然是子表单,共享一下根表单的一些配置属性也理所当然吧
+
+**得益于 formily 优秀的 api 设计, 设计思路如下**
+
+- 使用 SchemaFieldOptionsContext 获取根节点 createSchemaField 传入的注册组件与 scope, 省去重新 createSchema 的麻烦
+- 使用 createForm 创建一个新的影子 form, 与根表单没有任何关系, 当然也需要提供可配置项, 可以传入自定义的带 effects 等配置的form实例代替默认配置
+- 组件自身在根表单中是一个void节点,不产生任何数据污染
+- 数据初始值获取方式 promise, 子表单实例 form.setvalues ([为什么不是initValues?](https://github.com/alibaba/formily/pull/4053)),field.record 非常适合作为默认值[链接一下 formily curd规范
+- 相比 Editable, 编辑之后 form reset/submit 确认状态交还给用户处理,去代替原始值or发起保存/更新请求。
+- 影子表单的 schema 配置
+- x-component 还是 x-decorator ? 我全都要!
+
+> Tip: 为什么 field.record 非常适合?
+> 这篇[标准化CRUD作用域变量规范](https://github.com/alibaba/formily/discussions/3207) 直指 formily 模型抽象核心的内容就尤为重要, 这里面提到的 record 是如此的重要;
+以至于在 2.2.19 版本中, record 被作为 Field 模型的核心属性, 直接追加到了 BaseField 上.
+
+> Tip: 为什么增加 schema 属性配置, 直接使用 properties 不行吗
+> 可以是可以, 但外层 form 的 RecursionField (@formily/react#RecursionField) 在渲染的时候, 会进行构建, 生成 children 扔给组件处理, 虽然可以扔掉不用, 但多余的创建也是不必要的浪费
+
+### 代码案例
+<code src="../demos/ShadowFormAll.tsx"  />
+
+### ShadowForm
+
+```tsx | pure
+export interface IShadowFormOptions {
+  /** 子表单Schema */
+  schema: ISchema;
+  /** createSchemaField 函数配置, components 和 scope */
+  schemaFieldOptions?: Parameters<typeof useShadowSchemaField>[0];
+  /** createForm 创建的表单实例, 有自定义 effects 等可以通过自定义一个 form 这个传入 */
+  form?: ReturnType<typeof createForm>;
+}
+
+export interface ShadowFormWrappedProps {
+  form: ReturnType<typeof createForm>;
+  SchemaField: ReturnType<typeof createSchemaField>;
+  schema: ISchema;
+}
+
+```
+
+### ShadowModal
+> 注意!  这跟 ProArrayTable.ShadowModal 并不一样
+
+```tsx | pure
+export const ShadowModal: React.FC<
+  ShadowFormWrappedProps &
+    Omit<React.ComponentProps<typeof Modal>, "onOk"> & {
+      initLoader?: React.MutableRefObject<() => object | Promise<object>>;
+      children?: React.ReactElement;
+      onOk?: (data: any) => void | Promise<void>;
+    }
+>
+```
+
+### ShadowDrawer
+
+> Welcome PR.
 
 ### useShadowForm
 
-### ShadowFormProvider
+```tsx | pure
+type useShadowForm = (opts: IShadowFormOptions) => ShadowFormWrappedProps
+```

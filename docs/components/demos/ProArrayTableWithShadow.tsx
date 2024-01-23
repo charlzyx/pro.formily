@@ -1,17 +1,15 @@
-import { faker } from "@faker-js/faker";
 import { Editable, FormGrid, FormItem, FormLayout, Input } from "@formily/antd";
 import { createForm } from "@formily/core";
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
 import { Button, ConfigProvider } from "antd";
 import "antd/dist/antd.css";
-// import "antd/dist/antd.css";
+
 import zhCN from "antd/lib/locale/zh_CN";
 import moment from "moment";
 import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
 import { ProArrayTable, ShadowForm } from "@pro.formily/antd";
-import { useProArrayTableContext } from "src/pro-array-table/mixin";
 
 const form = createForm({
   initialValues: {
@@ -81,11 +79,12 @@ const schema: ISchema = {
       "x-component": "ProArrayTable",
       items: row.items,
       properties: {
+        // ↓ 不填写 act 属性的话, 就读这个 modal 字段
         modal: {
           type: "void",
-          "x-decorator": "ShadowForm",
-          "x-decorator-props": {
-            act: "modal",
+          "x-component": "ProArrayTable.ShadowModal",
+          "x-component-props": {
+            // act: "modal", // 这里不填写的话, 就读取上面
             schema: {
               type: "void",
               properties: {
@@ -113,7 +112,6 @@ const schema: ISchema = {
               },
             },
           },
-          "x-component": "ProArrayTable.ShadowModal",
         },
         add: {
           type: "void",
@@ -121,7 +119,7 @@ const schema: ISchema = {
           "x-component-props": {
             onOk: (
               data: any,
-              ctx: ReturnType<typeof useProArrayTableContext>,
+              ctx: ReturnType<typeof ProArrayTable.useProArrayTableContext>,
             ) => {
               // 如果添加数据后将超过当前页，则自动切换到下一页
               const total = ctx?.array.field?.value.length || 0;

@@ -20,11 +20,13 @@ import "@arco-design/web-react/es/Typography/style/index";
 import {
   IconCopy,
   IconDelete,
+  IconDown,
   IconPlus,
   IconSettings,
   IconShrink,
   IconSync,
   IconToTop,
+  IconUp,
 } from "@arco-design/web-react/icon";
 import "./themes/index";
 export const ColumnHeightOutlined = IconShrink;
@@ -34,7 +36,8 @@ export const CopyOutlined = IconCopy;
 export const DeleteOutlined = IconDelete;
 export const PlusOutlined = IconPlus;
 export const ToTopOutlined = IconToTop;
-
+export const DownOutlined = IconDown;
+export const UpOutlined = IconUp;
 export {
   Badge,
   Button,

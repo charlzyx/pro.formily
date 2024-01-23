@@ -73,7 +73,7 @@ export const registerDictLoader = (
   return loaders[name];
 };
 
-export const dictEffects = (form: Form) => {
+export const dictEffects = (form: Form, hijack?: boolean) => {
   onFieldMount("*", (field) => {
     const maybe = field.data?.dict;
     if (!maybe) return;
@@ -118,6 +118,7 @@ export const dictEffects = (form: Form) => {
   });
 
   onFieldReact("*", (field) => {
+    if (!hijack) return;
     const maybe = field.data?.dict;
     if (!maybe) return;
 

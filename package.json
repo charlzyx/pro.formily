@@ -49,11 +49,12 @@
   "devDependencies": {
     "@biomejs/biome": "^1.5.0",
     "@faker-js/faker": "^8.3.1",
-    "@rsbuild/plugin-react": "latest",
     "@rsbuild/core": "latest",
+    "@rsbuild/plugin-react": "latest",
     "@rspress/plugin-preview": "latest",
     "@types/bun": "^1.0.2",
     "@types/node": "^16.18.70",
+    "@types/qs": "^6.9.11",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@types/react-resizable": "^3.0.7",
