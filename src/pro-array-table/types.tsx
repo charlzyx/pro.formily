@@ -1,4 +1,3 @@
-import { ArrayBase } from "@formily/antd";
 import { ArrayField, FieldDisplayTypes, GeneralField } from "@formily/core";
 import { Schema } from "@formily/json-schema";
 import type { Table } from "../adaptor";

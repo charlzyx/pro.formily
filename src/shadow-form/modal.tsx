@@ -83,7 +83,7 @@ export const ShadowModal: React.FC<
         <Modal
           {...props}
           open={visible}
-          onCancel={(e) => {
+          onCancel={(e: any) => {
             if (pending.current) return;
             return form
               ?.reset()

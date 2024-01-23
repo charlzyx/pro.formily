@@ -35,8 +35,9 @@ export const Drawer = ({
 
 export type ModalProps = Omit<
   React.ComponentProps<typeof ArcoModal>,
-  "visible"
+  "visible" | "onCancel"
 > & {
+  onCancel?: (e?: any) => any | Promise<any>;
   open?: React.ComponentProps<typeof ArcoModal>["visible"];
   destroyOnClose?: React.ComponentProps<typeof ArcoModal>["unmountOnExit"];
 };
@@ -47,7 +48,11 @@ export const Modal = ({
   ...props
 }: React.PropsWithChildren<ModalProps>) => {
   return (
-    <ArcoModal {...props} visible={open} unmountOnExit={destroyOnClose}>
+    <ArcoModal
+      {...(props as any)}
+      visible={open}
+      unmountOnExit={destroyOnClose}
+    >
       {props.children}
     </ArcoModal>
   );

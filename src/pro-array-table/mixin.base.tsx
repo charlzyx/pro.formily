@@ -66,6 +66,7 @@ export const Addition = (
   return (
     <Button
       type={BUTTON_TYPE}
+      // @ts-ignore
       block
       {...props}
       disabled={self?.disabled}
@@ -123,7 +124,7 @@ export const Copy = React.forwardRef(
           props.className,
         )}
         ref={ref}
-        onClick={(e) => {
+        onClick={(e: any) => {
           if (self?.disabled) return;
           e.stopPropagation();
           if (array.props?.disabled) return;
@@ -227,7 +228,7 @@ export const MoveDown = React.forwardRef(
           props.className,
         )}
         ref={ref}
-        onClick={(e) => {
+        onClick={(e: any) => {
           if (self?.disabled) return;
           e.stopPropagation();
           if (props.onClick) {
@@ -268,7 +269,7 @@ export const MoveUp = React.forwardRef(
           props.className,
         )}
         ref={ref}
-        onClick={(e) => {
+        onClick={(e: any) => {
           if (self?.disabled) return;
           e.stopPropagation();
           if (props.onClick) {

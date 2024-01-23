@@ -42,7 +42,7 @@ export const ShadowPopconfirm: React.FC<
   return (
     <Popconfirm
       {...props}
-      popupVisible={visible}
+      open={visible}
       onOpenChange={(o) => {
         if (o !== visible) {
           return setVisible(o);
