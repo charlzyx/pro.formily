@@ -9,7 +9,7 @@ import {
   useFieldSchema,
 } from "@formily/react";
 import React, { useContext, useMemo } from "react";
-import { isReactElement } from "../__builtins__";
+import ReactIs from "react-is";
 
 export const useShadowSchemaField = (
   schemaFieldOptions?: Parameters<ReturnType<typeof createSchemaField>>[0],
@@ -73,14 +73,13 @@ export const ShadowForm: React.FC<React.PropsWithChildren<IShadowFormOptions>> =
       field.data = field.data ?? {};
       field.data._form = form;
     }
-
     const child = // at x-component
       im === "component" ? (
         <FormProvider form={form}>
           <SchemaField schema={schema}></SchemaField>
         </FormProvider>
       ) : // at x-decorator
-      isReactElement(children) ? (
+      ReactIs.isElement(children) ? (
         React.cloneElement(children, {
           ...children.props,
           form,
