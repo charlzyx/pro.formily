@@ -1,4 +1,4 @@
-import { FormProvider, useField } from "@formily/react";
+import { FormProvider, useField, useFieldSchema } from "@formily/react";
 import { toJS } from "@formily/reactive";
 import React, { useContext, useEffect, useRef } from "react";
 import { omit, pick } from "../__builtins__";
@@ -148,7 +148,8 @@ export const ArrayTableShowModal: React.FC<
   const { SchemaField, form, schema } = useShadowForm(
     pick(props, "schema", "schemaFieldOptions", "form"),
   );
-  const act = props.act ?? schema.name;
+  const mySchema = useFieldSchema();
+  const act = props.act ?? mySchema.name;
   const field = useField();
   const delegate = useContext(ArrayTableDelegateContext);
   const visible = delegate.act === act && delegate.index > -1;

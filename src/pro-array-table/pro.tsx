@@ -380,23 +380,4 @@ export const ProArrayTable = Object.assign(
   },
 );
 
-export const ProArrayTableMixin = <T extends JSXComponent>(o: T) => {
-  return Object.assign(ArrayBase.mixin(o as any), {
-    Copy,
-    MoveUp,
-    MoveDown,
-    Remove,
-    Column,
-    Addition,
-    ProAddition,
-    RowExpand,
-    ShadowModal: ArrayTableShowModal,
-    DelegateAction,
-    useTableExpandable,
-    useTableRowSelection,
-    useTablePagination,
-    useProArrayTableContext,
-  });
-};
-
 ProArrayTable.displayName = "ProArrayTable";
