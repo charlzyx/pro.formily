@@ -65,6 +65,33 @@ ArrayTable 本身是对本地数据的一个编辑方案, 缺少一些异步的�
 - ArrayBase.useRecord
 
 
+### 不支持表格树形数据的展示, 但你可以这样迂回一下
+
+```tsx | pure
+// 使用这个组件
+const Indent = () => {
+  const record = ArrayBase.useRecord?.();
+  const indent = Array.from({ length: record?.indent }).fill("..").join(" ");
+  return <span style={{ padding: "0 8px " }}>{indent}</span>;
+};
+
+const fluttenTree = (tree: Menu[], indent = 0) => {
+  return tree.reduce<(Menu & { indent: number })[]>((flat, item) => {
+    flat.push({
+      ...item,
+      // 添加 indent
+      indent,
+      // 记得去掉 children
+      children: undefined,
+    });
+    if (item.children) {
+      flat.push(...fluttenTree(item.children, indent + 1));
+    }
+    return flat;
+  }, []);
+};
+```
+
 ### ProArrayTable.useTablePagination 获取分页信息
 
 ```tsx | pure
@@ -120,7 +147,7 @@ export const useProArrayTableContext = () => {
   /** 当前列所属 index, 默认使用 ArrayBase.useIndex() 获取当前数据对应位置 */
   index?: number;
   /** 数据初始化加载器, 默认使用 field.record 当前模型所对应 record */
-  initLoader?: object | Promise<object>;
+  initLoader?: (record?: any) => object | Promise<object>;
   /**
    * 具体元素, 但必须有标签包装, 因为会被追加 data-属性字段标志给事件委托来识别
    * 不填写的情况下, 使用 Button 标签包装 field.title

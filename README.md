@@ -1,19 +1,18 @@
 # 💎 Formily, Pro！
 
-|||
-|--|--|
-|@pro.formily/antd| [![version](https://badgen.net/npm/v/@pro.formily/antd?last)](https://www.npmjs.com/package/@pro.formily/antd) |
-|@pro.formily/antd-v5| [![version](https://badgen.net/npm/v/@pro.formily/antd-v5?last)](https://www.npmjs.com/package/@pro.formily/antd-v5)|
-|@pro.formily/arco| [![version](https://badgen.net/npm/v/@pro.formily/arco?last)](https://www.npmjs.com/package/@pro.formily/arco)|
+|                      |                                                                                                                      |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| @pro.formily/antd    | [![version](https://badgen.net/npm/v/@pro.formily/antd?last)](https://www.npmjs.com/package/@pro.formily/antd)       |
+| @pro.formily/antd-v5 | [![version](https://badgen.net/npm/v/@pro.formily/antd-v5?last)](https://www.npmjs.com/package/@pro.formily/antd-v5) |
+| @pro.formily/arco    | [![version](https://badgen.net/npm/v/@pro.formily/arco?last)](https://www.npmjs.com/package/@pro.formily/arco)       |
 
-为 formily 宇宙添加的开箱即用的高级组件库, antd@4,5/arco.design 三大UI库版本适配
+为 formily 宇宙添加的开箱即用的高级组件库, antd@4,5/arco.design 三大 UI 库版本适配
 
-- 📋 **案例丰富** 练习时长两年半积累下来的丰富Demo, 方便cv
+- 📋 **案例丰富** 练习时长两年半积累下来的丰富 Demo, 方便 cv
 - 🐙 **原汁原味** 尽可能符合 AntD × formily 设计规范与直觉
 - 🚀 **拓展强大** 查询表单/多选/行展开/枚举词典等实用拓展
 
 ![welcome](./docs/public/welcome.png)
-
 
 # 如何安装
 
@@ -22,6 +21,7 @@
 `bun i @pro.formily/antd @formily/antd @fomrily/core @formily/react antd@4.x @ant-design/icons`
 
 > antd@v5
+
 `bun i @pro.formily/antd @formily/antd-v5 @fomrily/core @formily/react antd@5.x @ant-design/icons`
 
 > arco.design
@@ -38,7 +38,6 @@
 
 [for/arco.design](https://charlzyx.github.io/pro.formily/arco/)
 
-
 ## 如何开发
 
 `bun v4 && bun dev`
@@ -49,7 +48,7 @@
     "dev": "rspress dev",
     "v4": "bun scripts/switch.ts antd doc",
     "v5": "bun scripts/switch.ts antd-v5 doc",
-    "arco": "bun scripts/switch.ts arco doc",
+    "arco": "bun scripts/switch.ts arco doc"
   }
 }
 ```
@@ -64,4 +63,3 @@
 - [@formily/antd-v5](https://github.com/formilyjs/antd)
 - [Rspress](https://rspress.dev/)
 - [bun!强烈推荐](https://bun.sh/docs)
-

@@ -59,6 +59,10 @@ const row: ISchema = {
             "x-decorator": "ProArrayTable.DelegateAction",
             "x-decorator-props": {
               act: "modal",
+              initLoader: (o: any) => {
+                console.log("🚀 ~ o::", o);
+                return o;
+              },
             },
             "x-component": "Button",
             "x-component-props": {

@@ -8,7 +8,9 @@ import { ShadowFormWrappedProps } from "./shadow-form";
 export const ShadowPopconfirm: React.FC<
   ShadowFormWrappedProps &
     React.ComponentProps<typeof Popconfirm> & {
-      initLoader?: React.MutableRefObject<() => object | Promise<object>>;
+      initLoader?: React.MutableRefObject<
+        (record: any) => object | Promise<object>
+      >;
     }
 > = ({ form, SchemaField, schema, initLoader, ...props }) => {
   const field = useField<Field>();
@@ -30,7 +32,7 @@ export const ShadowPopconfirm: React.FC<
   useEffect(() => {
     if (visible) {
       if (initLoader?.current) {
-        Promise.resolve(initLoader.current()).then((init) => {
+        Promise.resolve(initLoader.current(field.record)).then((init) => {
           form.setValues(toJS(init || {}));
         });
       } else {

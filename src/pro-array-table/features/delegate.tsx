@@ -4,7 +4,9 @@ export interface IArrayTableDelegateContext {
   act: string;
   index: number;
   setAct: React.Dispatch<React.SetStateAction<{ index: number; act: string }>>;
-  initLoader?: React.MutableRefObject<() => object | Promise<object>>;
+  initLoader?: React.MutableRefObject<
+    (record: any) => object | Promise<object>
+  >;
 }
 
 export const ArrayTableDelegateContext =

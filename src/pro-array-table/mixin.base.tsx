@@ -78,11 +78,11 @@ export const Addition = (
           if (e.defaultPrevented) return;
         }
         const defaultValue = getDefaultValue(props.defaultValue, array.schema);
-        Promise.resolve(() => {
-          const toIndex =
-            props.method === "unshift" ? 0 : array?.field?.value?.length;
-          return array.props.onAdd?.(toIndex, defaultValue, array.field);
-        }).then(() => {
+        const toIndex =
+          props.method === "unshift" ? 0 : array?.field?.value?.length;
+        Promise.resolve(
+          array.props.onAdd?.(toIndex, defaultValue, array.field),
+        ).then(() => {
           if (props.method === "unshift") {
             array.field?.unshift?.(defaultValue);
           } else {
@@ -115,7 +115,7 @@ export const Copy = React.forwardRef(
     if (array.field?.pattern !== "editable") return null;
     return (
       <Button
-        type="text"
+        type={BUTTON_TYPE}
         {...props}
         disabled={self?.disabled}
         className={cls(
@@ -135,9 +135,9 @@ export const Copy = React.forwardRef(
           const value = clone(array?.field?.value[index]);
           const distIndex = index + 1;
 
-          Promise.resolve(() => {
-            return array.props?.onCopy?.(distIndex, value, array.field);
-          }).then(() => {
+          Promise.resolve(
+            array.props?.onCopy?.(distIndex, value, array.field),
+          ).then(() => {
             array.field?.insert?.(distIndex, value);
           });
         }}
@@ -170,16 +170,14 @@ export const Remove = React.forwardRef(
         props.onClick(e);
         if (e.defaultPrevented) return;
       }
-      Promise.resolve(() => {
-        return array.props?.onRemove?.(index, array.field);
-      }).then(() => {
+      Promise.resolve(array.props?.onRemove?.(index, array.field)).then(() => {
         array.field?.remove?.(index);
       });
     };
     const Wrapper = props.confirm ? Popconfirm : React.Fragment;
     const confirmProps =
       props.confirm && props.confirm !== true
-        ? props.confirm
+        ? ({} as any)
         : {
             onConfirm: onClick,
             title: "确定要删除此项吗?",
@@ -189,7 +187,7 @@ export const Remove = React.forwardRef(
     return (
       <Wrapper {...confirmProps}>
         <Button
-          type="text"
+          type={BUTTON_TYPE}
           {...props}
           disabled={self?.disabled}
           className={cls(
@@ -219,7 +217,7 @@ export const MoveDown = React.forwardRef(
     if (array.field?.pattern !== "editable") return null;
     return (
       <Button
-        type="text"
+        type={BUTTON_TYPE}
         {...props}
         disabled={self?.disabled}
         className={cls(
@@ -235,11 +233,11 @@ export const MoveDown = React.forwardRef(
             props.onClick(e);
             if (e.defaultPrevented) return;
           }
-          Promise.resolve(() => {
-            return array.props?.onMoveDown?.(index, array.field);
-          }).then(() => {
-            array.field?.moveDown?.(index);
-          });
+          Promise.resolve(array.props?.onMoveDown?.(index, array.field)).then(
+            () => {
+              array.field?.moveDown?.(index);
+            },
+          );
         }}
         icon={isUndef(props.icon) ? <DownOutlined /> : props.icon}
       >
@@ -260,7 +258,7 @@ export const MoveUp = React.forwardRef(
     if (array.field?.pattern !== "editable") return null;
     return (
       <Button
-        type="text"
+        type={BUTTON_TYPE}
         {...props}
         disabled={self?.disabled}
         className={cls(
@@ -276,11 +274,11 @@ export const MoveUp = React.forwardRef(
             props.onClick(e);
             if (e.defaultPrevented) return;
           }
-          Promise.resolve(() => {
-            return array.props?.onMoveUp?.(index, array.field);
-          }).then(() => {
-            array.field?.moveUp?.(index);
-          });
+          Promise.resolve(array.props?.onMoveUp?.(index, array.field)).then(
+            () => {
+              array.field?.moveUp?.(index);
+            },
+          );
         }}
         icon={isUndef(props.icon) ? <UpOutlined /> : props.icon}
       >

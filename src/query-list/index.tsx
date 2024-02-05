@@ -30,12 +30,12 @@ const defaultQueryListParams: IQueryListParams = {
 
 export interface IQueryListProps<Record = any, Params = any> {
   /** 查询请求, Promise */
-  service?: (params: Params) => Promise<{
+  service?: (params: IQueryListParams<Params>) => Promise<{
     list: Record[];
     total: number;
   }>;
   queryRef?: React.MutableRefObject<IQueryListContext>;
-  /** 首次自动刷新 */
+  /** 首次自动刷新, 默认开启 */
   autoload?: boolean;
   /** 是否将查询参数同步到url上 */
   syncUrl?: boolean;
@@ -91,6 +91,7 @@ export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
     });
 
     const form = useForm();
+    const autoloaded = useRef(false);
 
     const [loading, setLoading] = useState(false);
     const address = useRef({
@@ -178,6 +179,14 @@ export const QueryList = React.memo<React.PropsWithChildren<IQueryListProps>>(
         props.queryRef.current = ctx;
       }
     }, [props.queryRef]);
+
+    useEffect(() => {
+      if (autoloaded.current) return;
+      autoloaded.current = true;
+      if (ctx.table && props.autoload !== false) {
+        ctx.run();
+      }
+    }, [ctx.table]);
 
     return (
       <QueryListContext.Provider value={ctx}>

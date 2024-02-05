@@ -74,7 +74,7 @@ export interface ShadowFormWrappedProps {
 export const ShadowModal: React.FC<
   ShadowFormWrappedProps &
     Omit<React.ComponentProps<typeof Modal>, "onOk"> & {
-      initLoader?: React.MutableRefObject<() => object | Promise<object>>;
+      initLoader?: React.MutableRefObject<(record: any) => object | Promise<object>>;
       children?: React.ReactElement;
       onOk?: (data: any) => void | Promise<void>;
     }

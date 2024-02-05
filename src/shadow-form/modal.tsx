@@ -13,7 +13,9 @@ const HideInBush: React.CSSProperties = {
 export const ShadowModal: React.FC<
   ShadowFormWrappedProps &
     Omit<React.ComponentProps<typeof Modal>, "onOk"> & {
-      initLoader?: React.MutableRefObject<() => object | Promise<object>>;
+      initLoader?: React.MutableRefObject<
+        (record: object) => object | Promise<object>
+      >;
       children?: React.ReactElement;
       onOk?: (data: any) => void | Promise<void>;
     }
@@ -37,9 +39,11 @@ export const ShadowModal: React.FC<
         return Promise.reject();
       }
       if (initLoader?.current) {
-        return Promise.resolve(initLoader.current()).then((init) => {
-          form?.setValues(toJS(init || {}));
-        });
+        return Promise.resolve(initLoader.current(field.record)).then(
+          (init) => {
+            form?.setValues(toJS(init || {}));
+          },
+        );
       } else {
         return Promise.resolve(form?.setValues(toJS(field.record)));
       }

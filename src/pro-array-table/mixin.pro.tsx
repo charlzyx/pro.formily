@@ -1,7 +1,7 @@
 import { FormProvider, useField, useFieldSchema } from "@formily/react";
 import { toJS } from "@formily/reactive";
 import React, { useContext, useEffect, useRef } from "react";
-import { omit, pick } from "../__builtins__";
+import { empty, omit, pick } from "../__builtins__";
 import { Alert, BUTTON_TYPE, Button, Divider, Modal, Space } from "../adaptor";
 import { ArrayBase } from "../adaptor/adaptor";
 import { IShadowFormOptions, useShadowForm } from "../shadow-form/shadow-form";
@@ -158,9 +158,19 @@ export const ArrayTableShowModal: React.FC<
 
   useEffect(() => {
     if (visible) {
-      Promise.resolve(delegate.initLoader?.current?.()).then((init) => {
-        form.setInitialValues(toJS(init || {}));
-      });
+      // nextick is requied, 不然新增的可能会显示上一次的数据
+      setTimeout(() => {
+        /**
+         * delegate.initLoader?.current 被下面这样重写了, 所以, 这里的传值是
+         * 没有意义的, 只是为了类型
+         *  delegate.initLoader.current = props.initLoader
+         * ? () => props.initLoader?.(record)
+         * : () => record;
+         */
+        Promise.resolve(delegate.initLoader?.current?.({})).then((init) => {
+          form.setValues(toJS(init || {}));
+        });
+      }, 0);
     }
   }, [visible]);
 
@@ -168,7 +178,7 @@ export const ArrayTableShowModal: React.FC<
     delegate.setAct({ act: "", index: -1 });
     pending.current = true;
     return new Promise((resolve) => {
-      // 优化关闭展示
+      // 先关闭, 再清空表单,UI观感上会好点
       setTimeout(() => {
         return resolve(form.reset());
       }, 200);
@@ -228,11 +238,10 @@ export const DelegateAction: React.FC<{
     if (!delegate.initLoader) return;
     if (delegate.act === props.act && delegate.index === index) {
       delegate.initLoader.current = props.initLoader
-        ? props.initLoader
+        ? () => props.initLoader?.(record)
         : () => record;
     }
   }, [delegate.act, delegate.index, delegate.initLoader]);
-
   const dataInfo = {
     [DATE_DELEGATE_ACT_KEY]: props.act,
     [DATE_DELEGATE_INDEX_KEY]: index,
@@ -262,7 +271,11 @@ export const ProAddition = ({
   return (
     <React.Fragment>
       <ArrayTableShowModal act="_pro_addition" {...props}></ArrayTableShowModal>
-      <DelegateAction index={Infinity} act={"_pro_addition"}></DelegateAction>
+      <DelegateAction
+        initLoader={() => empty}
+        index={Infinity}
+        act={"_pro_addition"}
+      ></DelegateAction>
     </React.Fragment>
   );
 };

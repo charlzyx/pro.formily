@@ -247,9 +247,9 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
     const body = useSortableBody(
       dataSource,
       (from, to) =>
-        Promise.resolve(() => {
-          return onSortEnd?.(from, to, field);
-        }).then(() => field.move(from, to)),
+        Promise.resolve(onSortEnd?.(from, to, field)).then(() =>
+          field.move(from, to),
+        ),
       {
         wrapperRef: wrapperRef,
         enable: hasSortable(schema),
