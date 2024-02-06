@@ -17,7 +17,8 @@ export const RowComp: React.FC<React.HTMLAttributes<HTMLTableRowElement>> = (
   props,
 ) => {
   const prefixCls = usePrefixCls("formily-array-table-pro");
-  const index = (props as any)["data-row-key"] || 0;
+  // const index = (props as any)["data-row-key"] || 0;
+  const index = (props as any)["data-row-sort-index"] || 0;
   return (
     <SortableRow
       lockAxis="y"

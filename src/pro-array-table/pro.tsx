@@ -296,6 +296,11 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
                     size={"small"}
                     {...props}
                     rowKey={rowKey}
+                    onRow={(row, idx) => {
+                      const pre = props?.onRow?.(row, idx) || {};
+                      (pre as any)["data-row-sort-index"] = idx;
+                      return pre;
+                    }}
                     title={undefined}
                     footer={undefined}
                     rowSelection={rowSelection!}

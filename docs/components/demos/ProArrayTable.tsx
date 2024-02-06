@@ -12,7 +12,7 @@ import {
   onFormValuesChange,
 } from "@formily/core";
 import { FormProvider, ISchema, createSchemaField } from "@formily/react";
-import { Button, ConfigProvider, Divider, Space, message } from "antd";
+import { Button, ConfigProvider, Divider, Space } from "antd";
 import "antd/dist/antd.css";
 
 import zhCN from "antd/lib/locale/zh_CN";
@@ -241,14 +241,14 @@ const schema: ISchema = {
           rowExpandable: (record: any) => Array.isArray(record.subitems),
         },
         onRemove() {
-          message.loading({
+          console.log({
             key: "rmLoading",
             content: "删除中...",
           });
           return new Promise((resolve) => {
             setTimeout(resolve, 1000);
           }).then(() => {
-            message.destroy("rmLoading");
+            console.log("DONE!");
           });
         },
       },
