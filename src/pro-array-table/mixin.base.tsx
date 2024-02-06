@@ -15,6 +15,7 @@ import {
 import { ArrayBase, IArrayBaseContext, usePrefixCls } from "../adaptor/adaptor";
 import { TablePaginationContext } from "./features/pagination";
 import type { ColumnProps, IProArrayTableBaseMixins } from "./types";
+import { omit } from "../__builtins__";
 
 export const Column: ReactFC<ColumnProps<any>> = () => {
   return <Fragment />;
@@ -188,7 +189,7 @@ export const Remove = React.forwardRef(
       <Wrapper {...confirmProps}>
         <Button
           type={BUTTON_TYPE}
-          {...props}
+          {...omit(props, "confirm")}
           disabled={self?.disabled}
           className={cls(
             `${prefixCls}-remove`,

@@ -288,7 +288,7 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
                   onAdd={onAdd as any}
                   onCopy={onCopy as any}
                   onMoveDown={onMoveDown as any}
-                  onMoveUp={onMoveDown as any}
+                  onMoveUp={onMoveUp as any}
                   onRemove={onRemove as any}
                 >
                   {_header}
