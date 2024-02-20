@@ -162,7 +162,7 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
     } else if (page.hideOnSinglePage) {
       showPage = (page.pageSize || 0) < (page?.total || 0);
     } else {
-      showPage = true;
+      showPage = page?.total === 0 ? false : true;
     }
 
     const pagination = showPage ? (

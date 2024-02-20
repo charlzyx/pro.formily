@@ -29,6 +29,7 @@
       },
       "style": {
         "useSelfClosingElements": "off",
+        "noUnusedTemplateLiteral": "off",
         "noNonNullAssertion": "off",
         "noUselessElse": "off"
       }

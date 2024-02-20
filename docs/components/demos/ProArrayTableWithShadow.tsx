@@ -10,7 +10,6 @@ import "moment/locale/zh-cn";
 moment.locale("zh-cn");
 
 import { ProArrayTable, ShadowForm } from "@pro.formily/antd";
-console.log("🚀 ~ ProArrayTable:", ProArrayTable);
 
 const form = createForm({
   initialValues: {
