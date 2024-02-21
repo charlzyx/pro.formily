@@ -1,0 +1,105 @@
+# 🪂 Pro Enum
+
+> ProEnum 是为了解决常见的 枚举/Select/Checkbox.Group/Radio.Group 甚至Suggestion/Cascader 的异步数据源的解决方案
+
+
+## 设计思路
+Formily 模型中的 `enum` 字段能够满足本地的枚举词典的需求, 但远程的其实更常用一些; 基于这个事实，使用[归纳演绎法](https://mp.weixin.qq.com/s/9gCJudLQTjVMcm4DzMbgvA), 可以发现，上面提到的几个组件，所用到的数据源， 可以归纳为下面这种格式;
+
+```tsx | pure
+type Value = string | number;
+export type ProEnumItem = {
+  label: string;
+  value: Value;
+  disabled?: boolean;
+  /** tree like */
+  isLeaf?: boolean;
+  children?: ProEnumItem[];
+  /** lazy */
+  loading?: boolean;
+  /** read prettery */
+  color?: keyof typeof BUILTIN_COLOR | (string & {});
+};
+```
+
+因此, 设计了一个专用的 `ProEnum` 组件， 来增强原有的 `enum` 属性的表现力，当然， 这需要我们使用 `useProEnumEffects` 使用 `FieldEffects` 对 Field 改进劫持。
+
+### 针对 Select/Radio.Group/Checkbox.Group
+
+来讲, 劫持动作包含两部分
+
+- `enum` 属性支持 `ProEnum` 实例， 而这， 是一个支持远程加载的枚举, 并在组件 init 钩子中进行自动加并注入的 field.dataSource 属性， 也就是 enum 原来对应的属性值
+
+- 劫持 `readPretty` 形态下的 field.component, 优化枚举值的展示
+
+### 针对 Suggestion/CascaderPlus 这种
+
+更有用的是 异步数据的加载器， 而不是 `dataSource`, 因此如果 loader 被 mapToProp 到 field.componentProps 上的话, 我们认为加载流程会被托管到组件， 那么上述的自动加载和劫持都是不会生效的。
+
+取而代之的是， 你需要在组件内部处理这个异步请求；
+
+
+
+
+## 代码案例
+
+如此，我们就可以通过固定的形式， 方便的在 Formliy 中使用异步的枚举值
+
+<code src="../demos/ProEnum.tsx"  />
+
+## API
+
+### ProEnum
+
+```ts | pure
+
+type ProEnumOption = {
+  /** loader 映射到 componentProps 上的名称 */
+  mapToProp: string;
+  /** 是否进行缓存， 默认开启， 显示设置 false 关闭缓存  */
+  cache?: boolean;
+};
+
+type TItemsOrLoader =
+  | ProEnumItem[]
+  | ((params?: any) => Promise<ProEnumItem[]>);
+
+export class ProEnum {
+  static from(optionsOrLoader: TItemsOrLoader, opt?: ProEnumOption) {
+    return new ProEnum(optionsOrLoader, opt);
+  }
+
+  static is(x: any): x is ProEnum {
+    return x instanceof ProEnum;
+  }
+
+  isAsync = false;
+  remapPropName: string | null = null;
+  options: ProEnumItem[] = [];
+
+  loader(params?: any): Promise<ProEnumItem[]> {
+    return Promise.resolve(this.options);
+  }
+}
+```
+
+### Schema 属性
+
+在 Schema 表达式中， 使用 x-data#enum 这个字段可以添加一些属性
+
+```json
+{
+
+  "proEnum": {
+    "type": "string",
+    "x-data": {
+      "enum": {
+        "mapToProp": "loadData",
+        // TODO: test compile
+        "params": "{{object or expression}}",
+      }
+    }
+  }
+}
+```
+

@@ -1,13 +1,14 @@
-import { observer } from "@formily/react";
+import { connect, mapProps, observer } from "@formily/react";
 import { model } from "@formily/reactive";
 import React, { useEffect, useMemo, useRef } from "react";
-import { Cascader } from "../adaptor";
+import { Cascader as BaseCascader } from "../adaptor";
+import { prettyEnum } from "../shared";
 
-export interface LinkageOption<Value extends ValueType> {
-  label?: string;
-  value?: Value;
+export interface CascaderPlusOption<Value extends ValueType> {
+  label: string;
+  value: Value;
   isLeaf?: boolean;
-  children?: LinkageOption<Value>[];
+  children?: CascaderPlusOption<Value>[];
   disabled?: boolean;
   loading?: boolean;
 }
@@ -21,13 +22,13 @@ type LabelValueType = { label: string; value: ValueType };
 
 export type LinkageValueType = LabelValueType[] | ValueType[];
 
-type CascaderProps = React.ComponentProps<typeof Cascader>;
+type CascaderProps = React.ComponentProps<typeof BaseCascader>;
 
 const display: CascaderProps["displayRender"] = (label) => {
   return label.join("/");
 };
 
-const mapProps = (props: React.ComponentProps<typeof Linkage>) => {
+const remapProps = (props: React.ComponentProps<typeof Cascader>) => {
   // type ChangeFnParams = Parameters<Required<CascaderProps>['onChange']>;
   const onChange = (values: any, options: any) => {
     let next = values;
@@ -70,7 +71,7 @@ const mapProps = (props: React.ComponentProps<typeof Linkage>) => {
 };
 
 const fill = <
-  Option extends LinkageOption<ValueType> = LinkageOption<ValueType>,
+  Option extends CascaderPlusOption<ValueType> = CascaderPlusOption<ValueType>,
 >(
   $options: Option[],
   loader: (opts: Option[]) => Promise<Option[]>,
@@ -121,7 +122,32 @@ const fill = <
     : Promise.resolve([]);
 };
 
-export const Linkage = observer(
+// export const pretty = (
+//   value: ValueType[] | LabelValueType[],
+//   options: CascaderPlusOption<ValueType>[],
+// ) => {
+//   let labels = [];
+//   if ((value?.[0] as LabelValueType)?.label) {
+//     labels = (value as LabelValueType[]).map((item) => item.label);
+//   } else {
+//     const found = value.reduce(
+//       (info, val) => {
+//         // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
+//         const me = info.parent.find((x) => x.value == val);
+//         if (me) {
+//           info.chain.push(me.label!);
+//           info.parent = me.children!;
+//         }
+//         return info;
+//       },
+//       { parent: options, chain: [] as string[] },
+//     );
+//     labels = found.chain;
+//   }
+//   return labels;
+// };
+
+const Cascader = observer(
   <TValueType = ValueType[] | LabelValueType[]>(
     props: Omit<CascaderProps, "value" | "onChange" | "loadData"> & {
       value: TValueType;
@@ -132,21 +158,29 @@ export const Linkage = observer(
       /** 懒加载, 与整棵树加载不能共存 */
       loadData?: (
         selectOptions: LabelValueType[],
-      ) => Promise<LinkageOption<ValueType>[]>;
+      ) => Promise<CascaderPlusOption<ValueType>[]>;
       /** loadData 是否返回整棵树加载, 与懒加载不能共存 */
       all?: boolean;
+      readPretty?: boolean;
     },
   ) => {
-    const { loadData, all, labelInValue, disabled, multiple, ...others } =
-      props;
+    const {
+      loadData,
+      all,
+      readPretty,
+      labelInValue,
+      disabled,
+      multiple,
+      ...others
+    } = props;
 
     const state = useMemo(() => {
       return model({
         loading: false,
-        options: [] as LinkageOption<ValueType>[],
+        options: [] as CascaderPlusOption<ValueType>[],
       });
     }, []);
-    const { onChange, value } = mapProps(props as any);
+    const { onChange, value } = remapProps(props as any);
     const loaderCache = useRef({});
 
     useEffect(() => {
@@ -178,7 +212,7 @@ export const Linkage = observer(
     const _loadData =
       all || !loadData
         ? undefined
-        : (options: LinkageOption<ValueType>[]) => {
+        : (options: CascaderPlusOption<ValueType>[]) => {
             const last = options[options.length - 1];
             if (last.children) return;
             last.loading = true;
@@ -198,8 +232,13 @@ export const Linkage = observer(
                 state.loading = false;
               });
           };
-    return (
-      <Cascader
+    return readPretty ? (
+      // biome-ignore lint/complexity/noUselessFragments: <explanation>
+      <React.Fragment>
+        {display(prettyEnum(value, state.options))}
+      </React.Fragment>
+    ) : (
+      <BaseCascader
         multiple={multiple}
         displayRender={display}
         changeOnSelect
@@ -213,4 +252,11 @@ export const Linkage = observer(
       />
     );
   },
+);
+
+export const CascaderPlus = connect(
+  Cascader,
+  mapProps({
+    readPretty: true,
+  }),
 );

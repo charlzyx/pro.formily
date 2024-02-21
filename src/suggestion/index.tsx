@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Select } from "../adaptor";
+import { connect, mapProps } from "@formily/react";
+import { prettyEnum } from "..";
 
-type Input =
+type Value =
   | string
   | number
   | { label: string; value: string | number }
-  | Input[];
+  | Value[];
 
-const getInit = (multiple?: boolean, value?: Input): Input => {
+const getInit = (multiple?: boolean, value?: Value): Value => {
   let ret = value;
   if (multiple) {
     ret = Array.isArray(value) ? value : [];
@@ -15,15 +17,16 @@ const getInit = (multiple?: boolean, value?: Input): Input => {
   return ret as any;
 };
 
-export const Suggestion: React.FC<{
+export const BaseSuggestion: React.FC<{
   placeholder?: string;
   style?: React.CSSProperties;
   labelInValue?: boolean;
   params?: object;
   multiple?: boolean;
-  value?: Input;
-  onChange?: (neo: Input) => void;
+  value?: Value;
+  onChange?: (neo: Value) => void;
   disabled?: boolean;
+  readPretty?: boolean;
   suggest?: (
     parmas: object & { kw: string },
   ) => Promise<{ label: string; value: string | number }[]>;
@@ -31,7 +34,7 @@ export const Suggestion: React.FC<{
   const [data, setData] = useState<{ label: string; value: string | number }[]>(
     [],
   );
-  const [value, setValue] = useState<Input>(
+  const [value, setValue] = useState<Value>(
     getInit(props.multiple, props.value),
   );
 
@@ -79,12 +82,15 @@ export const Suggestion: React.FC<{
     }
   };
 
-  const handleChange = (newValue: Input) => {
+  const handleChange = (newValue: Value) => {
     setValue(newValue);
     props.onChange?.(newValue);
   };
 
-  return (
+  return props.readPretty ? (
+    // biome-ignore lint/complexity/noUselessFragments: <explanation>
+    <React.Fragment>{prettyEnum(value as any, data)}</React.Fragment>
+  ) : (
     <Select
       showSearch
       loading={loading}
@@ -104,3 +110,10 @@ export const Suggestion: React.FC<{
     />
   );
 };
+
+export const Suggestion = connect(
+  BaseSuggestion,
+  mapProps({
+    readPretty: true,
+  }),
+);

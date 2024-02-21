@@ -17,7 +17,8 @@
         "noExplicitAny": "off"
       },
       "complexity": {
-        "noForEach": "off"
+        "noForEach": "off",
+        "noStaticOnlyClass": "off"
       },
       "a11y": {
         "useKeyWithClickEvents": "off",

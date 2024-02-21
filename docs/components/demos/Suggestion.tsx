@@ -10,7 +10,7 @@ export const suggest = (params: object & { kw: string }) => {
   console.log("search params", params);
   const str = qs.stringify({
     code: "utf-8",
-    q: params.kw,
+    q: params?.kw,
   });
   return jsonp(`https://suggest.taobao.com/sug?${str}`)
     .then((response: any) => response.json())

@@ -1,29 +1,25 @@
-import { useMemo } from "react";
+import type { Value, ProEnumItem } from "./pro-enum";
 import { Badge, Space, Tag } from "../adaptor/index";
-import { colorByStatus, isColorStatus } from "./colors";
-import type { TDictShape } from "./helper";
-
-type Input = string | number | Input[];
-
-export const Dict = (props: {
+import { mapProps, connect } from "@formily/react";
+import { useMemo } from "react";
+export const EnumReadPretty: React.FC<{
   /**
    * 对应枚举值
-   * @type Input = string | number | Input[];
+   * @type Value = string | number | Value[];
    */
-  value?: Input;
+  value?: Value | Value[];
   /** 渲染形式 Badeg | Tag */
-  type?: "badge" | "tag";
+  showType?: "badge" | "tag";
   /** 选项 */
-  options?: TDictShape["options"];
+  options?: ProEnumItem[];
   /**
    * 严格模式, 将使用 === 来对比 value
    * 非严格模式下采用 == 对比
    * @default false
    */
   strict?: boolean;
-}) => {
-  const { strict, type, value, options } = props;
-
+}> = (props) => {
+  const { strict, showType: type, value, options } = props;
   const items = useMemo(() => {
     if (!Array.isArray(options)) return [];
     const ret = Array.isArray(value)
@@ -40,16 +36,9 @@ export const Dict = (props: {
     <Space size="small">
       {items.map((item) => {
         return type === "badge" ? (
-          <Badge
-            key={item?.key}
-            status={
-              isColorStatus(item?.color) ? (item?.color as any) : undefined
-            }
-            color={colorByStatus(item?.color)}
-            text={item?.label}
-          />
+          <Badge key={item?.value} color={item?.color} text={item?.label} />
         ) : type === "tag" ? (
-          <Tag key={item?.key} color={colorByStatus(item?.color)}>
+          <Tag key={item?.value} color={item?.color}>
             {item?.label}
           </Tag>
         ) : (
@@ -59,3 +48,8 @@ export const Dict = (props: {
     </Space>
   );
 };
+
+export const ProEnumPretty = connect(
+  EnumReadPretty,
+  mapProps({ dataSource: "options" }),
+);

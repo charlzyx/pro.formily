@@ -1,7 +1,7 @@
 import { Button, Divider, Space } from "antd";
-import { Linkage } from "@pro.formily/antd";
-import list from "china-location/dist/location.json";
+import { CascaderPlus } from "@pro.formily/antd";
 import React, { useEffect, useState } from "react";
+import localtionList from "china-location/dist/location.json";
 
 export interface OptionData {
   label?: string;
@@ -82,10 +82,10 @@ const buildTree = (parent: ReturnType<typeof flat>["tree"]) => {
   return tree;
 };
 
-const fake = (): Promise<typeof list> => {
+const fake = (): Promise<typeof localtionList> => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      resolve(list);
+      resolve(localtionList);
     }, 500);
   });
 };
@@ -182,7 +182,7 @@ export const LinkageDemo1 = () => {
         </Button>
       </Space>
       <div>
-        <Linkage
+        <CascaderPlus
           key={forceUpdateKey}
           value={value}
           onChange={onChange}
@@ -190,7 +190,7 @@ export const LinkageDemo1 = () => {
           loadData={all ? (loadAll as any) : loadData}
           multiple={mul}
           labelInValue={labelInValue}
-        ></Linkage>
+        ></CascaderPlus>
       </div>
     </div>
   );
@@ -238,13 +238,13 @@ export const LinkageDemo2 = () => {
         </Button>
       </Space>
       <div>
-        <Linkage
+        <CascaderPlus
           key={forceUpdateKey}
           value={mul ? mValue : value}
           multiple={mul}
           onChange={onChange}
           loadData={loadData as any}
-        ></Linkage>
+        ></CascaderPlus>
       </div>
     </div>
   );
@@ -332,14 +332,14 @@ export const LinkageDemo3 = () => {
         </Button>
       </Space>
       <div>
-        <Linkage
+        <CascaderPlus
           key={forceUpdateKey}
           value={mul ? mValue : value}
           multiple={mul}
           labelInValue
           onChange={onChange}
           loadData={loadData as any}
-        ></Linkage>
+        ></CascaderPlus>
       </div>
     </div>
   );
