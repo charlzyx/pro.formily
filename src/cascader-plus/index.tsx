@@ -24,7 +24,7 @@ export type LinkageValueType = LabelValueType[] | ValueType[];
 
 type CascaderProps = React.ComponentProps<typeof BaseCascader>;
 
-const display: CascaderProps["displayRender"] = (label) => {
+const display: CascaderProps["displayRender"] = (label: string[]) => {
   return label.join("/");
 };
 
@@ -212,7 +212,23 @@ const Cascader = observer(
     const _loadData =
       all || !loadData
         ? undefined
-        : (options: CascaderPlusOption<ValueType>[]) => {
+        : (ooptions: CascaderPlusOption<ValueType>[]) => {
+            const options = ooptions[0]?.label
+              ? ooptions
+              : // for arco loadMore
+                ooptions.reduce(
+                  (info, val: any) => {
+                    // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
+                    const me = info.parent.find((x) => x.value == val);
+                    if (me) {
+                      info.chain.push(me);
+                      info.parent = me.children!;
+                    }
+                    return info;
+                  },
+                  { parent: state.options, chain: [] as typeof ooptions },
+                ).chain;
+
             const last = options[options.length - 1];
             if (last.children) return;
             last.loading = true;
