@@ -112,38 +112,11 @@ export default () => {
       prefix: `${prefix}/plus`,
       children: [
         {
-          title: "Dict",
-          subtitle: "远程词典",
-          cover:
-            "https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*I5a2Tpqs3y0AAAAAAAAAAAAADrJ8AQ/original",
-          link: "/dict",
-        },
-        {
-          title: "Suggestion",
-          subtitle: "搜索建议",
-          cover:
-            "https://gw.alipayobjects.com/zos/alicdn/qtJm4yt45/AutoComplete.svg",
-          link: "/suggestion",
-        },
-        {
-          title: "Linkage",
+          title: "CascaderPlus",
           subtitle: "级联选择",
           cover:
             "https://gw.alipayobjects.com/zos/alicdn/UdS8y8xyZ/Cascader.svg",
-          link: "/linkage",
-        },
-      ],
-    },
-    {
-      title: "优雅阅读态组件",
-      prefix: `${prefix}/pretty`,
-      children: [
-        {
-          title: "ImageView",
-          subtitle: "图片查看",
-          cover:
-            "https://gw.alipayobjects.com/zos/antfincdn/D1dXz9PZqa/image.svg",
-          link: "/image-view",
+          link: "/cascader-plus",
         },
       ],
     },

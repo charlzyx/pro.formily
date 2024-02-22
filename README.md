@@ -32,11 +32,11 @@
 
 ## 在线文档地址
 
-[for/antd@4](https://charlzyx.github.io/pro.formily/antd/)
+- [for/antd@4](https://pro-formily.pages.dev)
 
-[for/antd@5](https://charlzyx.github.io/pro.formily/antd-v5/)
+- [for/antd@5](https://v5.pro-formily.pages.dev)
 
-[for/arco.design](https://charlzyx.github.io/pro.formily/arco/)
+- [for/arco.design](https://arco.pro-formily.pages.dev)
 
 ## 如何开发
 
