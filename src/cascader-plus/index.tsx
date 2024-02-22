@@ -1,26 +1,14 @@
 import { connect, mapProps, observer } from "@formily/react";
-import { model } from "@formily/reactive";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Cascader as BaseCascader } from "../adaptor";
-import { prettyEnum } from "../shared";
-
-export interface CascaderPlusOption<Value extends ValueType> {
-  label: string;
-  value: Value;
-  isLeaf?: boolean;
-  children?: CascaderPlusOption<Value>[];
-  disabled?: boolean;
-  loading?: boolean;
-}
+import { isLabelInValue, prettyEnum, useUpdate } from "../shared";
+import { buildTree, ProEnumItem } from "../pro-enum/pro-enum";
 
 const fullWithStyle = {
   width: "100%",
 };
 
-type ValueType = string | number;
-type LabelValueType = { label: string; value: ValueType };
-
-export type LinkageValueType = LabelValueType[] | ValueType[];
+type ValueType = ProEnumItem["value"];
 
 type CascaderProps = React.ComponentProps<typeof BaseCascader>;
 
@@ -34,7 +22,7 @@ const remapProps = (props: React.ComponentProps<typeof Cascader>) => {
     let next = values;
     if (props.labelInValue) {
       next = props.multiple
-        ? options.map((arr: LabelValueType[]) =>
+        ? options.map((arr: ProEnumItem[]) =>
             arr.map((item) => {
               return {
                 label: item.label,
@@ -42,7 +30,7 @@ const remapProps = (props: React.ComponentProps<typeof Cascader>) => {
               };
             }),
           )
-        : options.map((item: LabelValueType) => {
+        : options.map((item: ProEnumItem) => {
             return {
               label: item.label,
               value: item.value,
@@ -70,95 +58,71 @@ const remapProps = (props: React.ComponentProps<typeof Cascader>) => {
   return { onChange, value: getValue(props.value) };
 };
 
-const fill = <
-  Option extends CascaderPlusOption<ValueType> = CascaderPlusOption<ValueType>,
->(
-  $options: Option[],
-  loader: (opts: Option[]) => Promise<Option[]>,
-  cache: Record<ValueType, { key: ValueType; list: Option[] }>,
+const shouldRequery = (values: ProEnumItem["value"][], tree: ProEnumItem[]) => {
+  let should = false;
+  values.reduce((parent, v) => {
+    // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
+    const has = parent?.find?.((x) => x.value == v);
+
+    if (has?.children) {
+      return has.children as ProEnumItem[];
+    } else {
+      should = true;
+      return [];
+    }
+  }, tree);
+
+  return should;
+};
+
+const fill = (
+  tree: ProEnumItem[],
+  loader: (values: ProEnumItem["value"][]) => Promise<ProEnumItem[]>,
+  cache: Record<ValueType, { key: ValueType; list: ProEnumItem[] }>,
   values?: ValueType[],
 ) => {
   if (!Array.isArray(values) || values.length === 0) return;
-  let should = false;
-  // 反向排列value值 [河南省->鹤壁市->浚县] => [浚县->鹤壁市->河南省]
-  const asOptions = [] as Option[];
-  values.reduce((parent, v) => {
-    // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
-    const has = parent ? parent.find((x) => x.value == v) : false;
-    if (!has) {
-      should = true;
-      asOptions.unshift({ value: v } as Option);
-      return [];
-    } else {
-      asOptions.unshift({ value: v } as Option);
-      return has.children as Option[];
-    }
-  }, $options);
+  const should = shouldRequery(values, tree);
 
   return should
     ? Promise.all(
-        asOptions.map((optLike) => {
+        values.map((val) => {
           return (
-            cache[optLike.value!] ??
-            loader([optLike]).then((list) => {
+            cache[val!] ??
+            loader([val]).then((list) => {
               // cache
-              cache[optLike.value!] = {
-                key: optLike.value!,
+              cache[val!] = {
+                key: val!,
                 list: list,
               };
-              return cache[optLike.value!];
+              return cache[val];
             })
           );
         }),
       ).then((childList) => {
-        // 在这里返回来 [浚县->鹤壁市->河南省] => [河南省->鹤壁市->浚县]
-        return childList.reduceRight((parent, item) => {
+        return childList.reduce((parent, item) => {
           // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
           const me = parent.find((x) => x.value == item.key);
-          me!.children = item.list;
-          return me!.children! as Option[];
-        }, $options);
+          if (me) {
+            me.children = item.list;
+            return me.children! as ProEnumItem[];
+          } else {
+            return [];
+          }
+        }, tree || []);
       })
     : Promise.resolve([]);
 };
 
-// export const pretty = (
-//   value: ValueType[] | LabelValueType[],
-//   options: CascaderPlusOption<ValueType>[],
-// ) => {
-//   let labels = [];
-//   if ((value?.[0] as LabelValueType)?.label) {
-//     labels = (value as LabelValueType[]).map((item) => item.label);
-//   } else {
-//     const found = value.reduce(
-//       (info, val) => {
-//         // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
-//         const me = info.parent.find((x) => x.value == val);
-//         if (me) {
-//           info.chain.push(me.label!);
-//           info.parent = me.children!;
-//         }
-//         return info;
-//       },
-//       { parent: options, chain: [] as string[] },
-//     );
-//     labels = found.chain;
-//   }
-//   return labels;
-// };
-
 const Cascader = observer(
-  <TValueType = ValueType[] | LabelValueType[]>(
+  <TValueType = ValueType[] | ProEnumItem[]>(
     props: Omit<CascaderProps, "value" | "onChange" | "loadData"> & {
       value: TValueType;
       onChange: (neo: TValueType) => void;
       multiple?: boolean;
-      disabled?: boolean;
       labelInValue?: boolean;
-      /** 懒加载, 与整棵树加载不能共存 */
-      loadData?: (
-        selectOptions: LabelValueType[],
-      ) => Promise<CascaderPlusOption<ValueType>[]>;
+      /** 默认懒加载, 与整棵树加载不能共存 */
+      loadData?: (selectOptions: ProEnumItem[]) => Promise<ProEnumItem[]>;
       /** loadData 是否返回整棵树加载, 与懒加载不能共存 */
       all?: boolean;
       readPretty?: boolean;
@@ -168,35 +132,40 @@ const Cascader = observer(
       loadData,
       all,
       readPretty,
-      labelInValue,
       disabled,
       multiple,
+      labelInValue,
       ...others
     } = props;
 
-    const state = useMemo(() => {
-      return model({
-        loading: false,
-        options: [] as CascaderPlusOption<ValueType>[],
-      });
-    }, []);
-    const { onChange, value } = remapProps(props as any);
+    const update = useUpdate();
+
     const loaderCache = useRef({});
+
+    const optionsRef = useRef(props.options);
+    const selfOptions = useRef<ProEnumItem[]>([]);
+    useEffect(() => {
+      optionsRef.current = props.options;
+    }, [props.options]);
+    const [loading, setLoading] = useState(false);
+
+    const { onChange, value } = remapProps(props as any);
 
     useEffect(() => {
       if (!loadData) return;
-      state.loading = true;
+      setLoading(true);
+      // load root
       loadData([])
         .then((options) => {
-          state.options = options;
+          selfOptions.current = options;
           const values = value.map((x) => x);
-          state.loading = true;
+          setLoading(true);
           return all
             ? null
             : Promise.all(
                 (multiple ? values : [values]).map((valueList) => {
                   return fill(
-                    state.options,
+                    (optionsRef.current as any) || selfOptions.current,
                     loadData as any,
                     loaderCache.current,
                     valueList as any,
@@ -205,53 +174,38 @@ const Cascader = observer(
               );
         })
         .finally(() => {
-          state.loading = false;
+          setLoading(false);
         });
-    }, [loadData, state]);
+    }, [loadData]);
 
     const _loadData =
       all || !loadData
         ? undefined
-        : (ooptions: CascaderPlusOption<ValueType>[]) => {
-            const options = ooptions[0]?.label
-              ? ooptions
-              : // for arco loadMore
-                ooptions.reduce(
-                  (info, val: any) => {
-                    // biome-ignore lint/suspicious/noDoubleEquals: <explanation>
-                    const me = info.parent.find((x) => x.value == val);
-                    if (me) {
-                      info.chain.push(me);
-                      info.parent = me.children!;
-                    }
-                    return info;
-                  },
-                  { parent: state.options, chain: [] as typeof ooptions },
-                ).chain;
-
-            const last = options[options.length - 1];
-            if (last.children) return;
-            last.loading = true;
-            // 触发组件更新啦 state.loading -> [...state.options]
-            state.loading = true;
-            return loadData(options as any)
-              .then((children) => {
-                if (Array.isArray(children) && children.length > 0) {
-                  last.children = children;
-                } else {
-                  last.isLeaf = true;
-                }
-              })
-              .finally(() => {
-                last.loading = false;
-                // 触发组件更新啦 state.loading -> [...state.options]
-                state.loading = false;
-              });
+        : // arco 是只有 value
+          (ooptions: Array<ProEnumItem | ProEnumItem["value"]>) => {
+            const values = ooptions.map((item) =>
+              isLabelInValue(item) ? item.value : item,
+            );
+            const should = shouldRequery(values, selfOptions.current);
+            return should
+              ? loadData(values as any)
+                  .then((options) => {
+                    const neo = buildTree(
+                      values,
+                      selfOptions.current as any,
+                      options,
+                    );
+                    selfOptions.current = neo;
+                  })
+                  .finally(() => {
+                    update();
+                  })
+              : update();
           };
+
     return readPretty ? (
-      // biome-ignore lint/complexity/noUselessFragments: <explanation>
       <React.Fragment>
-        {display(prettyEnum(value, state.options))}
+        {display(prettyEnum(value, props.options as any))}
       </React.Fragment>
     ) : (
       <BaseCascader
@@ -259,10 +213,10 @@ const Cascader = observer(
         displayRender={display}
         changeOnSelect
         {...others}
-        loading={state.loading}
+        loading={loading}
         value={value as any}
         style={props.style || fullWithStyle}
-        options={[...state.options]}
+        options={[...(props.options || selfOptions.current || ([] as any))]}
         loadData={_loadData as any}
         onChange={onChange as any}
       />
@@ -273,6 +227,7 @@ const Cascader = observer(
 export const CascaderPlus = connect(
   Cascader,
   mapProps({
+    dataSource: "options",
     readPretty: true,
   }),
 );

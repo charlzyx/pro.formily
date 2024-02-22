@@ -5,8 +5,8 @@
 |属性|说明|类型|默认值|
 |---|---|---|---|
 |`labelInValue`| 增加类比 `<Select />` 的 `labelInValue` 属性和功能支持| `boolean` | `false`|
-|`all`| 懒加载可以加载整棵树的数据 | `boolean` | `false`|
-|`loadData`| 结合 all 属性, 你现在可以加载一整棵树了 | `(opts:{value}[]) => Promise<{ label, value, children?}[]>` | -- |
+|`all`| 表示懒加载是加载整棵树的数据 | `boolean` | `false`|
+|`loadData`| 结合 all 属性, 你现在可以加载一整棵树了 | `(opts: string[]\|number[]) => Promise<{ label, value, children?}[]>` | -- |
 
 - 增强: 初始值只有 `value` 的时候, 自动调用接口补全 `label` 展示, 请刷新注意下面两个反显的示意
 

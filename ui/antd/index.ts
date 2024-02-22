@@ -17,7 +17,6 @@ export {
   ConfigProvider,
   Divider,
   Drawer,
-  Image,
   Modal,
   Pagination,
   Popconfirm,
@@ -36,7 +35,6 @@ import "antd/lib/button/style/index";
 import "antd/lib/cascader/style/index";
 import "antd/lib/divider/style/index";
 import "antd/lib/drawer/style/index";
-import "antd/lib/image/style/index";
 import "antd/lib/modal/style/index";
 import "antd/lib/pagination/style/index";
 import "antd/lib/popconfirm/style/index";

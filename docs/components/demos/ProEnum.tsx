@@ -14,7 +14,6 @@ import { createForm } from "@formily/core";
 import { FormProvider, createSchemaField } from "@formily/react";
 import {
   CascaderPlus,
-  Suggestion,
   ProEnum,
   ProEnumPretty,
   useProEnumEffects,
@@ -117,19 +116,22 @@ export const getById = (parent?: React.Key) => {
       return flatten.filter((x) => x.parent === parent);
     });
 };
-export const loadData = (options: OptionData[]): Promise<OptionData[]> => {
-  const keys = [undefined, ...options.map((x) => x.value)];
-  const last = options[options.length - 1];
-  return getById(last?.value).then((opts) =>
+export const loadData = (
+  values: Array<string | number>,
+): Promise<OptionData[]> => {
+  const last = values[values.length - 1];
+  const ret = getById(last).then((opts) =>
     opts.map((item) => {
       return {
         value: item.code,
         label: item.name,
-        // 需要给出叶子条件, 这里我们是省市区3级, 所以keys长度是3的时候就到最后一级别了
-        isLeaf: keys.length === 3,
+        // 需要给出叶子条件, 这里我们是省市区3级, 所以keys长度是2的时候就到最后一级别了
+        isLeaf: values.length === 2,
       };
     }),
   );
+
+  return ret;
 };
 const list = [
   {
@@ -145,11 +147,11 @@ const list = [
     value: "e",
   },
 ];
-const suggest = (params: object & { kw: string }) => {
-  console.log("search params", params);
+const suggest = (kw: string) => {
+  if (!kw) return Promise.resolve([]);
   const str = qs.stringify({
     code: "utf-8",
-    q: params?.kw,
+    q: kw,
   });
   return jsonp(`https://suggest.taobao.com/sug?${str}`)
     .then((response: any) => response.json())
@@ -177,8 +179,18 @@ const enums = {
       }, 1000);
     });
   }),
-  suggest: ProEnum.from(suggest, { mapToProp: "suggest" }),
-  linkage: ProEnum.from(loadData, { mapToProp: "loadData" }),
+  suggest: ProEnum.from(suggest, {
+    pretty: false,
+    mapToProp: "onSearch",
+    debounce: 200,
+    colorful: false,
+  }),
+  linkage: ProEnum.from(loadData, {
+    mapToProp: "loadData",
+    lazyTree: true,
+    pretty: false,
+    colorful: false,
+  }),
 };
 
 const SchemaField = createSchemaField({
@@ -192,7 +204,6 @@ const SchemaField = createSchemaField({
     FormLayout,
     Space,
     CascaderPlus,
-    Suggestion,
     ProEnumPretty,
   },
   scope: {
@@ -224,7 +235,9 @@ const schema: SchemaShape = {
           "x-component": "Select",
           enum: "{{enums.list}}",
           "x-component-props": {
-            showType: "badge",
+            enum: {
+              showType: "badge",
+            },
           },
         },
         lazySelect: {
@@ -235,7 +248,9 @@ const schema: SchemaShape = {
           enum: "{{enums.lazyList}}",
           "x-component-props": {
             mode: "multiple",
-            showType: "tag",
+            enum: {
+              showType: "tag",
+            },
           },
         },
         radio: {
@@ -300,17 +315,13 @@ const schema: SchemaShape = {
           title: "Suggestion",
           type: "string",
           "x-decorator": "FormItem",
-          "x-component": "Suggestion",
+          "x-component": "Select",
           "x-component-props": {
             placeholder: "查询淘宝商品..",
-            multiple: true,
+            mode: "multiple",
+            showSearch: true,
           },
           enum: "{{enums.suggest}}",
-          // "x-data": {
-          //   proEnum: {
-          //     mapToProp: "suggest"
-          // }
-          // },
         },
         linkage: {
           title: "Linkage",

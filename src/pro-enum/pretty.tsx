@@ -10,6 +10,8 @@ export const EnumReadPretty: React.FC<{
   value?: Value | Value[];
   /** 渲染形式 Badeg | Tag */
   showType?: "badge" | "tag";
+  // same with strictMode,  to prvent React Warning cameCase Property on Dom
+  _type?: "badge" | "tag";
   /** 选项 */
   options?: ProEnumItem[];
   /**
@@ -17,9 +19,14 @@ export const EnumReadPretty: React.FC<{
    * 非严格模式下采用 == 对比
    * @default false
    */
-  strict?: boolean;
+  strictMode?: boolean;
+  // same with strictMode,  to prvent React Warning cameCase Property on Dom
+  _strict?: boolean;
+  empty?: React.ReactNode;
 }> = (props) => {
-  const { strict, showType: type, value, options } = props;
+  const { strictMode, _strict, showType, _type, value, options } = props;
+  const strict = _strict ?? strictMode;
+  const type = _type ?? showType;
   const items = useMemo(() => {
     if (!Array.isArray(options)) return [];
     const ret = Array.isArray(value)
@@ -34,17 +41,19 @@ export const EnumReadPretty: React.FC<{
 
   return (
     <Space size="small">
-      {items.map((item) => {
-        return type === "badge" ? (
-          <Badge key={item?.value} color={item?.color} text={item?.label} />
-        ) : type === "tag" ? (
-          <Tag key={item?.value} color={item?.color}>
-            {item?.label}
-          </Tag>
-        ) : (
-          item?.label
-        );
-      })}
+      {items.length > 0
+        ? items.map((item) => {
+            return type === "badge" ? (
+              <Badge key={item?.value} color={item?.color} text={item?.label} />
+            ) : type === "tag" ? (
+              <Tag key={item?.value} color={item?.color}>
+                {item?.label}
+              </Tag>
+            ) : (
+              item?.label
+            );
+          })
+        : props.empty ?? "-"}
     </Space>
   );
 };

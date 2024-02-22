@@ -6,7 +6,6 @@ import "@arco-design/web-react/es/Cascader/style/index";
 import "@arco-design/web-react/es/Divider/style/index";
 import "@arco-design/web-react/es/Drawer/style/index";
 import "@arco-design/web-react/es/Grid/style/index";
-import "@arco-design/web-react/es/Image/style/index";
 import "@arco-design/web-react/es/Modal/style/index";
 import "@arco-design/web-react/es/Pagination/style/index";
 import "@arco-design/web-react/es/Popconfirm/style/index";
@@ -44,7 +43,6 @@ export {
   ConfigProvider,
   Divider,
   Grid,
-  Image,
   Pagination,
   Popover,
   Select,

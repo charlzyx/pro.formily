@@ -102,16 +102,17 @@ export const getById = (parent?: React.Key) => {
       return flatten.filter((x) => x.parent === parent);
     });
 };
-export const loadData = (options: OptionData[]): Promise<OptionData[]> => {
-  const keys = [undefined, ...options.map((x) => x.value)];
-  const last = options[options.length - 1];
-  return getById(last?.value).then((opts) =>
+export const loadData = (
+  values: Array<number | string>,
+): Promise<OptionData[]> => {
+  const last = values[values.length - 1];
+  return getById(last).then((opts) =>
     opts.map((item) => {
       return {
         value: item.code,
         label: item.name,
-        // 需要给出叶子条件, 这里我们是省市区3级, 所以keys长度是3的时候就到最后一级别了
-        isLeaf: keys.length === 3,
+        // 需要给出叶子条件, 这里我们是省市区3级, 所以keys长度是2时候就到最后一级别了
+        isLeaf: values.length === 2,
       };
     }),
   );

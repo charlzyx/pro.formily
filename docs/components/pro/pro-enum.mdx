@@ -17,7 +17,7 @@ export type ProEnumItem = {
   children?: ProEnumItem[];
   /** lazy */
   loading?: boolean;
-  /** read prettery */
+  /** read pretty */
   color?: keyof typeof BUILTIN_COLOR | (string & {});
 };
 ```
@@ -32,18 +32,15 @@ export type ProEnumItem = {
 
 - 劫持 `readPretty` 形态下的 field.component, 优化枚举值的展示
 
-### 针对 Suggestion/CascaderPlus 这种
+### 针对 Suggestion/Cascader 这种
 
-更有用的是 异步数据的加载器， 而不是 `dataSource`, 因此如果 loader 被 mapToProp 到 field.componentProps 上的话, 我们认为加载流程会被托管到组件， 那么上述的自动加载和劫持都是不会生效的。
+- 根据 `lazyTree` 判断是否是懒加载的树状数据， 如果是树状数据，将在拼装完成后， 传递给 dataSource
 
-取而代之的是， 你需要在组件内部处理这个异步请求；
-
-
-
+- 根据 debounce 是否 >0 ,请求会进行防抖处理
 
 ## 代码案例
 
-如此，我们就可以通过固定的形式， 方便的在 Formliy 中使用异步的枚举值
+如此，我们就可以通过固定的形式， 方便的在 Formliy 中使用异步的枚举值, 以及轻松的适配 Suggestion(Select)/CascaderPlus
 
 <code src="../demos/ProEnum.tsx"  />
 
@@ -51,13 +48,40 @@ export type ProEnumItem = {
 
 ### ProEnum
 
-```ts | pure
+pretty 劫持属性
 
+```ts | pure
+/**
+ * Schema 上的配置
+ * @example
+ * {
+ *  type: 'string',
+ *  enum: ProEnum.from([]),
+ *  "x-component-props": {
+ *     enum: {
+ *       hijack: false,
+ *     }
+ *  }
+ * }
+ */
+type ProEnumSchemaOption = Pick<ProEnumOption, "mapToProp"> & {
+  pretty?: boolean;
+  showType?: React.ComponentProps<typeof ProEnumPretty>["showType"];
+  strict?: React.ComponentProps<typeof ProEnumPretty>["strictMode"];
+  // 额外的请求参数
+  params?: any;
+};
+
+/** 创建时候的配置 */
 type ProEnumOption = {
-  /** loader 映射到 componentProps 上的名称 */
-  mapToProp: string;
-  /** 是否进行缓存， 默认开启， 显示设置 false 关闭缓存  */
+  mapToProp?: string;
   cache?: boolean;
+  // > 0 启用
+  debounce?: number;
+  lazyTree?: boolean;
+  colorful?: boolean;
+  // 是否劫持 read pretty
+  pretty?: boolean;
 };
 
 type TItemsOrLoader =

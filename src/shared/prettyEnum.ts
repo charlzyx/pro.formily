@@ -6,7 +6,8 @@ type OptionLike = {
   children?: OptionLike[];
 };
 
-const isLabelInValue = (x: any): x is OptionLike => x?.label != null;
+export const isLabelInValue = (x: any): x is OptionLike => x?.label != null;
+
 const isLabelInValueList = (x: any[]): x is OptionLike[] =>
   isLabelInValue(x?.[0]);
 

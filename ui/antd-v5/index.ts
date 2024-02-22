@@ -17,7 +17,6 @@ export {
   ConfigProvider,
   Divider,
   Drawer,
-  Image,
   Modal,
   Pagination,
   Popconfirm,
