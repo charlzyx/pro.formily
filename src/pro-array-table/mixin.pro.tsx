@@ -217,8 +217,8 @@ export const ArrayTableShowModal: React.FC<
 };
 
 export const DelegateAction: React.FC<{
-  /** 动作标志, 与 ShadowModal 对应  */
-  act: string;
+  /** 动作标志, 与 ShadowModal 对应, 不填写的话去 schema 的名字  */
+  act?: string;
   /** 当前列所属 index, 默认使用 ArrayBase.useIndex() 获取当前数据对应位置 */
   index?: number;
   /** 数据初始化加载器, 默认使用 field.record 当前模型所对应 record */
@@ -231,19 +231,22 @@ export const DelegateAction: React.FC<{
 }> = (props) => {
   const index = "index" in (props ?? {}) ? props.index : ArrayBase.useIndex();
   const field = useField();
+  const schema = useFieldSchema();
   const record = useRecord();
   const delegate = useContext(ArrayTableDelegateContext);
 
+  const actName = props.act ?? schema.name;
+
   useEffect(() => {
     if (!delegate.initLoader) return;
-    if (delegate.act === props.act && delegate.index === index) {
+    if (delegate.act === actName && delegate.index === index) {
       delegate.initLoader.current = props.initLoader
         ? () => props.initLoader?.(record)
         : () => record;
     }
   }, [delegate.act, delegate.index, delegate.initLoader]);
   const dataInfo = {
-    [DATE_DELEGATE_ACT_KEY]: props.act,
+    [DATE_DELEGATE_ACT_KEY]: actName,
     [DATE_DELEGATE_INDEX_KEY]: index,
   };
 

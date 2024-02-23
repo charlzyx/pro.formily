@@ -53,11 +53,12 @@ const row: ISchema = {
         "x-component": "ProArrayTable.Column",
         "x-component-props": { title: "编辑", align: "center" },
         properties: {
-          _trigger: {
+          // ↓ 不填写 act 属性的话, 就读这个 modal 了 （schema.name)
+          modal: {
             type: "void",
             "x-decorator": "ProArrayTable.DelegateAction",
             "x-decorator-props": {
-              act: "modal",
+              // act: "modal", // 这里不填写的话, 就读取上面
               initLoader: (o: any) => {
                 console.log("🚀 ~ o::", o);
                 return o;
@@ -83,7 +84,7 @@ const schema: ISchema = {
       "x-component": "ProArrayTable",
       items: row.items,
       properties: {
-        // ↓ 不填写 act 属性的话, 就读这个 modal 字段
+        // ↓ 不填写 act 属性的话, 就读这个 modal 了 （schema.name)
         modal: {
           type: "void",
           "x-component": "ProArrayTable.ShadowModal",
