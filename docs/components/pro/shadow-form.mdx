@@ -6,22 +6,32 @@
 
 ### 有什么用？
 
-当你想对部分对象字段进行修改的时候,但又不想对当前表单响应式模型产生影响,可以考虑使用影子表单。如果只是针对单个字段修改的话,你可能在找Editable
+当你想对部分对象字段进行修改的时候,但又不想对当前表单响应式模型产生影响,可以考虑使用影子表单。如果只是针对单个字段修改的话, 你可能在找 Editable
 
 一个常见的例子：表格里面的行数据编辑,或者大数据对象的部分属性编辑,常见的几种方案
 
 1. 使用路径系统将当前行所有数据转换为 editable
+
 2. 使用 Editable 组件对可编辑组件进行包裹
+
 3. 使用 FormDialog/FormDrawer 进行弹窗编辑
 
-各有优劣,方案1,2 只能处理编辑内容与展示内容一致的情况,比如根据行id获取更多详情来编辑就处理不了。内容变更范围不好析出,假如变更内容是需要异步保存到服务器,请求出错本地变更数据回滚就会很麻烦,特别是 initialValues 可能并不像你想的那样工作。我的issues
+各有优劣: 方案1,2
+
+a. 只能处理编辑内容与展示内容一致的情况,比如根据行id获取更多详情来编辑就处理不了。
+
+b. 变更范围无法控制,假如变更内容是需要异步保存到服务器,请求出错本地变更数据回滚就会很麻烦,
+特别是 [initialValues 可能并不像你想的那样工作](https://github.com/alibaba/formily/pull/4053)。
+
 方案3实际体验相对较差,体现在
 
 a. 这两个是api调用,不能使用 schema 描述出来
 
 b. 创建的弹窗脱离了当前 root 树, ConfigProvider 之类的全局contex 需要到单独再配置一份,很麻烦。
 
-### 根据我练习时长两年半的 CRUD 经验, 我期望：
+### 设计思路
+
+根据我练习时长两年半的 CRUD 经验, 我期望：
 
 1. 能使用 Schema （没戳！我就是 schema 语法铁粉）描述
 2. 不污染当前数据与响应模型,不然怎么叫 shadow
@@ -32,14 +42,15 @@ b. 创建的弹窗脱离了当前 root 树, ConfigProvider 之类的全局contex
 - 使用 SchemaFieldOptionsContext 获取根节点 createSchemaField 传入的注册组件与 scope, 省去重新 createSchema 的麻烦
 - 使用 createForm 创建一个新的影子 form, 与根表单没有任何关系, 当然也需要提供可配置项, 可以传入自定义的带 effects 等配置的form实例代替默认配置
 - 组件自身在根表单中是一个void节点,不产生任何数据污染
-- 数据初始值获取方式 promise, 子表单实例 form.setvalues ([为什么不是initValues?](https://github.com/alibaba/formily/pull/4053)),field.record 非常适合作为默认值[链接一下 formily curd规范
+- 数据初始值获取方式 promise, 子表单实例 form.setvalues ([为什么不是initValues?](https://github.com/alibaba/formily/pull/4053)),field.record 非常适合作为默认值(为什么？见 Tip)
 - 相比 Editable, 编辑之后 form reset/submit 确认状态交还给用户处理,去代替原始值or发起保存/更新请求。
 - 影子表单的 schema 配置
 - x-component 还是 x-decorator ? 我全都要!
 
-> Tip: 为什么 field.record 非常适合?
+> Tip: 为什么 field.record 非常合适?
 > 这篇[标准化CRUD作用域变量规范](https://github.com/alibaba/formily/discussions/3207) 直指 formily 模型抽象核心的内容就尤为重要, 这里面提到的 record 是如此的重要;
 以至于在 2.2.19 版本中, record 被作为 Field 模型的核心属性, 直接追加到了 BaseField 上.
+
 
 > Tip: 为什么增加 schema 属性配置, 直接使用 properties 不行吗
 > 可以是可以, 但外层 form 的 RecursionField (@formily/react#RecursionField) 在渲染的时候, 会进行构建, 生成 children 扔给组件处理, 虽然可以扔掉不用, 但多余的创建也是不必要的浪费

@@ -107,7 +107,7 @@ export default () => {
         },
         {
           title: "ShadowForm",
-          subtitle: "专业字表单",
+          subtitle: "影子表单",
           cover:
             "	https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*NMvqRZpuJfQAAAAAAAAAAAAADrJ8AQ/original",
           link: "/shadow-form",
