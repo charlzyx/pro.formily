@@ -39,20 +39,20 @@ const form = createForm({
 
 const shadowSchema = {
   type: "void",
-  properties: withLayoutGrid({
+  properties: {
     domain: {
+      type: "string",
       title: "域名",
       "x-decorator": "FormItem",
-      type: "string",
       "x-component": "Input",
     },
     desc: {
+      type: "string",
       title: "描述",
       "x-decorator": "FormItem",
-      type: "string",
       "x-component": "Input.TextArea",
     },
-  }),
+  },
 };
 
 const schema: ISchema = {
@@ -92,8 +92,8 @@ const schema: ISchema = {
         _modal: {
           type: "void",
           title: "内置的Modal",
-          "x-component": "ShadowModal",
           "x-decorator": "ShadowForm",
+          "x-component": "ShadowModal",
           "x-decorator-props": {
             schema: shadowSchema,
           },

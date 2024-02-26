@@ -105,6 +105,13 @@ export default () => {
             "https://gw.alipayobjects.com/zos/antfincdn/mStei5BFC/bianzu%2525207.svg",
           link: "/pro-editable",
         },
+        {
+          title: "ShadowForm",
+          subtitle: "专业字表单",
+          cover:
+            "	https://mdn.alipayobjects.com/huamei_7uahnr/afts/img/A*NMvqRZpuJfQAAAAAAAAAAAAADrJ8AQ/original",
+          link: "/shadow-form",
+        },
       ],
     },
     {
