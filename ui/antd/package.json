@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ant-design/icons": "^4.8.1",
     "@formily/antd": "^2.*.*",
     "antd": "^4.*.*"
   }
