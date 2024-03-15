@@ -13,7 +13,7 @@
     "declaration": true,
     "moduleResolution": "Bundler",
     "paths": {
-      "@pro.formily/antd": ["src"]
+      "src/*": ["src/*"]
     }
   },
   "include": ["src", "ui", "docs"]
