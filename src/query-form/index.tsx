@@ -1,9 +1,8 @@
-import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import type { ObjectField } from "@formily/core";
 import { observer, useField } from "@formily/react";
 import { clone } from "@formily/shared";
 import React, { useEffect } from "react";
-import { BUTTON_TYPE, Button } from "../adaptor";
+import { BUTTON_TYPE, Button, DownOutlined, UpOutlined } from "../adaptor";
 import { FormButtonGroup, FormGrid, FormLayout } from "../adaptor/adaptor";
 import { useQueryListContext } from "../query-list";
 import { useGrid } from "../shared/useGrid";

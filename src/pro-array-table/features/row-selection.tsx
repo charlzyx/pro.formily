@@ -42,7 +42,7 @@ export const useRowSelection = (
     ? ({
         ...props,
         ...ctx,
-        showPro: props.showPro ?? "top",
+        showPro: props.type === "radio" ? false : props.showPro ?? "top",
         onChange(selectedRowKeys, ...rest) {
           setKeys(selectedRowKeys);
           propRowSelection?.onChange?.(selectedRowKeys, ...rest);
