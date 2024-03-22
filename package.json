@@ -13,12 +13,6 @@
   "main": "./dist/lib",
   "module": "./dist/esm",
   "types": "./dist/esm/index.d.ts",
-  "sideEffects": [
-    "dist",
-    "src/*.ts",
-    "*.less",
-    "**/*/style.js"
-  ],
   "scripts": {
     "dev": "rspress dev",
     "v4": "bun scripts/switch.ts antd doc",
@@ -68,7 +62,5 @@
     "rimraf": "^5.0.5",
     "rspress": "latest"
   },
-  "files": [
-    "dist"
-  ]
+  "files": ["dist"]
 }

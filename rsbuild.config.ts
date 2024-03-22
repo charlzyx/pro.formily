@@ -1,4 +1,3 @@
-import path from "path";
 import { defineConfig } from "@rsbuild/core";
 import { pluginReact } from "@rsbuild/plugin-react";
 
@@ -7,6 +6,7 @@ export default defineConfig({
   source: {
     alias: {
       src: "./src",
+      "@pro.formily/antd": "./src",
     },
   },
 });

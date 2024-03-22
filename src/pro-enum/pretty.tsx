@@ -1,7 +1,7 @@
-import type { Value, ProEnumItem } from "./pro-enum";
-import { Badge, Space, Tag } from "../adaptor/index";
-import { mapProps, connect } from "@formily/react";
+import { connect, mapProps } from "@formily/react";
 import { useMemo } from "react";
+import { Badge, Space, Tag } from "../adaptor/index";
+import type { ProEnumItem, Value } from "./pro-enum";
 export const EnumReadPretty: React.FC<{
   /**
    * 对应枚举值

@@ -1,4 +1,4 @@
-import { ArrayField, JSXComponent } from "@formily/core";
+import { ArrayField } from "@formily/core";
 import {
   ReactFC,
   RecursionField,

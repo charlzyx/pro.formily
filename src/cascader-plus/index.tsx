@@ -1,8 +1,8 @@
 import { connect, mapProps, observer } from "@formily/react";
 import React, { useEffect, useRef, useState } from "react";
 import { Cascader as BaseCascader } from "../adaptor";
+import { ProEnumItem, buildTree } from "../pro-enum/pro-enum";
 import { isLabelInValue, prettyEnum, useUpdate } from "../shared";
-import { buildTree, ProEnumItem } from "../pro-enum/pro-enum";
 
 const fullWithStyle = {
   width: "100%",

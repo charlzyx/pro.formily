@@ -2,6 +2,7 @@ import { ISchema, ReactFC, useField } from "@formily/react";
 import { clone, isUndef, isValid } from "@formily/shared";
 import cls from "classnames";
 import React, { Fragment, useContext } from "react";
+import { omit } from "../__builtins__";
 import {
   BUTTON_TYPE,
   Button,
@@ -15,7 +16,6 @@ import {
 import { ArrayBase, IArrayBaseContext, usePrefixCls } from "../adaptor/adaptor";
 import { TablePaginationContext } from "./features/pagination";
 import type { ColumnProps, IProArrayTableBaseMixins } from "./types";
-import { omit } from "../__builtins__";
 
 export const Column: ReactFC<ColumnProps<any>> = () => {
   return <Fragment />;

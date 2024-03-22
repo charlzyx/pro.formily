@@ -1,6 +1,5 @@
-import fs from "fs";
-import path from "path";
 import { pluginPreview } from "@rspress/plugin-preview";
+import path from "path";
 import { defineConfig } from "rspress/config";
 import RsBuildConfig from "./rsbuild.config";
 import { pluginFixCss } from "./scripts/fixcss";

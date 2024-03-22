@@ -1,7 +1,12 @@
-import { Field, isDataField, onFieldInit, onFieldReact } from "@formily/core";
+import {
+  GeneralField,
+  isDataField,
+  onFieldInit,
+  onFieldReact,
+} from "@formily/core";
+import { isLabelInValue } from "../shared";
 import { BUILTIN_COLOR, fillColors } from "./color";
 import { ProEnumPretty } from "./pretty";
-import { isLabelInValue } from "../shared";
 
 const safeStringify = (x: any) => {
   try {
@@ -212,22 +217,21 @@ export class ProEnum {
 const PRO_ENUM_KEY = "__pro_enum__";
 const PRO_ENUM_HIJACK_KEY = "__pro_enum_hijack_info__";
 
-const hijackField = (field: any, props: any) => {
+const hijackField = (field: GeneralField, props: any) => {
   field.data = field.data ?? {};
-  field.data[PRO_ENUM_HIJACK_KEY] = field.data?.[PRO_ENUM_HIJACK_KEY] ?? [];
-  field.data[PRO_ENUM_HIJACK_KEY][0] = field.component[0];
-  field.data[PRO_ENUM_HIJACK_KEY][1] = field.component[1];
-  const oprops = field.component[1];
+  field.data[PRO_ENUM_HIJACK_KEY] = field.data?.[PRO_ENUM_HIJACK_KEY] ?? {};
+  field.data[PRO_ENUM_HIJACK_KEY].componentType = field.componentType;
+  field.data[PRO_ENUM_HIJACK_KEY].componentProps = field.componentProps;
 
-  field.setComponent(ProEnumPretty, {
-    ...props,
-    ...oprops,
-  });
+  field.componentType = ProEnumPretty;
+  field.componentProps = props;
 };
 
 const restoreHijack = (field: any) => {
-  const [ocomp, oprops] = field.data[PRO_ENUM_HIJACK_KEY];
-  field.setComponent(ocomp, oprops);
+  const origin = field.data[PRO_ENUM_HIJACK_KEY];
+  // why not field.setComponet, @see https://github.com/alibaba/formily/blob/formily_next/packages/core/src/models/BaseField.ts#L250
+  field.componentType = origin.componentType;
+  field.componentProps = origin.componentProps;
 };
 
 const setProEnum = (field: any, inst: ProEnum) => {
@@ -248,15 +252,6 @@ const getProEnum = (field: any) => {
     inst: inst as ProEnum | undefined,
     props: props as ProEnumSchemaOption | undefined,
   };
-};
-
-const isCcomponentSame = (
-  origin: Field["component"],
-  comp: string | React.FunctionComponent<any> | Field["component"],
-) => {
-  const ocomp = Array.isArray(origin) ? origin[0] : origin;
-  const dcomp = Array.isArray(comp) ? comp[0] : comp;
-  return ocomp === dcomp;
 };
 
 export const useProEnumEffects = (opts?: {
@@ -312,13 +307,13 @@ export const useProEnumEffects = (opts?: {
     const origin = field.data?.[PRO_ENUM_HIJACK_KEY];
 
     if (readPretty) {
-      if (!isCcomponentSame(field.component, ProEnumPretty)) {
+      if (field.componentType !== ProEnumPretty) {
         hijackField(field, {
           _type: props?.showType,
           _strict: props?.strict,
         });
       }
-    } else if (origin && !isCcomponentSame(origin, field.component)) {
+    } else if (origin && origin.componentType !== field.componentType) {
       restoreHijack(field);
     }
   });

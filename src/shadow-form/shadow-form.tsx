@@ -6,7 +6,6 @@ import {
   SchemaOptionsContext,
   createSchemaField,
   useField,
-  useFieldSchema,
 } from "@formily/react";
 import React, { useContext, useMemo } from "react";
 import ReactIs from "react-is";
@@ -49,8 +48,8 @@ export const useShadowForm = (options: IShadowFormOptions) => {
 
 const role = (field: GeneralField, self: any) => {
   const components = useContext(SchemaComponentsContext);
-  const decorator = components[(field.decorator as any)?.[0]];
-  const component = components[(field.component as any)?.[0]];
+  const decorator = components[field.decoratorType];
+  const component = components[field.componentType];
   const isDecorator = decorator === self;
   const isComponent = component === self;
   return isDecorator ? "decorator" : isComponent ? "component" : null;

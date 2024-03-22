@@ -16,11 +16,14 @@ const byRoot = (x: string) => {
   return path.resolve(__dirname, `../${x}`);
 };
 
-const configs = ["tsconfig.json", "package.json", "rspress.config.ts"].map(
-  (item) => {
-    return byRoot(item);
-  },
-);
+const configs = [
+  "tsconfig.json",
+  "package.json",
+  "rspress.config.ts",
+  "rsbuild.config.ts",
+].map((item) => {
+  return byRoot(item);
+});
 
 const docs = (() => {
   const list: string[] = [];
