@@ -38,7 +38,7 @@
 
 - 💡 pro-array-table 重构 ([51d93a7](https://github.com/charlzyx/pro.formily/commit/51d93a7))
 - 💡 重构 array use-\* 功能函数,修复 demo 样式 ([973da1f](https://github.com/charlzyx/pro.formily/commit/973da1f))
-- 💡 @fomrily/antd, antd, v5 -> v4, array use-\* ([1b5b4bf](https://github.com/charlzyx/pro.formily/commit/1b5b4bf))
+- 💡 @formily/antd, antd, v5 -> v4, array use-\* ([1b5b4bf](https://github.com/charlzyx/pro.formily/commit/1b5b4bf))
 - 💡 pro-settings, and docs update ([d869b03](https://github.com/charlzyx/pro.formily/commit/d869b03))
 - 💡 sortable and configable columns ([c946198](https://github.com/charlzyx/pro.formily/commit/c946198))
 - 💡 rename and demo with chinese ([b3b840d](https://github.com/charlzyx/pro.formily/commit/b3b840d))

@@ -18,15 +18,15 @@
 
 > antd@v4
 
-`bun i @pro.formily/antd @formily/antd @fomrily/core @formily/react antd@4.x @ant-design/icons`
+`bun i @pro.formily/antd @formily/antd @formily/core @formily/react antd@4.x @ant-design/icons`
 
 > antd@v5
 
-`bun i @pro.formily/antd @formily/antd-v5 @fomrily/core @formily/react antd@5.x @ant-design/icons`
+`bun i @pro.formily/antd @formily/antd-v5 @formily/core @formily/react antd@5.x @ant-design/icons`
 
 > arco.design
 
-`bun i @pro.formily/arco arco.formily @fomrily/core @formily/react @arco-design/web-react`
+`bun i @pro.formily/arco arco.formily @formily/core @formily/react @arco-design/web-react`
 
 ## 样式 TODO
 

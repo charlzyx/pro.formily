@@ -117,6 +117,7 @@ const SchemaField = createSchemaField({
     QueryList,
     QueryForm,
     QueryTable,
+    ProArrayTable,
   },
   scope: {
     service,
