@@ -38,6 +38,10 @@
 
 - [for/arco.design](https://arco.pro-formily.pages.dev)
 
+## 本地体验
+
+- [pro.formily.demo](https://github.com/charlzyx/pro.formily.demo)
+
 ## 如何开发
 
 `bun v4 && bun dev`
