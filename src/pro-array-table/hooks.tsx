@@ -231,12 +231,12 @@ export const useExpandRender = (index: number) => {
 
 export const useAddition = () => {
   const schema = useFieldSchema();
-  return schema.reduceProperties((addition, schema, key) => {
+  return schema.reduceProperties((buf, schema, key) => {
     if (isAdditionComponent(schema)) {
-      return <RecursionField schema={schema} name={key} />;
+      buf.push(<RecursionField schema={schema} name={key} />);
     }
-    return addition;
-  }, null);
+    return buf;
+  }, [] as React.ReactElement[]);
 };
 
 export const useShadowComponents = () => {

@@ -62,5 +62,7 @@
     "rimraf": "^5.0.5",
     "rspress": "latest"
   },
-  "files": ["dist"]
+  "files": [
+    "dist"
+  ]
 }

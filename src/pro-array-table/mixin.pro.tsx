@@ -1,6 +1,6 @@
 import { FormProvider, useField, useFieldSchema } from "@formily/react";
 import { toJS } from "@formily/reactive";
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useId, useRef } from "react";
 import { empty, omit, pick } from "../__builtins__";
 import { Alert, BUTTON_TYPE, Button, Divider, Modal, Space } from "../adaptor";
 import { ArrayBase } from "../adaptor/adaptor";
@@ -271,13 +271,15 @@ export const ProAddition = ({
     React.ComponentProps<typeof Modal>,
     "onOk" | "onCancel" | "children"
   >) => {
+  const id = useId();
+  const actName = `_pro_additino_${id}`;
   return (
     <React.Fragment>
-      <ArrayTableShowModal act="_pro_addition" {...props}></ArrayTableShowModal>
+      <ArrayTableShowModal act={actName} {...props}></ArrayTableShowModal>
       <DelegateAction
         initLoader={() => empty}
         index={Infinity}
-        act={"_pro_addition"}
+        act={actName}
       ></DelegateAction>
     </React.Fragment>
   );

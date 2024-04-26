@@ -64,6 +64,15 @@ const schema: ISchema = {
     layout: "vertical",
   },
   properties: {
+    _modal: {
+      type: "void",
+      title: "Void内置的Modal",
+      "x-decorator": "ShadowForm",
+      "x-component": "ShadowModal",
+      "x-decorator-props": {
+        schema: shadowSchema,
+      },
+    },
     info: {
       type: "object",
       "x-read-pretty": true,

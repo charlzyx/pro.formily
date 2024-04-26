@@ -169,6 +169,57 @@ const schema: ISchema = {
           },
           title: "添加条目",
         },
+        add2: {
+          type: "void",
+          "x-component": "ProArrayTable.ProAddition",
+          "x-component-props": {
+            onOk: (
+              data: any,
+              ctx: ReturnType<typeof ProArrayTable.useProArrayTableContext>,
+            ) => {
+              // 如果添加数据后将超过当前页，则自动切换到下一页
+              const total = ctx?.array.field?.value.length || 0;
+              if (
+                total >=
+                ctx.pagination!.current! * ctx.pagination.pageSize!
+              ) {
+                ctx.pagination.setPagination((memo) => {
+                  return { ...memo, current: memo.current + 1 };
+                });
+              }
+
+              ctx.array.field.push(data);
+              console.log(data);
+            },
+            schema: {
+              type: "void",
+              properties: {
+                id: {
+                  title: "ID",
+                  type: "string",
+                  "x-decorator": "FormItem",
+                  "x-component": "Input",
+                },
+                domain: {
+                  title: "域名",
+                  "x-decorator": "FormItem",
+                  type: "string",
+                  "x-component": "Input",
+                },
+                desc: {
+                  title: "描述",
+                  "x-decorator": "FormItem",
+                  type: "string",
+                  "x-component": "Input.TextArea",
+                  "x-component-props": {
+                    rows: 4,
+                  },
+                },
+              },
+            },
+          },
+          title: "演示多个添加共存",
+        },
       },
     },
   },
