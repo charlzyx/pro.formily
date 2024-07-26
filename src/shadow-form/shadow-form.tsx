@@ -6,6 +6,7 @@ import {
   SchemaOptionsContext,
   createSchemaField,
   useField,
+  useForm,
 } from "@formily/react";
 import React, { useContext, useMemo } from "react";
 import ReactIs from "react-is";
@@ -32,13 +33,18 @@ export interface IShadowFormOptions {
   /** createSchemaField 函数配置, components 和 scope */
   schemaFieldOptions?: Parameters<typeof useShadowSchemaField>[0];
   /** createForm 创建的表单实例, 有自定义 effects 等可以通过自定义一个 form 这个传入 */
-  form?: ReturnType<typeof createForm>;
+  subFormOptions?: Parameters<typeof createForm>[0];
 }
 
 export const useShadowForm = (options: IShadowFormOptions) => {
-  const { schema, schemaFieldOptions, form } = options;
+  const { schema, schemaFieldOptions, subFormOptions } = options;
+  const form = useForm();
   const SchemaField = useShadowSchemaField(schemaFieldOptions);
-  const realForm = useMemo(() => form ?? createForm({}), [form]);
+
+  const realForm = useMemo(
+    () => createForm({ ...form.props, ...subFormOptions }),
+    [subFormOptions, form.props],
+  );
   return {
     form: realForm,
     schema,

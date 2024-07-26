@@ -146,7 +146,7 @@ export const ArrayTableShowModal: React.FC<
     CommonShadowPopup
 > = (props) => {
   const { SchemaField, form, schema } = useShadowForm(
-    pick(props, "schema", "schemaFieldOptions", "form"),
+    pick(props, "schema", "schemaFieldOptions", "subFormOptions"),
   );
   const mySchema = useFieldSchema();
   const act = props.act ?? mySchema.name;
@@ -189,7 +189,7 @@ export const ArrayTableShowModal: React.FC<
 
   return (
     <Modal
-      {...omit(props, "act", "schema", "schemaFieldOptions", "form")}
+      {...omit(props, "act", "schema", "schemaFieldOptions", "subFormOptions")}
       open={visible}
       title={field.title}
       onCancel={() => {
