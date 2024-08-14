@@ -17,7 +17,7 @@ type QueryFormProps = React.PropsWithChildren<{
 const buttonGroupStyle: React.CSSProperties = {
   width: "100%",
   display: "flex",
-  alignItems: "center",
+  alignItems: "flex-end",
   justifyContent: "flex-end",
 };
 
