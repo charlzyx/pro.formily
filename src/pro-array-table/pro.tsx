@@ -185,8 +185,7 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
       props.settings !== false;
 
     const _header = !showHeader ? null : (
-      <Flex between marginBottom={"6px"} marginTop={"6px"}>
-        <Flex start>
+      <Flex {...props.headerFlex} marginBottom={"8px"} marginTop={"8px"}>
           {props.title ? (
             typeof props.title === "function" ? (
               props.title(dataSource)
@@ -199,8 +198,6 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
           {rowSelection?.showPro === "top" ? (
             <RowSelectionPro ds={dataSlice} rowKey={rowKey}></RowSelectionPro>
           ) : null}
-        </Flex>
-        <Flex end>
           {toolbar}
           {addition}
           {!props.extra && props.settings === false ? null : (
@@ -211,7 +208,6 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
               ) : null}
             </Space>
           )}
-        </Flex>
       </Flex>
     );
 
@@ -354,7 +350,6 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
 );
 
 const useTableExpandable = () => {
-  return useContext(TableExpandableContext);
 };
 
 const useTableRowSelection = () => {

@@ -4,6 +4,7 @@ import type { Table } from "../adaptor";
 
 type TableProps<T> = React.ComponentProps<typeof Table>;
 
+import { Flex } from './mixin.pro'
 export type TableChangeParams = Parameters<
   Required<TableProps<any>>["onChange"]
 >;
@@ -57,6 +58,7 @@ export interface IProArrayTableBaseMixins {
 
 export type ProArrayTableProps = Omit<TableProps<any>, "title"> &
   IProArrayTableBaseMixins & {
+    headerFlex?: React.ComponentProps<typeof Flex>,
     title: string | TableProps<any>["title"];
     footer: string | TableProps<any>["footer"];
     rowSelection?:
