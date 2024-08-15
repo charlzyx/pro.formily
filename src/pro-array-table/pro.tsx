@@ -259,18 +259,20 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
     const _footer = (
       <FooterRender
         footer={
-          props.footer ? (
-            typeof props.footer === "function" ? (
-              props.footer(dataSource)
-            ) : (
-              <Typography.Title level={5}>{props.footer}</Typography.Title>
-            )
-          ) : null
+          <React.Fragment>
+            {props.footer ? (
+              typeof props.footer === "function" ? (
+                props.footer(dataSource)
+              ) : (
+                <Typography.Title level={5}>{props.footer}</Typography.Title>
+              )
+            ) : null}
+            {footer}
+          </React.Fragment>
         }
         pagination={pagination}
       ></FooterRender>
     );
-
     const header = useResizeHeader({
       enable: props.resizeable,
     });
