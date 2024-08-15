@@ -4,7 +4,8 @@ import type { Table } from "../adaptor";
 
 type TableProps<T> = React.ComponentProps<typeof Table>;
 
-import { Flex } from './mixin.pro'
+import { Flex } from "./mixin.pro";
+import { DefaultFooterRender, DefaultHeaderRender } from "./pro";
 export type TableChangeParams = Parameters<
   Required<TableProps<any>>["onChange"]
 >;
@@ -56,14 +57,46 @@ export interface IProArrayTableBaseMixins {
   onMoveDown?: (index: number, arrayField: ArrayField) => void | Promise<void>;
 }
 
+{
+  /* <Flex {...props.headerFlex} marginBottom={"8px"} marginTop={"8px"}>
+          {props.title ? (
+            typeof props.title === "function" ? (
+              props.title(dataSource)
+            ) : (
+              <Typography.Title level={5} style={{ flex: 1 }}>
+                {props.title}
+              </Typography.Title>
+            )
+          ) : null}
+          {rowSelection?.showPro === "top" ? (
+            <RowSelectionPro ds={dataSlice} rowKey={rowKey}></RowSelectionPro>
+          ) : null}
+          {toolbar}
+          {addition}
+          {!props.extra && props.settings === false ? null : (
+            <Space size="small">
+              {props.extra}
+              {props.settings !== false ? (
+                <ProSettings columns={proColumns}></ProSettings>
+              ) : null}
+            </Space>
+          )}
+      </Flex>
+type HeaderRender = (props: {
+
+}) => React.ReactNode */
+}
+
 export type ProArrayTableProps = Omit<TableProps<any>, "title"> &
   IProArrayTableBaseMixins & {
-    headerFlex?: React.ComponentProps<typeof Flex>,
+    headerRender?: typeof DefaultHeaderRender;
+    footerRender?: typeof DefaultFooterRender;
+    // headerFlex?: React.ComponentProps<typeof Flex>;
     title: string | TableProps<any>["title"];
     footer: string | TableProps<any>["footer"];
     rowSelection?:
       | (Exclude<RequiredTableProps["rowSelection"], undefined> & {
-          showPro?: "top" | "bottom" | false;
+          showPro?: boolean;
         })
       | true;
     /** 列表配置齿轮, 默认 true */

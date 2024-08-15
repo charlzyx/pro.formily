@@ -62,6 +62,46 @@ import {
 } from "./mixin.pro";
 import { IChangeData, ProArrayTableProps } from "./types";
 
+export const DefaultHeaderRender = (props: {
+  title?: React.ReactNode;
+  selection?: React.ReactNode;
+  toolbars?: React.ReactNode;
+  addition?: React.ReactNode;
+  settings?: React.ReactNode;
+  extra?: React.ReactNode;
+}) => {
+  return (
+    <Flex marginBottom={"8px"} marginTop={"8px"}>
+      {props.title || props.selection ? (
+        <Flex start>
+          {props.title}
+          {props.selection}
+        </Flex>
+      ) : null}
+      {props.toolbars ? <Flex center>{props.toolbars}</Flex> : null}
+      {props.addition || props.extra || props.settings ? (
+        <Flex end>
+          {props.addition}
+          {props.extra}
+          {props.settings}
+        </Flex>
+      ) : null}
+    </Flex>
+  );
+};
+
+export const DefaultFooterRender = (props: {
+  footer?: React.ReactNode;
+  pagination?: React.ReactNode;
+}) => {
+  return (
+    <Flex between marginTop={`${8}px`}>
+      {props.footer}
+      {props.pagination}
+    </Flex>
+  );
+};
+
 const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
   ({ onAdd, onRemove, onCopy, onMoveDown, onMoveUp, onSortEnd, ...props }) => {
     const wrapperRef = useRef<HTMLDivElement>(null);
@@ -177,16 +217,18 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
       </div>
     ) : null;
 
-    const showHeader =
-      props.title ||
-      props.rowSelection ||
-      toolbar ||
-      addition ||
-      props.settings !== false;
+    // const showHeader =
+    //   props.title ||
+    //   props.rowSelection ||
+    //   toolbar ||
+    //   addition ||
+    //   props.settings !== false;
 
-    const _header = !showHeader ? null : (
-      <Flex {...props.headerFlex} marginBottom={"8px"} marginTop={"8px"}>
-          {props.title ? (
+    const HeaderRender = props.headerRender || DefaultHeaderRender;
+    const _header = (
+      <HeaderRender
+        title={
+          props.title ? (
             typeof props.title === "function" ? (
               props.title(dataSource)
             ) : (
@@ -194,46 +236,39 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
                 {props.title}
               </Typography.Title>
             )
-          ) : null}
-          {rowSelection?.showPro === "top" ? (
+          ) : null
+        }
+        selection={
+          rowSelection?.showPro ? (
             <RowSelectionPro ds={dataSlice} rowKey={rowKey}></RowSelectionPro>
-          ) : null}
-          {toolbar}
-          {addition}
-          {!props.extra && props.settings === false ? null : (
-            <Space size="small">
-              {props.extra}
-              {props.settings !== false ? (
-                <ProSettings columns={proColumns}></ProSettings>
-              ) : null}
-            </Space>
-          )}
-      </Flex>
+          ) : null
+        }
+        toolbars={toolbar}
+        addition={addition}
+        extra={props.extra}
+        settings={
+          props.settings !== false ? (
+            <ProSettings columns={proColumns}></ProSettings>
+          ) : null
+        }
+      ></HeaderRender>
     );
 
-    const showFooter = props.footer || footer || pagination;
-    const _footer = !showFooter ? null : (
-      <Flex between marginTop={`${6}px`}>
-        <Flex
-          start
-          hidden={!props.footer && rowSelection?.showPro !== "bottom"}
-        >
-          {props.footer ? (
+    const FooterRender = props.footerRender || DefaultFooterRender;
+
+    const _footer = (
+      <FooterRender
+        footer={
+          props.footer ? (
             typeof props.footer === "function" ? (
               props.footer(dataSource)
             ) : (
               <Typography.Title level={5}>{props.footer}</Typography.Title>
             )
-          ) : null}
-          {rowSelection?.showPro === "bottom" ? (
-            <RowSelectionPro ds={dataSlice} rowKey={rowKey}></RowSelectionPro>
-          ) : null}
-        </Flex>
-        <Flex end>
-          {footer}
-          {pagination}
-        </Flex>
-      </Flex>
+          ) : null
+        }
+        pagination={pagination}
+      ></FooterRender>
     );
 
     const header = useResizeHeader({
@@ -349,8 +384,7 @@ const ArrayTableProInside: ReactFC<ProArrayTableProps> = observer(
   },
 );
 
-const useTableExpandable = () => {
-};
+const useTableExpandable = () => {};
 
 const useTableRowSelection = () => {
   return useContext(TableRowSelectionContext);
