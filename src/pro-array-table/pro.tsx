@@ -95,7 +95,7 @@ export const DefaultFooterRender = (props: {
   pagination?: React.ReactNode;
 }) => {
   return (
-    <Flex between marginTop={`${8}px`}>
+    <Flex end marginTop={`${8}px`}>
       {props.footer}
       {props.pagination}
     </Flex>
