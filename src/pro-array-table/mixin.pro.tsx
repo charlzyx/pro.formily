@@ -1,6 +1,6 @@
 import { FormProvider, useField, useFieldSchema } from "@formily/react";
 import { toJS } from "@formily/reactive";
-import React, { useContext, useEffect, useId, useRef } from "react";
+import React, { useContext, useEffect, useId, useRef, useState } from "react";
 import { empty, omit, pick } from "../__builtins__";
 import { Alert, BUTTON_TYPE, Button, Divider, Modal, Space } from "../adaptor";
 import { ArrayBase } from "../adaptor/adaptor";
@@ -159,6 +159,7 @@ export const ArrayTableShowModal: React.FC<
   const pending = useRef(false);
   const ctx = useProArrayTableContext();
   const queryListCtx = useQueryListContext();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -188,6 +189,7 @@ export const ArrayTableShowModal: React.FC<
       }, 200);
     }).finally(() => {
       pending.current = false;
+      setLoading(false);
     });
   };
 
@@ -198,13 +200,20 @@ export const ArrayTableShowModal: React.FC<
       title={field.title}
       onCancel={() => {
         if (pending.current) return;
-        return form
-          .reset()
-          .then(() => props?.onCancel?.(ctx, queryListCtx))
-          .then(() => reset());
+        setLoading(true);
+        return Promise.resolve(props?.onCancel?.(ctx, queryListCtx)).then(() =>
+          reset(),
+        );
+      }}
+      cancelButtonProps={{
+        loading,
+      }}
+      okButtonProps={{
+        loading,
       }}
       onOk={() => {
         if (pending.current) return;
+        setLoading(true);
         pending.current = true;
         return form
           .submit()
