@@ -14,6 +14,7 @@ import {
 } from "./features/delegate";
 import { TableRowSelectionContext } from "./features/row-selection";
 import { useProArrayTableContext } from "./hooks";
+import { useQueryListContext } from "src/query-list";
 
 const justifyContentList: Required<React.CSSProperties>["justifyContent"][] = [
   "space-around",
@@ -134,10 +135,12 @@ export interface CommonShadowPopup extends IShadowFormOptions {
   act?: string;
   onCancel?: (
     ctx: ReturnType<typeof useProArrayTableContext>,
+    querylistCtx: ReturnType<typeof useQueryListContext>,
   ) => void | Promise<void>;
   onOk?: (
     data: any,
     ctx: ReturnType<typeof useProArrayTableContext>,
+    querylistCtx: ReturnType<typeof useQueryListContext>,
   ) => void | Promise<void>;
 }
 
@@ -155,6 +158,7 @@ export const ArrayTableShowModal: React.FC<
   const visible = delegate.act === act && delegate.index > -1;
   const pending = useRef(false);
   const ctx = useProArrayTableContext();
+  const queryListCtx = useQueryListContext();
 
   useEffect(() => {
     if (visible) {
@@ -196,15 +200,20 @@ export const ArrayTableShowModal: React.FC<
         if (pending.current) return;
         return form
           .reset()
-          .then(() => props?.onCancel?.(ctx))
+          .then(() => props?.onCancel?.(ctx, queryListCtx))
           .then(() => reset());
       }}
       onOk={() => {
         if (pending.current) return;
+        pending.current = true;
         return form
           .submit()
           .then((data) => {
-            return props?.onOk?.(data, ctx);
+            return Promise.resolve(
+              props?.onOk?.(data, ctx, queryListCtx),
+            ).finally(() => {
+              pending.current = false;
+            });
           })
           .then(() => reset());
       }}
