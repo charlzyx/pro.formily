@@ -34,10 +34,10 @@ export const Flex = (
       start?: boolean;
       end?: boolean;
     } & Pick<React.CSSProperties, "marginTop" | "marginBottom">
-  >,
+  >
 ) => {
   const justifyContent = Object.keys(props).find((key) =>
-    justifyContentList.find((prop) => new RegExp(key).test(prop)),
+    justifyContentList.find((prop) => new RegExp(key).test(prop))
   );
 
   return props.hidden ? null : (
@@ -110,7 +110,7 @@ export const RowSelectionPro = (props: {
                   m[i] = true;
                   return m;
                 },
-                {},
+                {}
               );
               const keys: (string | number)[] = [];
               ds.forEach((item) => {
@@ -135,12 +135,12 @@ export interface CommonShadowPopup extends IShadowFormOptions {
   act?: string;
   onCancel?: (
     ctx: ReturnType<typeof useProArrayTableContext>,
-    querylistCtx: ReturnType<typeof useQueryListContext>,
+    querylistCtx: ReturnType<typeof useQueryListContext>
   ) => void | Promise<void>;
   onOk?: (
     data: any,
     ctx: ReturnType<typeof useProArrayTableContext>,
-    querylistCtx: ReturnType<typeof useQueryListContext>,
+    querylistCtx: ReturnType<typeof useQueryListContext>
   ) => void | Promise<void>;
 }
 
@@ -149,7 +149,7 @@ export const ArrayTableShowModal: React.FC<
     CommonShadowPopup
 > = (props) => {
   const { SchemaField, form, schema } = useShadowForm(
-    pick(props, "schema", "schemaFieldOptions", "subFormOptions"),
+    pick(props, "schema", "schemaFieldOptions", "subFormOptions")
   );
   const mySchema = useFieldSchema();
   const act = props.act ?? mySchema.name;
@@ -189,7 +189,6 @@ export const ArrayTableShowModal: React.FC<
       }, 200);
     }).finally(() => {
       pending.current = false;
-      setLoading(false);
     });
   };
 
@@ -201,9 +200,11 @@ export const ArrayTableShowModal: React.FC<
       onCancel={() => {
         if (pending.current) return;
         setLoading(true);
-        return Promise.resolve(props?.onCancel?.(ctx, queryListCtx)).then(() =>
-          reset(),
-        );
+        return Promise.resolve(props?.onCancel?.(ctx, queryListCtx))
+          .then(() => reset())
+          .finally(() => {
+            setLoading(false);
+          });
       }}
       cancelButtonProps={{
         loading,
@@ -218,13 +219,13 @@ export const ArrayTableShowModal: React.FC<
         return form
           .submit()
           .then((data) => {
-            return Promise.resolve(
-              props?.onOk?.(data, ctx, queryListCtx),
-            ).finally(() => {
-              pending.current = false;
-            });
+            return Promise.resolve(props?.onOk?.(data, ctx, queryListCtx));
           })
-          .then(() => reset());
+          .then(() => reset())
+          .finally(() => {
+            pending.current = false;
+            setLoading(false);
+          });
       }}
     >
       <FormProvider form={form}>

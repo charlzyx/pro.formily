@@ -26,6 +26,7 @@ export const ShadowModal: React.FC<
     const [visible, setVisible] = useState(false);
     const pending = useRef(false);
     const navRef = useRef<HTMLSpanElement>(null);
+    const [loading, setLoading] = useState(false);
 
     const init = (c = 0) => {
       if (!form) {
@@ -42,7 +43,7 @@ export const ShadowModal: React.FC<
         return Promise.resolve(initLoader.current(field.record)).then(
           (init) => {
             form?.setValues(toJS(init || {}));
-          },
+          }
         );
       } else {
         return Promise.resolve(form?.setValues(toJS(field.record)));
@@ -87,19 +88,31 @@ export const ShadowModal: React.FC<
         <Modal
           {...props}
           open={visible}
+          okButtonProps={{
+            loading,
+          }}
+          cancelButtonProps={{ loading }}
           onCancel={(e: any) => {
             if (pending.current) return;
+            setLoading(true);
             return form
               ?.reset()
               .then(() => props?.onCancel?.(e))
-              .then(() => reset());
+              .then(() => reset())
+              .finally(() => {
+                setLoading(false);
+              });
           }}
           onOk={() => {
             if (pending.current) return;
+            setLoading(true);
             return form
               ?.submit()
               .then((data: any) => props?.onOk?.(data))
-              .then(() => reset());
+              .then(() => reset())
+              .finally(() => {
+                setLoading(false);
+              });
           }}
         >
           <FormProvider form={form}>
@@ -122,5 +135,5 @@ export const ShadowModal: React.FC<
         )}
       </React.Fragment>
     );
-  },
+  }
 );
